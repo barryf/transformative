@@ -29,7 +29,7 @@ module Transformative
     end
 
     def replace_property(property, value)
-      return unless valid_property?(property)
+      return unless Post.valid_property?(property)
       current_value = self.send(property)
       # unwrap single-value arrays if not array
       if !current_value.is_a?(Array) && value.size == 1
@@ -64,15 +64,6 @@ module Transformative
       end
     end
     
-    def valid_property?(property)
-      unless PROPERTIES.include?(property) 
-        puts "Did not recognise property '#{property}'"
-        # don't throw, it's ok if we don't know about a property
-        return
-      end
-      true
-    end
-    
     def delete
       @status = :deleted
       save!
@@ -94,6 +85,15 @@ module Transformative
     
     def self.find_by_url(url)
       Post.new
+    end
+    
+    def self.valid_property?(property)
+      unless PROPERTIES.include?(property) 
+        puts "Did not recognise property '#{property}'"
+        # don't throw, it's ok if we don't know about a property
+        return
+      end
+      true
     end
 
   end

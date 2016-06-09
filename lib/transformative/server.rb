@@ -35,7 +35,19 @@ module Transformative
     end
 
     get '/micropub' do
-      'Micropub endpoint'
+      if params.has_key?('q')
+        headers 'Content-Type' => 'application/json'
+        case params[:q]
+        when 'source'
+          render_source
+        when 'config'
+          render_config
+        when 'syndicate-to'
+          render_syndication_targets
+        end
+      else
+        'Micropub endpoint'
+      end
     end
     
     private
@@ -70,6 +82,34 @@ module Transformative
         'error_description' => error.message
       }.to_json
       halt(error.status_code, {'Content-Type' => 'application/json'}, json)
+    end
+
+    def syndication_targets
+      [
+        {
+          uid: "https://twitter.com/barryf",
+          name: "Twitter"
+        }
+      ]
+    end
+
+    def render_syndication_targets
+      { "syndicate-to" => syndication_targets }.to_json
+    end
+    
+    def render_config
+      {
+        # "media-endpoint" => media_endpoint, # TODO media endpoint
+        "syndicate-to" => syndication_targets
+      }.to_json
+    end
+
+    def render_source
+      raise Micropub::InvalidRequestError.new unless valid_url?
+      properties = Micropub.source(params)
+      body = { "properties" => properties }
+      body['type'] = "h-entry" unless params.has_key?('properties')
+      body.to_json
     end
 
   end

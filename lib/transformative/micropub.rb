@@ -33,6 +33,20 @@ module Transformative
       end
     end
 
+    def source(params)
+      post = Post.find_by_url(params[:url])
+      if params.has_key?('properties') && params[:properties].is_a?(Array)
+        filtered_post = {}
+        properties = params[:properties].keys
+        properties.each do |property|
+          filtered_post[property] = post[property] if Post.valid_property?(property)
+        end
+        filtered_post
+      else
+        post
+      end
+    end
+
     class ForbiddenError < ResponseError
       def initialize(message="The authenticated user does not have permission to perform this request.")
         super("forbidden", message, 403)
