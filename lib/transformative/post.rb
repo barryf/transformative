@@ -1,7 +1,7 @@
 module Transformative
   class Post
 
-    PROPERTIES = %w( name content published slug category ).freeze
+    PROPERTIES = %i( name content published slug category ).freeze
     PROPERTIES.each { |p| attr_accessor p }
 
     STATUSES = %i( live draft deleted ).freeze
@@ -32,7 +32,7 @@ module Transformative
       return unless valid_property?(property)
       current_value = self.send(property)
       # unwrap single-value arrays if not array
-      if value.size == 1 && !current_value.is_a?(Array)
+      if !current_value.is_a?(Array) && value.size == 1
         value = value[0]
       end
       self.send("#{property}=", value)
@@ -67,6 +67,7 @@ module Transformative
     def valid_property?(property)
       unless PROPERTIES.include?(property) 
         puts "Did not recognise property '#{property}'"
+        # don't throw, it's ok if we don't know about a property
         return
       end
       true

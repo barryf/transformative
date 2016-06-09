@@ -16,7 +16,6 @@ module Transformative
       end
 
       def create_from_form(params)
-        puts "create_from_form"
         post = Post.new
       
         # optional content
@@ -33,9 +32,7 @@ module Transformative
       end
 
       def create_from_json(params)
-        puts "create_from_json"
         post = Post.new
-        
         post
       end
     
