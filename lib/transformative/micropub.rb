@@ -9,26 +9,64 @@ module Transformative
       post.content = "Old content"
 
       status_code = 204
-      case params['mp-action']
+      case params['action']
       when 'update'
         if params.has_key?('replace') && !params[:replace].empty?
-          post = Update.replace(post, params[:replace])
+          post = replace(post, params[:replace])
         end
         if params.has_key?('add') && !params[:add].empty?
-          post = Update.add(post, params[:add])
+          post = add(post, params[:add])
         end
         if params.has_key?('delete') && !params[:delete].empty?
-          post = Update.remove(post, params[:delete])
+          post = remove(post, params[:delete])
         end
-        PostStore.save!(post)
+        PostStore.save(post)
       when 'delete'
-        Delete.delete(post)
+        post.delete
       when 'undelete'
-        Undelete.undelete(post)
+        post.undelete
       else
         # TODO: raise something
       end
       status_code
+    end
+
+    def create(params)
+      type = params[:h] || params[:type]
+      raise InvalidRequestError.new if type.nil?
+      case type
+      when 'event', ['h-event']
+        post = Event.new
+      when 'card', ['h-card']
+        post = Card.new
+      when 'cite', ['h-cite']
+        post = Cite.new
+      else
+        post = Entry.new
+      end
+      post.create(params)
+      post
+    end
+
+    def replace(post, properties)
+      properties.each do |property|
+        post.replace_property(property[0], property[1])
+      end
+      post
+    end
+
+    def add(post, properties)
+      properties.each do |property|
+        post.add_property(property[0], property[1])
+      end
+      post
+    end
+
+    def remove(post, properties)
+      properties.each do |property|
+        post.remove_property(property[0], property[1])
+      end
+      post
     end
 
     def source(params)

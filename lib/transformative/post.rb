@@ -1,11 +1,26 @@
 module Transformative
   class Post
 
+    STATUSES = %i( live draft deleted ).freeze
+    attr_reader :status
+
+    def status
+      @status || :live
+    end
+
+    def post_object
+      self.class.name.split('::').last.downcase
+    end
+
+    def mf2_object
+      "h-#{post_object}"
+    end
+
     def to_hash(properties=valid_properties)
       hash = {}
       properties.each do |property|
-        next unless valid_properties.include?(property.to_sym)
-        value = self.send(property.to_sym)
+        next unless valid_properties.include?(property)
+        value = self.send(property)
         next if value.nil? || value.empty?
         value = [value] unless value.is_a?(Array)
         hash[property] = value
@@ -13,17 +28,8 @@ module Transformative
       hash
     end
 
-    def slug
-      # TODO
-      @slug || "slug"
-    end
-
-    def permalink
-      "/#{Time.parse(published.to_s).strftime('%Y/%m')}/#{slug}"
-    end
-
     def replace_property(property, value)
-      return unless self.valid_property?(property)
+      return unless valid_property?(property)
       current_value = self.send(property)
       # unwrap single-value arrays if not array
       if !current_value.is_a?(Array) && value.size == 1
@@ -33,7 +39,7 @@ module Transformative
     end
 
     def add_property(property, value)
-      return unless self.valid_property?(property)
+      return unless valid_property?(property)
       current_value = self.send(property)
       # if property is an array append to it
       if current_value.is_a?(Array)
@@ -66,6 +72,32 @@ module Transformative
       @status = :live
     end
 
+    def underscores_to_hyphens!(name)
+      name.gsub!('_', '-')
+    end
+
+    def create_simple_value(property, params)
+      underscores_to_hyphens!(property)
+      if params.has_key?(property) && !params[property].empty?
+        if params[property].is_a?(Array)
+          params[property].first
+        else
+          params[property]
+        end
+      end
+    end
+
+    def create_array_value(property, params)
+      underscores_to_hyphens!(property)
+      if params.has_key?(property) && !params[property].empty?
+        params[property]
+      end
+    end
+
+    def valid_property?(property)
+      valid_properties.include?(property)
+    end
+
     def self.exists_by_url?(url)
       # TODO
       true
@@ -76,10 +108,6 @@ module Transformative
       p.published = Time.now
       p.category = ["one","two"]
       p
-    end
-
-    def self.valid_property?(property)
-      valid_properties.include?(property)
     end
 
   end

@@ -3,9 +3,9 @@ module Transformative
     helpers Sinatra::LinkHeader
 
     configure do
-      root = "#{File.dirname(__FILE__)}/../../"
-      set :views, "#{root}views"
-      set :config_path, "#{root}config/"
+      root_path = "#{File.dirname(__FILE__)}/../../"
+      set :views, "#{root_path}views"
+      set :config_path, "#{root_path}config/"
       set :server, :puma
     end
 
@@ -21,13 +21,13 @@ module Transformative
     post '/micropub' do
       begin
         # start by assuming this is a non-create action
-        if params.has_key?('mp-action') && !params['mp-action'].empty?
+        if params.has_key?('action') && !params['action'].empty?
           raise Micropub::InvalidRequestError.new unless valid_action?
           raise Micropub::InvalidRequestError.new unless valid_url?
           status_code = Micropub.action(params)
         else
           # if it's not an update/delete/undelete then hopefully it's a create
-          post = Micropub::Create.create(params)
+          post = Micropub.create(params)
           status_code = 201
         end
         headers 'Location' => post.permalink if status_code == 201
@@ -66,11 +66,12 @@ module Transformative
     end
 
     def valid_action?
-      %w( update delete undelete ).include?(params['mp-action'])
+      %w( update delete undelete ).include?(params['action'])
     end
 
     def valid_url?
-      params.has_key?('url') && !params[:url].empty? && Post.exists_by_url?(params[:url])
+      params.has_key?('url') && !params[:url].empty? &&
+        Post.exists_by_url?(params[:url])
     end
 
     def halt_unless_auth

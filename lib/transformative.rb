@@ -12,11 +12,11 @@ module Transformative
 end
 
 require_relative 'transformative/post.rb'
-#require_relative 'transformative/card.rb'
-#require_relative 'transformative/cite.rb'
-require_relative 'transformative/entry.rb'
-#require_relative 'transformative/event.rb'
 require_relative 'transformative/post_store.rb'
+require_relative 'transformative/card.rb'
+require_relative 'transformative/cite.rb'
+require_relative 'transformative/entry.rb'
+require_relative 'transformative/event.rb'
 
 require_relative 'transformative/actions/create.rb'
 require_relative 'transformative/actions/delete.rb'

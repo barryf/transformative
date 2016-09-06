@@ -1,25 +1,22 @@
 module Transformative
   class Entry < Post
 
-    PROPERTIES = %i( name summary content published updated category location
-      syndication in_reply_to like_of repost_of rsvp photo )
+    SIMPLE_PROPERTIES = %w( name summary content published updated location
+    in_reply_to like_of repost_of rsvp photo )
+    ARRAY_PROPERTIES = %w( category syndication )
+    PROPERTIES = SIMPLE_PROPERTIES + ARRAY_PROPERTIES
     PROPERTIES.each { |p| attr_accessor p }
 
-    STATUSES = %i( live draft deleted )
-    attr_accessor :status
-
     def valid_properties
-      PROPERTIES.freeze
+      PROPERTIES
     end
 
     def published
-      @published ||= Time.now
-      @published.utc.iso8601
+      @published.utc.iso8601 unless @published.nil?
     end
 
     def updated
-      @updated ||= Time.now
-      @updated.utc.iso8601
+      @updated.utc.iso8601 unless @updated.nil?
     end
 
     def category
@@ -30,8 +27,14 @@ module Transformative
       @syndication || []
     end
 
-    def status
-      @status || :live
+    def create(params)
+      SIMPLE_PROPERTIES.each do |property|
+        self.send("#{property}=", create_simple_value(property, params))
+      end
+
+      ARRAY_PROPERTIES.each do |property|
+        self.send("#{property}=", create_array_value(property, params))
+      end
     end
 
   end
