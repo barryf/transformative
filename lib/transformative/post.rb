@@ -1,18 +1,16 @@
 module Transformative
   class Post
 
-    PROPERTIES = %i( name content published slug category ).freeze
-    PROPERTIES.each { |p| attr_accessor p }
-
-    STATUSES = %i( live draft deleted ).freeze
-    attr_accessor :status
-    
-    def category
-      @category || []
-    end
-
-    def status
-      @status || :live
+    def to_hash(properties=valid_properties)
+      hash = {}
+      properties.each do |property|
+        next unless valid_properties.include?(property.to_sym)
+        value = self.send(property.to_sym)
+        next if value.nil? || value.empty?
+        value = [value] unless value.is_a?(Array)
+        hash[property] = value
+      end
+      hash
     end
 
     def slug
@@ -21,15 +19,11 @@ module Transformative
     end
 
     def permalink
-      published = @published || Time.now.utc
-      "/#{Time.parse(published.to_s).strftime('%Y/%m')}/#{@slug}"
-    end
-
-    def save!
+      "/#{Time.parse(published.to_s).strftime('%Y/%m')}/#{slug}"
     end
 
     def replace_property(property, value)
-      return unless Post.valid_property?(property)
+      return unless self.valid_property?(property)
       current_value = self.send(property)
       # unwrap single-value arrays if not array
       if !current_value.is_a?(Array) && value.size == 1
@@ -37,9 +31,9 @@ module Transformative
       end
       self.send("#{property}=", value)
     end
-    
+
     def add_property(property, value)
-      return unless valid_property?(property)
+      return unless self.valid_property?(property)
       current_value = self.send(property)
       # if property is an array append to it
       if current_value.is_a?(Array)
@@ -54,7 +48,7 @@ module Transformative
         replace_property(property, value)
       end
     end
-    
+
     def remove_property(property, value)
       return unless valid_property?(property)
       current_value = self.send(property)
@@ -63,37 +57,29 @@ module Transformative
         self.send("#{property}=", current_value - value)
       end
     end
-    
+
     def delete
       @status = :deleted
-      save!
     end
-    
+
     def undelete
       @status = :live
-      save!
-    end
-    
-    def self.statuses
-      STATUSES
     end
 
     def self.exists_by_url?(url)
       # TODO
       true
     end
-    
+
     def self.find_by_url(url)
-      Post.new
+      p = Entry.new
+      p.published = Time.now
+      p.category = ["one","two"]
+      p
     end
-    
+
     def self.valid_property?(property)
-      unless PROPERTIES.include?(property) 
-        puts "Did not recognise property '#{property}'"
-        # don't throw, it's ok if we don't know about a property
-        return
-      end
-      true
+      valid_properties.include?(property)
     end
 
   end

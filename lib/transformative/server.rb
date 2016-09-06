@@ -1,18 +1,21 @@
 module Transformative
   class Server < Sinatra::Application
     helpers Sinatra::LinkHeader
-    
+
     configure do
-      set :views, "#{File.dirname(__FILE__)}/../../views"
+      root = "#{File.dirname(__FILE__)}/../../"
+      set :views, "#{root}views"
+      set :config_path, "#{root}config/"
       set :server, :puma
     end
 
     before do
-      logger.info "Params: #{params}"
+      @root_url = ENV['ROOT_URL'] || ""
+      link "#{@root_url}/micropub", rel: "micropub"
     end
 
     get '/' do
-      '/'
+      erb :index
     end
 
     post '/micropub' do
@@ -44,12 +47,14 @@ module Transformative
           render_config
         when 'syndicate-to'
           render_syndication_targets
+        else
+          # TODO query method not supported
         end
       else
         'Micropub endpoint'
       end
     end
-    
+
     private
 
     def require_auth
@@ -63,7 +68,7 @@ module Transformative
     def valid_action?
       %w( update delete undelete ).include?(params['mp-action'])
     end
-    
+
     def valid_url?
       params.has_key?('url') && !params[:url].empty? && Post.exists_by_url?(params[:url])
     end
@@ -85,18 +90,14 @@ module Transformative
     end
 
     def syndication_targets
-      [
-        {
-          uid: "https://twitter.com/barryf",
-          name: "Twitter"
-        }
-      ]
+      @syndication_targets ||=
+        JSON.parse(File.read("#{settings.config_path}syndication_targets.json"))
     end
 
     def render_syndication_targets
       { "syndicate-to" => syndication_targets }.to_json
     end
-    
+
     def render_config
       {
         # "media-endpoint" => media_endpoint, # TODO media endpoint

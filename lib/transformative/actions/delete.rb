@@ -1,6 +1,7 @@
 module Transformative
-  module Micropub
+  module Actions
     module Delete
+
       module_function
 
       def delete(post)

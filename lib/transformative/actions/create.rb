@@ -1,8 +1,9 @@
 module Transformative
-  module Micropub
+  module Actions
     module Create
+
       module_function
-      
+
       def create(params)
         if params.has_key?('h') && params[:h] == 'entry'
           # form-encoded create
@@ -16,26 +17,28 @@ module Transformative
       end
 
       def create_from_form(params)
-        post = Post.new
-      
+        post = Entry.new
+
+        # TODO this should be automated via the post type properties
+
         # optional content
         if params.has_key?('content') && !params[:content].empty?
           post.content = params[:content]
         end
 
-        # set published time in utc
+        # set published time
         if params.has_key?('published') && !params[:published].empty?
-          post.published = Time.parse(params[:published].to_s).utc
+          post.published = Time.parse(params[:published].to_s)
         end
-      
+
         post
       end
 
       def create_from_json(params)
-        post = Post.new
+        post = Entry.new
         post
       end
-    
+
     end
   end
 end

@@ -1,6 +1,7 @@
 module Transformative
-  module Micropub
+  module Actions
     module Update
+
       module_function
 
       def replace(post, properties)
