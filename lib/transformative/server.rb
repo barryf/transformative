@@ -11,7 +11,7 @@ module Transformative
 
     before do
       @root_url = ENV['ROOT_URL'] || ""
-      link "#{@root_url}/micropub", rel: "micropub"
+      link "#{@root_url}micropub", rel: "micropub"
     end
 
     get '/' do

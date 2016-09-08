@@ -9,6 +9,7 @@ gem 'puma'
 
 group :development do
   gem 'shotgun'
+  gem 'dotenv'
   gem 'guard'
   gem 'guard-rspec'
   gem 'pry'

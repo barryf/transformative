@@ -4,6 +4,7 @@ GEM
     backports (3.6.8)
     coderay (1.1.1)
     diff-lcs (1.2.5)
+    dotenv (2.1.1)
     ffi (1.9.10)
     formatador (0.2.5)
     git-version-bump (0.15.1)
@@ -84,6 +85,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dotenv
   guard
   guard-rspec
   pry
@@ -99,4 +101,4 @@ RUBY VERSION
    ruby 2.2.3p173
 
 BUNDLED WITH
-   1.12.2
+   1.12.3
