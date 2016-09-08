@@ -17,12 +17,6 @@ require_relative 'transformative/card.rb'
 require_relative 'transformative/cite.rb'
 require_relative 'transformative/entry.rb'
 require_relative 'transformative/event.rb'
-
-require_relative 'transformative/actions/create.rb'
-require_relative 'transformative/actions/delete.rb'
-require_relative 'transformative/actions/undelete.rb'
-require_relative 'transformative/actions/update.rb'
-
 require_relative 'transformative/indieauth.rb'
 require_relative 'transformative/micropub.rb'
 require_relative 'transformative/server.rb'
