@@ -72,13 +72,13 @@ module Transformative
       @status = :live
     end
 
-    def underscores_to_hyphens!(name)
-      name.gsub!('_', '-')
+    def underscores_to_hyphens(name)
+      name.gsub('_', '-')
     end
 
     def create_simple_value(property, params)
-      underscores_to_hyphens!(property)
-      if params.has_key?(property) && !params[property].empty?
+      property = underscores_to_hyphens(property)
+      if params.key?(property) && !params[property].empty?
         if params[property].is_a?(Array)
           params[property].first
         else
@@ -89,7 +89,7 @@ module Transformative
 
     def create_array_value(property, params)
       underscores_to_hyphens!(property)
-      if params.has_key?(property) && !params[property].empty?
+      if params.key?(property) && !params[property].empty?
         params[property]
       end
     end

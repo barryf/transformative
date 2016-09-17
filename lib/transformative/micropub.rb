@@ -1,33 +1,6 @@
 module Transformative
   module Micropub
-
     module_function
-
-    def action(params)
-      post = Post.find_by_url(params[:url])
-      post.category = ["one","two"]
-      post.content = "Old content"
-
-      case params['action']
-      when 'update'
-        if params.has_key?('replace') && !params[:replace].empty?
-          post = replace(post, params[:replace])
-        end
-        if params.has_key?('add') && !params[:add].empty?
-          post = add(post, params[:add])
-        end
-        if params.has_key?('delete') && !params[:delete].empty?
-          post = remove(post, params[:delete])
-        end
-        PostStore.save(post)
-      when 'delete'
-        post.delete
-      when 'undelete'
-        post.undelete
-      else
-        # TODO: raise something
-      end
-    end
 
     def create(params)
       type = params[:h] || params[:type]
@@ -46,33 +19,57 @@ module Transformative
       post
     end
 
-    def replace(post, properties)
+    def action(params)
+      post = Post.find_by_url(params[:url])
+
+      case params['action']
+      when 'update'
+        if params.key?('replace') && !params[:replace].empty?
+          replace!(post, params[:replace])
+        end
+        if params.key?('add') && !params[:add].empty?
+          add!(post, params[:add])
+        end
+        if params.key?('delete') && !params[:delete].empty?
+          remove!(post, params[:delete])
+        end
+        PostStore.save(post)
+      when 'delete'
+        post.delete
+      when 'undelete'
+        post.undelete
+      else
+        # TODO: raise something
+      end
+    end
+
+    def replace!(post, properties)
       properties.each do |property|
         post.replace_property(property[0], property[1])
       end
-      post
     end
 
-    def add(post, properties)
+    def add!(post, properties)
       properties.each do |property|
         post.add_property(property[0], property[1])
       end
-      post
     end
 
-    def remove(post, properties)
+    def remove!(post, properties)
       properties.each do |property|
         post.remove_property(property[0], property[1])
       end
-      post
     end
 
     def source(params)
-      entry = Entry.find_by_url(params[:url])
-      if params.has_key?('properties') && params[:properties].is_a?(Array)
-        entry.to_hash(params[:properties])
+      post = Post.find_by_url(params[:url])
+      if params.key?('properties') && params[:properties].is_a?(Array)
+        { properties: post.to_hash(params[:properties]) }
       else
-        entry.to_hash
+        {
+          type: post.mf2_object,
+          properties: post.to_hash
+        }
       end
     end
 

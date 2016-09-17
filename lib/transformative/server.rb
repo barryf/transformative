@@ -15,7 +15,7 @@ module Transformative
     post '/micropub' do
       begin
         # start by assuming this is a non-create action
-        if params.has_key?('action')
+        if params.key?('action')
           verify_action
           verify_url
           Micropub.action(params)
@@ -23,7 +23,7 @@ module Transformative
         else
           # if it's not an update/delete/undelete then hopefully it's a create
           post = Micropub.create(params)
-          headers 'Location' => post.permalink
+          headers 'Location' => post.url
           status 201
         end
       rescue RequestError => error
@@ -32,7 +32,7 @@ module Transformative
     end
 
     get '/micropub' do
-      if params.has_key?('q')
+      if params.key?('q')
         headers 'Content-Type' => 'application/json'
         case params[:q]
         when 'source'
@@ -74,7 +74,7 @@ module Transformative
     end
 
     def verify_url
-      unless params.has_key?('url') && !params[:url].empty? &&
+      unless params.key?('url') && !params[:url].empty? &&
           Post.exists_by_url?(params[:url])
         raise Micropub::InvalidRequestError.new(
           "The specified URL ('#{params[:url]}') could not be found."
@@ -109,9 +109,10 @@ module Transformative
     end
 
     def render_source
-      properties = Micropub.source(params)
-      body = { properties: properties }
-      body['type'] = "h-entry" unless params.has_key?('properties')
+      source = Micropub.source(params)
+      puts "source=#{source}"
+      body = { properties: source[:properties] }
+      body[:type] = source[:type] unless params.key?('properties')
       content_type :json
       body.to_json
     end

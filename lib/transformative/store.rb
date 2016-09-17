@@ -1,8 +1,5 @@
-# STORE IN GIT(HUB)? Rebase and cache in PG
-# Edit the file in GH and then webhook sends update to T
-
 module Transformative
-  module PostStore
+  module Store
     module_function
 
     def save_file!(post)
@@ -22,9 +19,9 @@ module Transformative
 
     def save(post)
       puts post.inspect
-      file_path = "#{post.post_object}/#{post.published.strftime('%Y/%m')}/"
-      file_name = "#{post.slug}.txt"
-      puts "Creating #{file_path}#{file_name}"
+      path = "/#{post.post_object}/#{post.published.strftime('%Y/%m')}/"
+      name = "#{post.slug}.txt"
+      puts "Creating #{path}#{name}"
     end
 
   end
