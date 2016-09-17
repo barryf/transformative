@@ -107,6 +107,10 @@ module Transformative
       p = Entry.new
       p.published = Time.now
       p.category = ["one","two"]
+      p.content = "My content"
+      p.name = "My name"
+      p.in_reply_to = "https://test"
+      p.syndication = ["https://twitter.com/barryf/status/768401483448496128"]
       p
     end
 

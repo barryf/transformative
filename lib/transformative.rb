@@ -1,6 +1,6 @@
 module Transformative
 
-  class ResponseError < StandardError
+  class RequestError < StandardError
     attr_reader :type, :status_code
     def initialize(type, message, status_code)
       @type = type
@@ -17,6 +17,6 @@ require_relative 'transformative/card.rb'
 require_relative 'transformative/cite.rb'
 require_relative 'transformative/entry.rb'
 require_relative 'transformative/event.rb'
-require_relative 'transformative/indieauth.rb'
+require_relative 'transformative/auth.rb'
 require_relative 'transformative/micropub.rb'
 require_relative 'transformative/server.rb'

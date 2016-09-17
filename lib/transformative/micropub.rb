@@ -8,7 +8,6 @@ module Transformative
       post.category = ["one","two"]
       post.content = "Old content"
 
-      status_code = 204
       case params['action']
       when 'update'
         if params.has_key?('replace') && !params[:replace].empty?
@@ -28,7 +27,6 @@ module Transformative
       else
         # TODO: raise something
       end
-      status_code
     end
 
     def create(params)
@@ -78,25 +76,25 @@ module Transformative
       end
     end
 
-    class ForbiddenError < ResponseError
+    class ForbiddenError < RequestError
       def initialize(message="The authenticated user does not have permission to perform this request.")
         super("forbidden", message, 403)
       end
     end
 
-    class InsufficientScopeError < ResponseError
+    class InsufficientScopeError < RequestError
       def initialize(message="The scope of this token does not meet the requirements for this request.")
         super("insufficient_scope", message, 401)
       end
     end
 
-    class InvalidRequestError < ResponseError
+    class InvalidRequestError < RequestError
       def initialize(message="The request is missing a required parameter, or there was a problem with a value of one of the parameters.")
         super("invalid_request", message, 400)
       end
     end
 
-    class NotFoundError < ResponseError
+    class NotFoundError < RequestError
       def initialize(message="The post with the requested URL was not found.")
         super("not_found", message, 400)
       end

@@ -1,38 +1,32 @@
 module Transformative
   class Server < Sinatra::Application
-    helpers Sinatra::LinkHeader
 
     configure do
       root_path = "#{File.dirname(__FILE__)}/../../"
-      set :views, "#{root_path}views"
       set :config_path, "#{root_path}config/"
+      set :token_endpoint, ENV['TOKEN_ENDPOINT']
       set :server, :puma
     end
 
-    before do
-      @root_url = ENV['ROOT_URL'] || ""
-      link "#{@root_url}micropub", rel: "micropub"
-    end
-
     get '/' do
-      erb :index
+      'Transformative'
     end
 
     post '/micropub' do
       begin
         # start by assuming this is a non-create action
-        if params.has_key?('action') && !params['action'].empty?
-          raise Micropub::InvalidRequestError.new unless valid_action?
-          raise Micropub::InvalidRequestError.new unless valid_url?
-          status_code = Micropub.action(params)
+        if params.has_key?('action')
+          verify_action
+          verify_url
+          Micropub.action(params)
+          status 204
         else
           # if it's not an update/delete/undelete then hopefully it's a create
           post = Micropub.create(params)
-          status_code = 201
+          headers 'Location' => post.permalink
+          status 201
         end
-        headers 'Location' => post.permalink if status_code == 201
-        status status_code
-      rescue ResponseError => error
+      rescue RequestError => error
         halt_error(error)
       end
     end
@@ -48,7 +42,7 @@ module Transformative
         when 'syndicate-to'
           render_syndication_targets
         else
-          # TODO query method not supported
+          # Silently fail if query method is not supported
         end
       else
         'Micropub endpoint'
@@ -59,33 +53,39 @@ module Transformative
 
     def require_auth
       return unless settings.production?
-      token = request.env['HTTP_AUTHORIZATION'] || params['access_token']
+      token = request.env['HTTP_AUTHORIZATION'] || params['access_token'] || ""
       token.gsub!('Bearer ','')
-      raise Indieauth::NoTokenError.new if token.nil? || token.empty?
-      raise Indieauth::ForbiddenError.new unless Indieauth.verify_token?(token)
+      if token.empty?
+        raise Auth::NoTokenError.new
+      end
+      unless Auth.valid_token?(token, settings.token_endpoint)
+        raise Auth::ForbiddenError.new
+      end
     end
 
-    def valid_action?
-      %w( update delete undelete ).include?(params['action'])
+    def verify_action
+      valid_actions = %w( update delete undelete )
+      unless valid_actions.include?(params[:action])
+        raise Micropub::InvalidRequestError.new(
+          "The specified action ('#{params[:action]}) is not supported. " +
+          "Valid actions are: #{valid_actions.join(', ')}."
+        )
+      end
     end
 
-    def valid_url?
-      params.has_key?('url') && !params[:url].empty? &&
-        Post.exists_by_url?(params[:url])
-    end
-
-    def halt_unless_auth
-      begin
-        Indieauth.require_auth
-      rescue ResponseError => error
-        halt_error(error)
+    def verify_url
+      unless params.has_key?('url') && !params[:url].empty? &&
+          Post.exists_by_url?(params[:url])
+        raise Micropub::InvalidRequestError.new(
+          "The specified URL ('#{params[:url]}') could not be found."
+        )
       end
     end
 
     def halt_error(error)
       json = {
-        'error' => error.type,
-        'error_description' => error.message
+        error: error.type,
+        error_description: error.message
       }.to_json
       halt(error.status_code, {'Content-Type' => 'application/json'}, json)
     end
@@ -96,10 +96,12 @@ module Transformative
     end
 
     def render_syndication_targets
+      content_type :json
       { "syndicate-to" => syndication_targets }.to_json
     end
 
     def render_config
+      content_type :json
       {
         # "media-endpoint" => media_endpoint, # TODO media endpoint
         "syndicate-to" => syndication_targets
@@ -107,10 +109,10 @@ module Transformative
     end
 
     def render_source
-      raise Micropub::InvalidRequestError.new unless valid_url?
       properties = Micropub.source(params)
-      body = { "properties" => properties }
+      body = { properties: properties }
       body['type'] = "h-entry" unless params.has_key?('properties')
+      content_type :json
       body.to_json
     end
 

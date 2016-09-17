@@ -22,9 +22,9 @@ module Transformative
 
     def save(post)
       puts post.inspect
-      #file_path = "#{post.post_object}/#{post.published.strftime('%Y/%m')}/"
-      #file_name = "#{post.slug}.txt"
-      #puts "Creating #{file_path}#{file_name}"
+      file_path = "#{post.post_object}/#{post.published.strftime('%Y/%m')}/"
+      file_name = "#{post.slug}.txt"
+      puts "Creating #{file_path}#{file_name}"
     end
 
   end
