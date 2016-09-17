@@ -7,6 +7,12 @@ module Transformative
     def valid_properties
       PROPERTIES
     end
+    def simple_properties
+      PROPERTIES
+    end
+    def array_properties
+      []
+    end
 
     def published
       @published ||= Time.now

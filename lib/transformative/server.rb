@@ -4,7 +4,6 @@ module Transformative
     configure do
       root_path = "#{File.dirname(__FILE__)}/../../"
       set :config_path, "#{root_path}config/"
-      set :token_endpoint, ENV['TOKEN_ENDPOINT']
       set :server, :puma
     end
 
@@ -13,6 +12,7 @@ module Transformative
     end
 
     post '/micropub' do
+      puts "MICROPUB PARAMS #{params}"
       begin
         # start by assuming this is a non-create action
         if params.key?('action')
@@ -58,7 +58,7 @@ module Transformative
       if token.empty?
         raise Auth::NoTokenError.new
       end
-      unless Auth.valid_token?(token, settings.token_endpoint)
+      unless Auth.valid_token?(token)
         raise Auth::ForbiddenError.new
       end
     end

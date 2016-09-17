@@ -2,12 +2,13 @@ module Transformative
   module Auth
     module_function
 
-    def valid_token?(token, token_endpoint)
-      response = HTTParty.get(token_endpoint,
+    def valid_token?(token, token_endpoint=ENV['TOKEN_ENDPOINT'])
+      response = HTTParty.get(
+        token_endpoint,
         headers: {
           'Content-Type' => 'application/x-www-form-urlencoded',
           'Authorization' => "Bearer #{token}"
-      })
+        })
       response.status == 200
     end
 

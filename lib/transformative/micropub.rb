@@ -15,13 +15,14 @@ module Transformative
       else
         post = Entry.new
       end
-      post.create(params)
+      set!(post, params[:properties])
+      post.set_timestamps
+      Store.save(post)
       post
     end
 
     def action(params)
       post = Post.find_by_url(params[:url])
-
       case params['action']
       when 'update'
         if params.key?('replace') && !params[:replace].empty?
@@ -33,13 +34,20 @@ module Transformative
         if params.key?('delete') && !params[:delete].empty?
           remove!(post, params[:delete])
         end
-        PostStore.save(post)
+        post.set_timestamps
+        Store.save(post)
       when 'delete'
         post.delete
       when 'undelete'
         post.undelete
       else
         # TODO: raise something
+      end
+    end
+
+    def set!(post, properties)
+      properties.each do |property|
+        post.set_property(property[0], property[1])
       end
     end
 
@@ -64,11 +72,11 @@ module Transformative
     def source(params)
       post = Post.find_by_url(params[:url])
       if params.key?('properties') && params[:properties].is_a?(Array)
-        { properties: post.to_hash(params[:properties]) }
+        { properties: post.to_mf2(params[:properties]) }
       else
         {
           type: post.mf2_object,
-          properties: post.to_hash
+          properties: post.to_mf2
         }
       end
     end

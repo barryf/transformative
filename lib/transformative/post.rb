@@ -8,6 +8,15 @@ module Transformative
       @status || :live
     end
 
+    def slug
+      Random.new_seed.to_s
+    end
+
+    def url
+      # TODO
+      "/"
+    end
+
     def post_object
       self.class.name.split('::').last.downcase
     end
@@ -16,13 +25,23 @@ module Transformative
       "h-#{post_object}"
     end
 
-    def to_hash(properties=valid_properties)
+    def to_mf2(properties=valid_properties)
       hash = {}
       properties.each do |property|
         next unless valid_properties.include?(property)
         value = self.send(property)
         next if value.nil? || value.empty?
         value = [value] unless value.is_a?(Array)
+        hash[property] = value
+      end
+      hash
+    end
+
+    def to_hash
+      hash = {}
+      valid_properties.each do |property|
+        value = self.send(property)
+        next if value.nil? || value.empty?
         hash[property] = value
       end
       hash
@@ -64,6 +83,13 @@ module Transformative
       end
     end
 
+    def set_property(property, value)
+      property = hyphens_to_underscores(property)
+      return unless valid_property?(property)
+      new_value = array_properties.include?(property) ? value : value[0]
+      self.send("#{property}=", new_value)
+    end
+
     def delete
       @status = :deleted
     end
@@ -72,30 +98,33 @@ module Transformative
       @status = :live
     end
 
+    def hyphens_to_underscores(name)
+      name.gsub('-','_')
+    end
+
     def underscores_to_hyphens(name)
       name.gsub('_', '-')
     end
 
-    def create_simple_value(property, params)
-      property = underscores_to_hyphens(property)
-      if params.key?(property) && !params[property].empty?
-        if params[property].is_a?(Array)
-          params[property].first
-        else
-          params[property]
-        end
-      end
-    end
-
-    def create_array_value(property, params)
-      underscores_to_hyphens!(property)
-      if params.key?(property) && !params[property].empty?
-        params[property]
-      end
-    end
-
     def valid_property?(property)
       valid_properties.include?(property)
+    end
+
+    def file_name_with_path
+      published_date = Time.parse(published)
+      "/#{post_object}/#{published_date.strftime('%Y/%m')}/#{slug}.txt"
+    end
+
+    def file_content
+      properties_without_content = to_hash
+      properties_without_content.delete('content')
+      "#{properties_without_content.to_yaml}---\n#{content}"
+    end
+
+    def set_timestamps
+      now = Time.now.utc
+      @published ||= now
+      @updated = now
     end
 
     def self.exists_by_url?(url)
