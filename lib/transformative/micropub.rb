@@ -15,58 +15,35 @@ module Transformative
       else
         post = Entry.new
       end
-      set!(post, params[:properties])
-      post.set_timestamps
+      post.set(params[:properties])
+      post.set_timestamp(:create)
       Store.save(post)
       post
     end
 
     def action(params)
       post = Post.find_by_url(params[:url])
-      case params['action']
-      when 'update'
+      case params['action'].to_sym
+      when :update
         if params.key?('replace') && !params[:replace].empty?
-          replace!(post, params[:replace])
+          post.replace(params[:replace])
         end
         if params.key?('add') && !params[:add].empty?
-          add!(post, params[:add])
+          post.add(params[:add])
         end
         if params.key?('delete') && !params[:delete].empty?
-          remove!(post, params[:delete])
+          post.remove(params[:delete])
         end
-        post.set_timestamps
-        Store.save(post)
-      when 'delete'
+      when :delete
         post.delete
-      when 'undelete'
+      when :undelete
         post.undelete
       else
         # TODO: raise something
       end
-    end
-
-    def set!(post, properties)
-      properties.each do |property|
-        post.set_property(property[0], property[1])
-      end
-    end
-
-    def replace!(post, properties)
-      properties.each do |property|
-        post.replace_property(property[0], property[1])
-      end
-    end
-
-    def add!(post, properties)
-      properties.each do |property|
-        post.add_property(property[0], property[1])
-      end
-    end
-
-    def remove!(post, properties)
-      properties.each do |property|
-        post.remove_property(property[0], property[1])
-      end
+      post.set_timestamp(params['action'].to_sym)
+      Store.save(post)
+      post
     end
 
     def source(params)
