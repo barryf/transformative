@@ -11,5 +11,6 @@ Dotenv.load unless env == :production
 # automatically parse json in the body
 use Rack::PostBodyContentTypeParser
 
+require 'microformats'
 require 'transformative'
 run Transformative::Server

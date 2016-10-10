@@ -3,18 +3,10 @@ module Transformative
     module_function
 
     def create(params)
-      type = params[:h] || params[:type]
+      type = params[:h] || params[:type][0].sub('h-','')
       raise InvalidRequestError.new if type.nil?
-      case type
-      when 'event', ['h-event']
-        post = Event.new
-      when 'card', ['h-card']
-        post = Card.new
-      when 'cite', ['h-cite']
-        post = Cite.new
-      else
-        post = Entry.new
-      end
+      object = Microformats::Base.get_class(type).new
+      post = Post.new(object)
       post.set(params[:properties])
       post.set_timestamp(:create)
       Store.save(post)
@@ -52,7 +44,7 @@ module Transformative
         { properties: post.to_mf2(params[:properties]) }
       else
         {
-          type: post.mf2_object,
+          type: post.mf2_name,
           properties: post.to_mf2
         }
       end

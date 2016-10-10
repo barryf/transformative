@@ -12,26 +12,30 @@ module Transformative
     end
 
     post '/micropub' do
+      require_auth
       puts "MICROPUB PARAMS #{params}"
       begin
         # start by assuming this is a non-create action
         if params.key?('action')
           verify_action
           verify_url
-          Micropub.action(params)
+          post = Micropub.action(params)
+          syndicate(post)
           status 204
         else
           # if it's not an update/delete/undelete then hopefully it's a create
           post = Micropub.create(params)
+          syndicate(post)
           headers 'Location' => post.url
           status 201
         end
-      rescue RequestError => error
-        halt_error(error)
+      rescue Request§Error => e
+        halt_error(e)
       end
     end
 
     get '/micropub' do
+      require_auth
       if params.key?('q')
         headers 'Content-Type' => 'application/json'
         case params[:q]
@@ -47,6 +51,36 @@ module Transformative
       else
         'Micropub endpoint'
       end
+    end
+
+    get '/webmention' do
+      "Webmention endpoint"
+    end
+
+    post '/webmention' do
+      require_auth
+      require_source
+      require_target
+      halt if params[:source] == params[:target]
+      halt if params[:target] == ENV['ROOT_URL']
+      begin
+        Webmention.receive(params[:source], params[:target])
+        headers 'Location' => params[:target]
+        status 202
+      rescue WebmentionError => e
+        Notify.send("Webmention failed: #{e.type}", e.message, params[:source])
+        halt_error(e)
+      end
+    end
+
+    post '/built' do
+      begin
+        posts = Store.process_build(params)
+        puts "built posts=#{posts}"
+      rescue StoreError => e
+        halt_error(e)
+      end
+      status 200
     end
 
     private
@@ -115,6 +149,14 @@ module Transformative
       body[:type] = source[:type] unless params.key?('properties')
       content_type :json
       body.to_json
+    end
+
+    def syndicate(post)
+      if params.key?('mp-syndicate-to') && !params['mp-syndicate-to'].empty?
+        # list of services may or may not be an array
+        services = Array(params['mp-syndicate-to'])
+        post.syndicate(services)
+      end
     end
 
   end
