@@ -2,10 +2,6 @@ module Transformative
   module Webmention
     module_function
 
-    def send(url)
-      ::Webmention::Client.new(url).send_mentions
-    end
-
     def receive(source, target)
       verify_source(source)
 
@@ -17,27 +13,29 @@ module Transformative
 
       source_body = get_source_and_check_it_links_to_target(source, target)
 
-      author_name = get_author_and_store_cite_and_card(source, source_body)
+      author = store_author(source, source_body)
 
-      send_notification(author_name, source_body, target)
+      cite = store_cite(source, source_body, author.properties['url'][0])
+
+      send_notification(author, source_body, target)
     end
 
     def verify_source(source)
-      unless valid_url?(source)
+      unless Utils.valid_url?(source)
         raise WebmentionError.new("invalid_source",
           "The specified source URI is not a valid URI.")
       end
     end
 
     def verify_target(target)
-      unless valid_url?(target)
+      unless Utils.valid_url?(target)
         raise WebmentionError.new("invalid_target",
           "The specified target URI is not a valid URI.")
       end
     end
 
     def check_site_matches_target(target)
-      unless URI.parse(ENV['ROOT_URL']).host == URI.parse(target).host
+      unless URI.parse(ENV['SITE_URL']).host == URI.parse(target).host
         raise WebmentionError.new("target_not_supported",
           "The specified target URI does not exist on this server.")
       end
@@ -45,8 +43,14 @@ module Transformative
 
     def check_target_is_valid_post(target)
       target_path = URI.parse(target).path
-      # TODO: look this up in database
-      unless true
+      # check there is a webmention link tag/header at target
+      response = HTTParty.get(target)
+      unless response.code.to_i == 200
+        raise WebmentionError.new("invalid_source",
+        "The specified target URI could not be retrieved.")
+      end
+      unless Nokogiri::HTML(response.body).css("link[rel=webmention]").any? ||
+          response.headers['Link'].match('rel=webmention')
         raise WebmentionError.new("target_not_supported",
           "The specified target URI is not a Webmention-enabled resource.")
       end
@@ -54,6 +58,10 @@ module Transformative
 
     def get_source_and_check_it_links_to_target(source, target)
       response = HTTParty.get(source)
+      unless response.code.to_i == 200
+        raise WebmentionError.new("invalid_source",
+        "The specified source URI could not be retrieved.")
+      end
       unless Nokogiri::HTML(response.body).css("a[href=\"#{target}\"]").any?
         raise WebmentionError.new("no_link_found",
           "The source URI does not contain a link to the target URI.")
@@ -61,41 +69,31 @@ module Transformative
       response.body
     end
 
-    def get_author_and_store_cite_and_card(source, source_body)
-      entry = Microformats2.parse(source_body).entry
-      author_url = absolutize(entry.author.to_s, source)
-      create_cite({
-        url: source,
-        name: entry.name.to_s,
-        content: entry.content.to_s,
-        author: author_url
-      })
-      author_body = HTTParty.get(author_url).body
-      author = Microformats2.parse(author_body).card
-      create_card({
-        name: author.name.to_s,
-        photo: absolutize(author.photo.to_s, source),
-        url: absolutize(author.url.to_s, source)
-      })
-      author.name.to_s
+    def store_author(source, source_body)
+      author_post = Authorship.get_author(source, source_body)
+      Store.save(author_post)
     end
 
-    # TODO: create_cite, create_card. refactor ^^^?
-
-    def send_notification(name, content, url)
-      Notify.send("Webmention from #{name}", content, url)
+    # TODO fix this - it's very broken
+    def store_cite(source, source_body, author_url)
+      json = Microformats2.parse(source_body).to_json
+      # remove the 'items' container at the top
+      properties = JSON.parse(json)['items'][0]['properties']
+      # override the author and url
+      properties['author'] = [author_url]
+      properties['url'] = [source]
+      url = "/cites/#{Utils.slugify_url(source)}"
+      cite_post = Post.new(url, ['h-cite'], properties)
+      Store.save(cite_post)
     end
 
-    def valid_url?(url)
-      begin
-        uri = URI.parse(url)
-        uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
-      rescue URI::InvalidURIError
-      end
+    def send_notification(author, content, url)
+      name = author.properties['name'][0]
+      Notification.send("Webmention from #{name}", content, url)
     end
 
     def absolutize(url, base_url)
-      if url.start_with?("http")
+      if url.start_with?('http')
         url
       else
         URI.join(base_url, url)
@@ -104,7 +102,7 @@ module Transformative
 
   end
 
-  class WebmentionError < RequestError
+  class WebmentionError < TransformativeError
     def initialize(type, message)
       super(type, message)
     end

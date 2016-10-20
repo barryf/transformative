@@ -11,42 +11,46 @@ module Transformative
     def send_twitter(post)
       # we can only send entries to twitter so ignore anything else
       # TODO syndicate other objects
-      return unless post.class_name == 'entry'
+      return unless post.type == 'h-entry'
 
-      entry = post.object
-      body = { h: 'entry', url: post.url }
+      body = { 'h' => 'entry', 'url' => post.absolute_url }
 
       # prefer the (hand-crafted) summary to the main content
-      content = entry.summary.empty? ? entry.content : entry.summary
-      unless content.empty?
-        body[:content] = content
+      body['content'] = if post['properties'].key?('summary')
+        post['properties']['summary'][0]
+      elsif post['properties'].key?('content')
+        if post['properties']['content'][0].is_a?(Hash) &&
+            post['properties']['content'][0].key?('html')
+          post['properties']['content'][0]['html']
+        else
+          post['properties']['content'][0]
+        end
       end
 
-      # multiple in-reply-tos are allowed (only first used) so use array
-      unless entry.in_reply_to.empty?
-        body['in-reply-to'] = entry.in_reply_to
+      if post['properties'].key?('in-reply-to')
+        body['in-reply-to'] = post['properties']['in-reply-to']
       end
 
-      unless entry.repost_of.empty?
-        body['repost-of'] = entry.repost_of
+      if post['properties'].key?('repost-of')
+        body['repost-of'] = post['properties']['repost-of']
       end
 
-      unless entry.like_of.empty?
-        body['like-of'] = entry.like_of
+      if post['properties'].key?('like-of')
+        body['like-of'] = post['properties']['like-of']
       end
 
-      unless entry.name.empty?
-        body[:name] = entry.name
+      if post['properties'].key?('name')
+        body['name'] = post['properties']['name'][0]
       end
 
-      # multiple photos are allowed so use array
-      unless entry.photo.empty?
-        body[:photo] = entry.photo
+      # TODO limit to 4? may not be necessary
+      if post['properties'].key?('photo')
+        body['photo'] = post['properties']['photo']
       end
 
       response = micropub_request(body, ENV['SILOPUB_TWITTER_TOKEN'])
-      unless response.code == 200
-        raise SyndicationError.new("Twitter syndication failed.", response.body)
+      unless response.code.to_i == 200
+        raise SyndicationError.new("Twitter syndication failed.")
       end
 
       # find the twitter id from its api's json response
@@ -64,4 +68,11 @@ module Transformative
     end
 
   end
+
+  class SyndicationError < TransformativeError
+    def initialize(message)
+      super("syndication", message)
+    end
+  end
+
 end

@@ -3,44 +3,22 @@ require 'uri'
 module Microformats
   class Base
 
-    def get_property(name)
-      property = self.hyphens_to_underscores(name)
-      return unless self.valid_property?(property)
-      send(property)
+    attr_reader :post
+
+    def initialize(post)
+      @post = post
     end
 
-    def set_property(name, value)
-      property = self.hyphens_to_underscores(name)
-      return unless self.valid_property?(property)
-      send("#{property}=", value)
-    end
-
-    def self.class_name
-      self.name.split('::').last.downcase
-    end
-
-    def self.mf2_name
-      "h-#{self.class_name}"
-    end
-
-    def self.valid_url?(url)
-      begin
-        uri = URI.parse(url)
-        uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
-      rescue URI::InvalidURIError
-      end
-    end
-
-    def self.hyphens_to_underscores(name)
-      name.gsub('-','_')
+    def properties
+      @post.properties
     end
 
     def self.valid_property?(property)
       self.valid_properties.include?(property)
     end
 
-    def self.get_class(name)
-      case name.to_sym
+    def self.get_class
+      case self.class.name.to_sym
       when :card
         Card
       when :cite
@@ -49,6 +27,14 @@ module Microformats
         Entry
       when :event
         Event
+      end
+    end
+
+    def self.valid_url?(url)
+      begin
+        uri = URI.parse(url)
+        uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+      rescue URI::InvalidURIError
       end
     end
 

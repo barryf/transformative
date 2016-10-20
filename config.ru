@@ -6,7 +6,7 @@ env = ENV['RACK_ENV'].to_sym
 require "bundler/setup"
 Bundler.require(:default, env)
 
-Dotenv.load unless env == :production
+Dotenv.load
 
 # automatically parse json in the body
 use Rack::PostBodyContentTypeParser

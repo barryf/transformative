@@ -4,9 +4,8 @@ require 'json'
 require 'jekyll'
 
 path_moof = "/Users/barry/data-2016-10-02/webmentions"
-path_new  = "/Users/barry/Desktop/json/cites"
-path_card = "/Users/barry/Desktop/json/cards"
-path_wm   = "/Users/barry/Desktop/json/webmentions"
+path_new  = "/Users/barry/Dropbox/barryfrost.com/content/cites"
+path_card = "/Users/barry/Dropbox/barryfrost.com/content/cards"
 
 Dir.glob("#{path_moof}/**/*.md").each do |file|
 
@@ -35,14 +34,24 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
     properties['content'] = [content]
   end
 
-  #post_url = "https://barryfrost.com#{data['post_permalink']}"
+  post_url = "https://barryfrost.com#{data['post_permalink']}"
+  case data['webmention_type']
+  when 'reply'
+    properties['in-reply-to'] = [post_url]
+  when 'repost'
+    properties['repost-of'] = [post_url]
+  when 'like'
+    properties['like-of'] = [post_url]
+  when 'mention'
+    properties['mention-of'] = [post_url]
+  end
 
   if data.key?('photo')
     properties['photo'] = [data['photo']]
   end
 
-  if data['url'].start_with?('https://twitter.com')
-    properties['author'] = [data['url'].split('/')[0..3].join('/')]
+  if data['author_url'].start_with?('https://twitter.com')
+    properties['author'] = [data['author_url'].split('/')[0..3].join('/')]
   else
     properties['author'] = [data['author_url']]
   end
@@ -66,16 +75,5 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
     properties: properties
   }.to_json
   File.write("#{path_new}/#{slug}.json", file_content)
-
-  # create webmention file
-  wm_slug = "#{data['post_permalink']}/#{slug}"
-  wm_content = {
-    source: data['url'],
-    target: "https://barryfrost.com#{data['post_permalink']}",
-    method: data['webmention_type']
-  }.to_json
-  wm_file = "#{path_wm}#{wm_slug}.json"
-  FileUtils.mkdir_p( File.dirname(wm_file) )
-  File.write(wm_file, wm_content)
 
 end

@@ -3,7 +3,7 @@ require 'time'
 require 'json'
 
 path_moof = "/Users/barry/data-2016-10-02/posts"
-path_new  = "/Users/barry/Desktop/json/entries"
+path_new  = "/Users/barry/Dropbox/barryfrost.com/content"
 
 Dir.glob("#{path_moof}/**/*.md").each do |file|
 
@@ -26,6 +26,8 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
     case key
     when 'syndications'
       k = 'syndication'
+    when 'tags'
+      k = 'category'
     when 'bookmark'
       k = 'bookmark-of'
     when 'in_reply_to'
@@ -37,7 +39,7 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
     when 'place_name'
       k = 'place-name'
     when 'post_type'
-      k = 'post-type'
+      k = 'entry-type'
     when 'permalink', 'latitude', 'longitude'
       next
     else
@@ -50,7 +52,7 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
       properties[key] = [Time.parse(data[key]).utc.iso8601.to_s]
     elsif k == 'photo'
       # TODO move old photos to s3
-      properties[key] = ["https://barryfrost.com/photos/#{data[key]}"]
+      properties[key] = ["https://media.barryfrost.com/#{data[key]}"]
     end
   end
 

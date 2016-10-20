@@ -2,40 +2,71 @@ module Transformative
   module Store
     module_function
 
-    def put_post(post)
-      put(post.file_name_with_path, post.class_name, post.file_content)
+    def save(post)
+      # ensure entry posts always have an entry-type
+      if post.type == 'h-entry'
+        post.properties['entry-type'] ||= [post.entry_type]
+      end
+      put(post.filename, post.data)
+      post
     end
 
-    def put(filename, type, content)
-      client.create_contents(
+    def put(filename, data)
+      content = JSON.pretty_generate(data)
+      if sha = exists?(filename)
+        update(sha, filename, content)
+      else
+        create(filename, content)
+      end
+    end
+
+    def create(filename, content)
+      octokit.create_contents(
         github_full_repo,
         filename,
-        "Adding new #{type} using Transformative.",
+        "Adding new post using Transformative.",
         content
       )
     end
 
-    def process_build(params)
-      require_built_build(params)
-      commit = get_commit(params['build']['commit'])
-      posts = []
-      commit['files'].each do |file|
-        filename = file['filename']
-        next unless filename.start_with?('_posts/')
-        file_content = get_file_content(filename)
-        post = parse_file(file_content, Microformats::Entry)
-        posts << post
-      end
-      posts
+    def update(sha, filename, content)
+      octokit.update_contents(
+        github_full_repo,
+        filename,
+        "Updating post using Transformative.",
+        sha,
+        content
+      )
     end
 
-    private
+    def get(filename)
+      file_content = get_file_content(filename)
+      data = JSON.parse(file_content)
+      url = filename.sub(/\.json$/, '')
+      Post.new(url, data['type'][0], data['properties'])
+    end
 
-    def require_built_build(params)
-      unless params.has_key?('build') && params['build'].has_key?('status') &&
-          params['build']['status'] == 'built'
-        raise StoreError.new(
-          "Request must contain successful GitHub Pages build payload.")
+    def get_url(url)
+      relative_url = Utils.relative_url(url)
+      get("#{relative_url}.json")
+    end
+
+    def exists?(filename)
+      file = get_file(filename)
+      unless file.nil?
+        file['sha']
+      end
+    end
+
+    def exists_url?(url)
+      relative_url = Utils.relative_url(url)
+      exists?("#{relative_url}.json")
+    end
+
+    def get_file(filename)
+      begin
+        octokit.contents(github_full_repo, { path: filename })
+      rescue Octokit::NotFound
       end
     end
 
@@ -44,20 +75,20 @@ module Transformative
         github_full_repo,
         { path: filename }
       ).content
-      Base64.decode64(base64_contents)
+      Base64.decode64(base64_content)
     end
 
     def github_full_repo
       "#{ENV['GITHUB_USER']}/#{ENV['GITHUB_REPO']}"
     end
 
-    def client
+    def octokit
       @octokit ||= Octokit::Client.new(access_token: ENV['GITHUB_ACCESS_TOKEN'])
     end
 
   end
 
-  class StoreError < RequestError
+  class StoreError < TransformativeError
     def initialize(message)
       super("store", message)
     end

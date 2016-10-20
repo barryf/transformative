@@ -3,72 +3,78 @@ module Transformative
     module_function
 
     def create(params)
-      type = params[:h] || params[:type][0].sub('h-','')
-      raise InvalidRequestError.new if type.nil?
-      object = Microformats::Base.get_class(type).new
-      post = Post.new(object)
-      post.set(params[:properties])
-      post.set_timestamp(:create)
+      safe_params = sanitise_params(params)
+      post = if params.key?('h')
+        Post.new_from_form(safe_params)
+      else
+        Post.new(nil, safe_params['type'][0], safe_params['properties'])
+      end
+
       Store.save(post)
-      post
     end
 
-    def action(params)
-      post = Post.find_by_url(params[:url])
-      case params['action'].to_sym
+    def action(properties)
+      post = Store.get_url(properties['url'])
+
+      case properties['action'].to_sym
       when :update
-        if params.key?('replace') && !params[:replace].empty?
-          post.replace(params[:replace])
+        if properties.key?('replace')
+          verify_array(properties, 'replace')
+          post.replace(properties['replace'])
         end
-        if params.key?('add') && !params[:add].empty?
-          post.add(params[:add])
+        if properties.key?('add')
+          verify_array(properties, 'add')
+          post.add(properties['add'])
         end
-        if params.key?('delete') && !params[:delete].empty?
-          post.remove(params[:delete])
+        if properties.key?('delete')
+          verify_array(properties, 'delete')
+          post.remove(properties['delete'])
         end
       when :delete
         post.delete
       when :undelete
         post.undelete
-      else
-        # TODO: raise something
       end
-      post.set_timestamp(params['action'].to_sym)
+
+      post.set_updated
       Store.save(post)
-      post
     end
 
-    def source(params)
-      post = Post.find_by_url(params[:url])
-      if params.key?('properties') && params[:properties].is_a?(Array)
-        { properties: post.to_mf2(params[:properties]) }
-      else
-        {
-          type: post.mf2_name,
-          properties: post.to_mf2
-        }
+    def verify_array(properties, key)
+      unless properties[key].is_a?(Array)
+        raise InvalidRequestError.new("Invalid request: the '#{key}' property should be an array.")
       end
     end
 
-    class ForbiddenError < RequestError
+    def sanitise_params(params)
+      safe_params = {}
+      params.keys.each do |param|
+        unless param.start_with?('mp-') || param == 'access_token'
+          safe_params[param] = params[param]
+        end
+      end
+      safe_params
+    end
+
+    class ForbiddenError < TransformativeError
       def initialize(message="The authenticated user does not have permission to perform this request.")
         super("forbidden", message, 403)
       end
     end
 
-    class InsufficientScopeError < RequestError
+    class InsufficientScopeError < TransformativeError
       def initialize(message="The scope of this token does not meet the requirements for this request.")
         super("insufficient_scope", message, 401)
       end
     end
 
-    class InvalidRequestError < RequestError
+    class InvalidRequestError < TransformativeError
       def initialize(message="The request is missing a required parameter, or there was a problem with a value of one of the parameters.")
         super("invalid_request", message, 400)
       end
     end
 
-    class NotFoundError < RequestError
+    class NotFoundError < TransformativeError
       def initialize(message="The post with the requested URL was not found.")
         super("not_found", message, 400)
       end
