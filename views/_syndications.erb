@@ -1,0 +1,10 @@
+<% if @post.properties.key?('syndication') && @post.properties['syndication'].any? %>
+  <li class="syndications">
+    Also on&nbsp;
+    <% @post.properties['syndication'].each do |syndication| %>
+      <a class="u-syndication" rel="syndication" href="<%= syndication %>">
+        <%= syndication_text(syndication) %>
+      </a>&nbsp;
+    <% end %>
+  </li>
+<% end %>

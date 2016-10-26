@@ -11,6 +11,9 @@ Dotenv.load
 # automatically parse json in the body
 use Rack::PostBodyContentTypeParser
 
-require 'microformats'
+require 'will_paginate/sequel'
+Sequel::Database.extension(:pagination)
+Sequel.extension(:pg_array, :pg_json, :pg_json_ops)
+
 require 'transformative'
 run Transformative::Server

@@ -1,0 +1,72 @@
+<div id="container">
+<article class="h-event post post-full event">
+
+  <div class="h-card p-author" style="display: none;">
+    <img class="u-photo" src="https://barryf.s3.amazonaws.com/barryfrost.jpg">
+    <a class="u-url p-name" rel="author" href="https://barryfrost.com/">Barry Frost</a>
+  </div>
+
+  <a class="post-type" href="<%= @post.url %>">
+    <span class="fa fa-calendar"></span>
+  </a>
+
+  <h1 class="p-name">
+    <% if @post.properties.key?('url') %>
+      <a href="<%= @post.properties['url'][0] %>">
+        <%= @post.properties['name'][0] %>
+        <span class="fa fa-external-link-square"></span>
+      </a>
+    <% else %>
+      <%= @post.properties['name'][0] %>
+    <% end %>
+  </h1>
+
+  <ul>
+    <%= erb :'_location' %>
+  </ul>
+
+  <p>
+    Starts at
+    <time class="dt-start" datetime="<%= @post.properties['start'][0] %>"
+        pubdate>
+      <%= Time.parse(@post.properties['start'][0]).utc.strftime('%Y-%m-%d %H:%M') %>
+    </time>
+    <abbr title="Coordinated Universal Time">UTC</abbr>.
+    <% if @post.properties.key?('end') %>
+      Finishes at
+      <time class="dt-end" datetime="<%= @post.properties['end'][0] %>"
+          pubdate>
+        <%= Time.parse(@post.properties['end'][0]).utc.strftime('%Y-%m-%d %H:%M') %>
+      </time>
+      <abbr title="Coordinated Universal Time">UTC</abbr>.
+    <% end %>
+  </p>
+
+  <% if @post.properties.key?('summary') %>
+    <div class="p-summary">
+      <%= @post.properties['summary'][0] %>
+    </div>
+  <% end %>
+
+  <% if @post.properties.key?('description') %>
+    <div class="p-description">
+      <%= @post.properties['description'][0] %>
+    </div>
+  <% end %>
+
+  <ul class="metadata">
+
+    <%= erb :'_timestamp' %>
+
+    <%= erb :'_indie_actions' %>
+
+    <%= erb :'_categories' %>
+
+    <%= erb :'_syndications' %>
+
+  </ul>
+
+  <%= erb :'_webmentions' unless @webmentions.nil? %>
+
+</article>
+</div>

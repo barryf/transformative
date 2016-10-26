@@ -1,87 +1,58 @@
 module Transformative
   class Post
 
-    attr_reader :url, :type, :properties
+    attr_reader :properties, :url
 
-    def initialize(url, type, properties)
-      @type = type
+    def initialize(properties, url=nil)
       @properties = properties
       @url = url || generate_url
     end
 
     def data
-      { 'type' => [@type], 'properties' => @properties }
+      { 'type' => [h_type], 'properties' => @properties }
     end
 
     def absolute_url
       URI.join(ENV['SITE_URL'], @url).to_s
     end
 
-    def entry_type
-      if @properties.key?('rsvp') &&
-          %w( yes no maybe interested ).include?(@properties['rsvp'][0])
-        'rsvp'
-      elsif @properties.key?('in-reply-to') &&
-          Utils.valid_url?(@properties['in-reply-to'][0])
-        'reply'
-      elsif @properties.key?('repost-of') &&
-          Utils.valid_url?(@properties['repost-of'][0])
-        'repost'
-      elsif @properties.key?('like-of') &&
-          Utils.valid_url?(@properties['like-of'][0])
-        'like'
-      elsif @properties.key?('video') &&
-          Utils.valid_url?(@properties['video'][0])
-        'video'
-      elsif @properties.key?('photo') &&
-          Utils.valid_url?(@properties['photo'][0])
-        'photo'
-      elsif @properties.key?('bookmark-of') &&
-          Utils.valid_url?(@properties['bookmark-of'][0])
-        'bookmark'
-      elsif @properties.key?('name') && !@properties['name'].empty? &&
-          !content_start_with_name?
-        'article'
-      else
-        'note'
-      end
+    def is_deleted?
+      @properties.key?('deleted') &&
+        Time.parse(@properties['deleted'][0]) < Time.now
     end
 
-    def content_start_with_name?
-      return unless @properties.key?('content') && @properties.key?('name')
-      content = @properties['content'][0].is_a?(Hash) &&
-        @properties['content'][0].key?('html') ?
-        @properties['content'][0]['html'] : @properties['content'][0]
-      content_tidy = content.gsub(/\s+/, " ").strip
-      name_tidy = @properties['name'][0].gsub(/\s+/, " ").strip
-      content_tidy.start_with?(name_tidy)
-    end
-
-    def filename
-      path = "#{@url}.json"
-    end
-
-    def generate_url
-      case @type
-      when 'h-entry', 'h-event'
-        unless @properties.key('published')
-          @properties['published'] = [Time.now.utc.iso8601]
+    def content
+      if properties.key?('content') and !properties['content'].empty?
+        if properties['content'].is_a?(Hash) and
+            properties['content'].key?('html')
+          properties['content']['html']
+        else
+          properties['content'][0]
         end
-        slug = @properties.key?('slug') ? @properties['slug'][0] : slugify
-        url = "/#{Time.parse(@properties['published'][0]).strftime('%Y/%m')}/" +
-          slug
-      when 'h-cite', 'h-card'
-        return unless @properties.key?('url')
-        url = "/#{slugify}"
       end
-      @type == 'h-entry' ? url : "/#{self.pural_type(@type)}#{url}"
+    end
+
+    def generate_url_published
+      unless @properties.key('published')
+        @properties['published'] = [Time.now.utc.iso8601]
+      end
+      slug = @properties.key?('slug') ? @properties['slug'][0] : slugify
+      "/#{Time.parse(@properties['published'][0]).strftime('%Y/%m')}/#{slug}"
+    end
+
+    def generate_url_slug
+      prefix = case h_type
+        when 'h_card'
+          '/cards/'
+        when 'h_cite'
+          '/cites'
+        else
+          '/'
+        end
+      "#{prefix}#{Utils.slugify_url(@properties['url'][0])}"
     end
 
     def slugify
-      if @properties.key?('url')
-        return Utils.slugify_url(@properties['url'][0])
-      end
-
       content = if @properties.key?('name')
         @properties['name'][0]
       elsif @properties.key?('summary')
@@ -144,7 +115,7 @@ module Transformative
 
     def syndicate(services)
       # only syndicate if this is an entry or event
-      return unless ['h-entry','h-event'].include?(@type)
+      return unless ['h-entry','h-event'].include?(h_type)
 
       # iterate over the mp-syndicate-to services
       new_syndications = services.map do |service|
@@ -157,21 +128,17 @@ module Transformative
       Store.put_post(self)
     end
 
-    def self.new_from_form(params)
-      h_type = "h-#{params['h']}"
-      params.delete('h')
-
-      # then wrap each non-array value in an array
-      props = Hash[ params.map { |k, v| [k, Array(v)] } ]
-
-      if params.key?('photo')
-        props['photo'] = Media.upload_files(props['photo'])
+    def self.class_from_type(type)
+      case type
+      when 'h-card'
+        Card
+      when 'h-cite'
+        Cite
+      when 'h-entry'
+        Entry
+      when 'h-event'
+        Event
       end
-      if params.key?('video')
-        props['video'] = Media.upload_files(props['video'])
-      end
-
-      self.new(nil, h_type, props)
     end
 
     def self.valid_types

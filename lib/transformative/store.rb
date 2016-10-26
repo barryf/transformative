@@ -4,7 +4,7 @@ module Transformative
 
     def save(post)
       # ensure entry posts always have an entry-type
-      if post.type == 'h-entry'
+      if post.h_type == 'h-entry'
         post.properties['entry-type'] ||= [post.entry_type]
       end
       put(post.filename, post.data)
@@ -24,7 +24,7 @@ module Transformative
       octokit.create_contents(
         github_full_repo,
         filename,
-        "Adding new post using Transformative.",
+        "Adding new post using Transformative",
         content
       )
     end
@@ -33,7 +33,7 @@ module Transformative
       octokit.update_contents(
         github_full_repo,
         filename,
-        "Updating post using Transformative.",
+        "Updating post using Transformative",
         sha,
         content
       )
@@ -43,7 +43,8 @@ module Transformative
       file_content = get_file_content(filename)
       data = JSON.parse(file_content)
       url = filename.sub(/\.json$/, '')
-      Post.new(url, data['type'][0], data['properties'])
+      klass = Post.class_from_type(data['type'][0])
+      klass.new(data['properties'], url)
     end
 
     def get_url(url)
@@ -61,6 +62,27 @@ module Transformative
     def exists_url?(url)
       relative_url = Utils.relative_url(url)
       exists?("#{relative_url}.json")
+    end
+
+
+    def webhook(commits)
+      puts "webhook=#{commits}"
+      commits.each do |commit|
+        process_files(commit['added']) if commit['added'].any?
+        process_files(commit['modified']) if commit['modified'].any?
+      end
+    end
+
+    def process_files(files)
+      files.each do |file|
+        file_content = get_file_content(file)
+        url = "/" + file.sub(/\.json$/,'')
+        data = JSON.parse(file_content)
+        klass = Post.class_from_type(data['type'][0])
+        post = klass.new(data['properties'], url)
+        Cache.put(post)
+        Utils.send_webmentions(post.absolute_url)
+      end
     end
 
     def get_file(filename)

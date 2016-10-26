@@ -1,0 +1,34 @@
+<% if @post.properties.key?('location') %>
+  <li class="location">
+    <span class="fa fa-map-marker"></span>
+
+    <% if @post.properties['location'][0].is_a?(Hash) &&
+         @post.properties['location'][0]['type'][0] == 'h-adr' %>
+      <% adr = @post.properties['location'][0] %>
+      <a class="p-location h-geo"
+          href="https://maps.google.com/maps?q=<%= adr['properties']['latitude'][0] %>,<%= adr['properties']['longitude'][0] %>">
+        <data class="p-latitude" value="<%= adr['properties']['latitude'][0] %>"></data>
+        <data class="p-longitude" value="<%= adr['properties']['longitude'][0] %>"></data>
+        <%= adr['properties']['latitude'][0] %>,
+        <%= adr['properties']['longitude'][0] %>
+      </a>
+
+    <% elsif @post.properties['location'][0].start_with?('geo:') %>
+      <% geo = @post.properties['location'][0].sub(/^geo:/,'').split(',') %>
+      <a class="p-location h-geo"
+          href="https://maps.google.com/maps?q=<%= geo[0] %>,<%= geo[1] %>">
+        <data class="p-latitude" value="<%= geo[0] %>"></data>
+        <data class="p-longitude" value="<%= geo[1] %>"></data>
+        <% if @post.properties.key?('place-name') %>
+          <span class="p-name"><%= @post.properties['place-name'][0] %></span>
+        <% else %>
+          <%= geo[0] %>, <%= geo[1] %>
+        <% end %>
+      </a>
+
+    <% elsif valid_url?(@post.properties['location'][0]) %>
+      <!-- TODO: support h-card location -->
+
+    <% end %>
+  </li>
+<% end %>

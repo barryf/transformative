@@ -1,0 +1,33 @@
+<% if @post.properties.key?('category') && @post.properties['category'].any? %>
+<li class="tags">
+  <ul>
+
+    <% @post.properties['category'].each do |category| %>
+      <% if valid_url?(category) %>
+        <li>
+          <span class="fa fa-user"></span>
+          <% if defined?(@authors) && @authors.key?(category) %>
+            <a class="u-category h-card" rel="nofollow"
+                href="<%= @authors[category].properties['url'][0] %>">
+              <%= @authors[category].properties['name'][0] %>
+            </a>
+          <% else %>
+            <%= host_link(category) %>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+
+    <% @post.properties['category'].each do |category| %>
+      <% unless valid_url?(category) %>
+        <li>
+          <a href="/tags/<%= category %>">
+            #<span class="p-category"><%= category %></span>
+          </a>
+        </li>
+      <% end %>
+    <% end %>
+
+  </ul>
+</li>
+<% end %>

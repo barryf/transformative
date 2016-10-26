@@ -10,7 +10,13 @@ gem 'httparty'
 gem 'nokogiri'
 gem 'octokit'
 gem 'microformats2'
+gem 'redcarpet'
+gem 'sanitize'
+gem 'builder'
+gem 'webmention'
 gem 'dotenv'
+gem 'sequel_pg', require: 'sequel'
+gem 'will_paginate'
 gem 'jekyll'
 
 group :development do

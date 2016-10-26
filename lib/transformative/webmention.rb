@@ -74,7 +74,7 @@ module Transformative
       Store.save(author_post)
     end
 
-    # TODO fix this - it's very broken
+    # TODO check this - is it broken?
     def store_cite(source, source_body, author_url)
       json = Microformats2.parse(source_body).to_json
       # remove the 'items' container at the top
@@ -83,21 +83,13 @@ module Transformative
       properties['author'] = [author_url]
       properties['url'] = [source]
       url = "/cites/#{Utils.slugify_url(source)}"
-      cite_post = Post.new(url, ['h-cite'], properties)
+      cite_post = Cite.new(properties, url)
       Store.save(cite_post)
     end
 
     def send_notification(author, content, url)
       name = author.properties['name'][0]
       Notification.send("Webmention from #{name}", content, url)
-    end
-
-    def absolutize(url, base_url)
-      if url.start_with?('http')
-        url
-      else
-        URI.join(base_url, url)
-      end
     end
 
   end

@@ -1,0 +1,64 @@
+<div id="container">
+<article class="h-entry post post-full <%= @post.properties['entry-type'][0] %>">
+
+  <div class="h-card p-author" style="display: none;">
+    <img class="u-photo" src="https://barryf.s3.amazonaws.com/barryfrost.jpg">
+    <a class="u-url p-name" rel="author" href="https://barryfrost.com/">Barry Frost</a>
+  </div>
+
+  <%= erb :'_contexts' unless @contexts.nil? %>
+
+  <a class="post-type" href="<%= @post.url %>">
+    <%= post_type_icon(@post.properties['entry-type'][0]) %>
+  </a>
+
+  <% if @post.properties['entry-type'][0] == 'bookmark' %>
+    <h1 class="p-name">
+      <a href="<%= @post.properties['bookmark-of'][0] %>">
+        <%= @post.properties['name'][0] %>
+        <span class="fa fa-external-link-square"></span>
+      </a>
+    </h1>
+  <% elsif @post.properties['entry-type'][0] == 'article' %>
+    <h1 class="p-name"><%= @post.properties['name'][0] %></h1>
+  <% end %>
+
+  <% unless @post.content.nil? %>
+    <div class="e-content<% unless @post.properties['entry-type'][0] == 'article' or
+        @post.properties['entry-type'][0] == 'bookmark' %> p-name<% end %> content">
+      <%= filter_all filter_markdown @post.content %>
+      <%= erb :'_photos' %>
+
+      <!-- embeds? -->
+
+    </div>
+  <% end %>
+
+  <% if @post.properties.key?('summary') and !@post.properties['summary'][0].empty? %>
+    <div class="p-summary" style="display: none;">
+      <%= @post.properties['summary'][0] %>
+    </div>
+  <% end %>
+
+  <% if @post.properties['entry-type'][0] == 'rsvp' %>
+    <data class="p-rsvp" value="<%= @post.properties['rsvp'][0] %>"></data>
+  <% end %>
+
+  <ul class="metadata">
+
+    <%= erb :'_timestamp' %>
+
+    <%= erb :'_indie_actions' %>
+
+    <%= erb :'_categories' %>
+
+    <%= erb :'_syndications' %>
+
+    <%= erb :'_location' %>
+
+  </ul>
+
+  <%= erb :'_webmentions' unless @webmentions.nil? %>
+
+</article>
+</div>

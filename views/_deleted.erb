@@ -1,0 +1,17 @@
+<div class="e-content">
+  <p>
+    This post has been deleted and is no longer available.
+  </p>
+</div>
+
+<ul class="metadata">
+  <li class="timestamp">
+    <a class="u-url" href="<%= @post.absolute_url %>">
+      <time class="dt-deleted" datetime="<%= @post.properties['deleted'][0] %>"
+          pubdate>
+        <%= Time.parse(@post.properties['deleted'].to_s).utc.strftime('%Y-%m-%d %H:%M') %>
+        <abbr title="Coordinated Universal Time">UTC</abbr>
+      </time>
+    </a>
+  </li>
+</ul>

@@ -2,7 +2,7 @@ require 'yaml'
 require 'time'
 require 'json'
 
-path_moof = "/Users/barry/data-2016-10-02/posts"
+path_moof = "/Users/barry/data-2016-10-22/posts"
 path_new  = "/Users/barry/Dropbox/barryfrost.com/content"
 
 Dir.glob("#{path_moof}/**/*.md").each do |file|
@@ -52,14 +52,18 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
       properties[key] = [Time.parse(data[key]).utc.iso8601.to_s]
     elsif k == 'photo'
       # TODO move old photos to s3
-      properties[key] = ["https://media.barryfrost.com/#{data[key]}"]
+      properties[key] = ["https://media.barryfrost.com/photo/#{data[key]}"]
     end
   end
 
-  file_content = {
+  if data.key?('latitude') && data.key?('longitude')
+    properties['location'] = ["geo:#{data['latitude']},#{data['longitude']}"]
+  end
+
+  file_content = JSON.pretty_generate({
     type: ['h-entry'],
     properties: properties
-  }.to_json
+  })
 
   date = Time.parse(data['published']).utc
   url = date.strftime('/%Y/%m/') + data['slug']

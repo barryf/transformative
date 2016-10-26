@@ -11,7 +11,7 @@ module Transformative
     def send_twitter(post)
       # we can only send entries to twitter so ignore anything else
       # TODO syndicate other objects
-      return unless post.type == 'h-entry'
+      return unless post.h_type == 'h-entry'
 
       body = { 'h' => 'entry', 'url' => post.absolute_url }
 

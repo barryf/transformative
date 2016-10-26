@@ -3,7 +3,7 @@ require 'time'
 require 'json'
 require 'jekyll'
 
-path_moof = "/Users/barry/data-2016-10-02/webmentions"
+path_moof = "/Users/barry/data-2016-10-22/webmentions"
 path_new  = "/Users/barry/Dropbox/barryfrost.com/content/cites"
 path_card = "/Users/barry/Dropbox/barryfrost.com/content/cards"
 
@@ -50,30 +50,42 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
     properties['photo'] = [data['photo']]
   end
 
-  if data['author_url'].start_with?('https://twitter.com')
-    properties['author'] = [data['author_url'].split('/')[0..3].join('/')]
+  if data.key?('author_url')
+    if data['author_url'].start_with?('https://twitter.com')
+      properties['author'] = [data['author_url'].split('/')[0..3].join('/')]
+    else
+      properties['author'] = [data['author_url']]
+    end
   else
-    properties['author'] = [data['author_url']]
+    properties['author'] = [data['author']]
   end
 
   # create card
   card_slug = Jekyll::Utils.slugify(properties['author'][0])
+  next if card_slug.nil?
+  card_slug = card_slug.gsub!('-','/')
   cp = {}
   cp['name'] = [data['author_name']] if data.key?('author_name')
   cp['photo'] = [data['author_photo']] if data.key?('author_photo')
   cp['url'] = [data['author_url']] if data.key?('author_url')
-  card_content = {
+  card_content = JSON.pretty_generate({
     type: ['h-card'],
     properties: cp
-  }.to_json
-  File.write("#{path_card}/#{card_slug}.json", card_content)
+  })
+  filename = "#{path_card}/#{card_slug}.json"
+  FileUtils.mkdir_p(File.dirname(filename))
+  File.write(filename, card_content)
 
   # create cite
   slug = Jekyll::Utils.slugify(data['url'])
-  file_content = {
+  next if slug.nil?
+  slug.gsub!('-','/')
+  file_content = JSON.pretty_generate({
     type: ['h-cite'],
     properties: properties
-  }.to_json
-  File.write("#{path_new}/#{slug}.json", file_content)
+  })
+  filename = "#{path_new}/#{slug}.json"
+  FileUtils.mkdir_p(File.dirname(filename))
+  File.write(filename, file_content)
 
 end

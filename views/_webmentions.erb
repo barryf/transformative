@@ -1,0 +1,42 @@
+<ul class="webmentions external">
+<% @webmentions.each do |webmention| %>
+  <% type = webmention_type(webmention) %>
+
+  <li class="<%= type %>">
+    <dl class="h-cite <%= webmention_type_p_class(type) %>">
+
+      <dt>
+        <span class="h-card p-author">
+          <%= webmention_type_icon(type) %>
+          <% if @authors.key?(webmention.properties['author'][0]) %>
+            <% author = @authors[webmention.properties['author'][0]] %>
+            <img class="u-photo" src="<%= force_https_author_profile author.properties['photo'][0] %>">
+            <a class="u-url" rel="nofollow" href="<%= author.properties['url'][0] %>">
+              <%= author.properties['name'][0] %>
+            </a>
+          <% else %>
+            <%= webmention.properties['author'][0] %>
+          <% end %>
+        </span>
+
+        <%= webmention_type_text(type) %>
+
+        <% if webmention.properties.key?('name') %>
+          &ldquo;<a href="<%= webmention.properties['url'][0] %>" rel="nofollow">
+            <span class="p-name"><%= post_summary(webmention.properties['name'][0], 40) %></span>
+          </a>&rdquo;
+        <% end %>
+        on <%= host_link(webmention.properties['url'][0]) %>
+      </dt>
+
+      <% if type == 'reply' %>
+        <dd class="e-content<% if webmention.properties.key?('name') %> p-name<% end %>">
+          <%= link_twitter link_hashtags link_urls webmention.content %>
+        </dd>
+      <% end %>
+
+    </dl>
+  </li>
+
+<% end %>
+</ul>

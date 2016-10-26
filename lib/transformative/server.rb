@@ -1,18 +1,143 @@
 module Transformative
   class Server < Sinatra::Application
+    helpers Sinatra::LinkHeader
+    helpers ViewHelper
 
     configure do
       root_path = "#{File.dirname(__FILE__)}/../../"
       set :config_path, "#{root_path}config/"
-      set :site_url, ENV['SITE_URL']
-      set :media_url, ENV['MEDIA_URL']
-      set :media_endpoint, ENV['MEDIA_ENDPOINT']
+      set :markdown, layout_engine: :erb
       set :server, :puma
-      disable :show_exceptions
     end
 
     get '/' do
-      'Transformative'
+      @posts_rows = Cache.stream(%w( note article photo repost ),
+        params[:page] || 1)
+      index_page
+    end
+
+    get '/all' do
+      @posts_rows = Cache.stream_all(params[:page] || 1)
+      @title = "All"
+      index_page
+    end
+
+    get %r{^/tags?/([A-Za-z0-9\-\+]+)/?$} do |tags|
+      tags.downcase!
+      @title = "Tagged  ##{tags.split('+').join(' #')}"
+      @page_title = @title
+      @posts_rows = Cache.stream_tagged(tags, params[:page] || 1)
+      index_page
+    end
+
+    get %r{^/(note|article|bookmark|photo|repost|like|replie)s/?$} do |type|
+      @title = "#{type}s".capitalize
+      type = 'reply' if type == 'replie'
+      @posts_rows = Cache.stream([type], params[:page] || 1)
+      index_page
+    end
+
+    get %r{^/([0-9]{4})/([0-9]{2})/?$} do |y, m|
+      @posts_rows = Cache.stream_all_by_month(y, m)
+      @title = "#{Date::MONTHNAMES[m.to_i]} #{y}"
+      @page_title = @title
+      index_page
+    end
+
+    get %r{^/([0-9]{4})/([0-9]{2})/([a-z0-9-]+)/?$} do |y, m, slug|
+      url = "/#{y}/#{m}/#{slug}"
+      @post = Cache.get(url)
+      return not_found if @post.nil?
+      return deleted if @post.is_deleted?
+      @title = page_title(@post)
+      @webmentions = Cache.webmentions(@post)
+      @contexts = Cache.contexts(@post)
+      @authors = Cache.authors_from_cites(@webmentions, @contexts)
+      @authors.merge!(Cache.authors_from_categories(@post))
+      @webmention_link = true
+      erb :entry
+    end
+
+    get %r{^/([0-9]{4})/([0-9]{2})/([a-z0-9-]+)\.json$} do |y, m, slug|
+      url = "/#{y}/#{m}/#{slug}"
+      content_type :json, charset: 'utf-8'
+      Cache.get_json(url)
+    end
+
+    get %r{(index|posts|rss)(\.xml)?$} do
+      posts_rows = Cache.stream(%w( note article bookmark photo ), 1)
+      @posts = posts_rows.map { |row| Cache.row_to_post(row) }
+      content_type :xml
+      builder :rss
+    end
+
+    get '/archives/?' do
+      posts = Cache.stream_all(1, 99999).map { |row| Cache.row_to_post(row) }
+      year = 0
+      month = 0
+      months_content = ""
+      @content = "<dl id=\"archives\">"
+      posts.each do |post|
+        published = Time.parse(post.properties['published'][0])
+        if published.strftime('%Y') != year
+          year = published.strftime('%Y')
+          @content += "#{months_content}\n<dt>#{year}</dt>\n"
+          months_content = ""
+        end
+        if published.strftime('%m') != month
+          month = published.strftime('%m')
+          mon = Date::MONTHNAMES[month.to_i][0...3]
+          months_content = "<dd><a href=\"/#{year}/#{month}\">#{mon}</a></dd>\n" +
+            months_content
+        end
+      end
+      @content += "#{months_content}\n</dl>"
+      @title = "Archives"
+      erb :static
+    end
+
+    # legacy redirects from old sites (baker)
+    get %r{^/posts/([0-9]+)/?$} do |baker_id|
+      post = Cache.get_first_by_slug("baker-#{baker_id}")
+      if post.nil?
+        not_found
+      else
+        redirect post.url, 301
+      end
+    end
+    get %r{^/([0-9]{1,3})/?$} do |baker_id|
+      post = Cache.get_first_by_slug("baker-#{baker_id}")
+      if post.nil?
+        not_found
+      else
+        redirect post.url, 301
+      end
+    end
+    get %r{^/articles/([a-z0-9-]+)/?$} do |slug|
+      post = Cache.get_first_by_slug(slug)
+      not_found if post.nil?
+      redirect post.url, 301
+    end
+    get '/feed' do
+      redirect '/rss', 301
+    end
+    get '/posts' do
+      redirect '/', 301
+    end
+    get '/about' do
+      redirect '/2015/01/about', 301
+    end
+    get '/colophon' do
+      redirect '/2015/01/colophon', 301
+    end
+    get '/contact' do
+      redirect '/2015/01/contact', 301
+    end
+
+    post '/webhook' do
+      return not_found unless params.key?('commits')
+      Store.webhook(params[:commits])
+      status 204
     end
 
     post '/micropub' do
@@ -72,7 +197,30 @@ module Transformative
       status 202
     end
 
+    not_found do
+      erb :'404'
+    end
+
+    error do
+      erb :'500'
+    end
+
+    def deleted
+      status 410
+      erb :'410'
+    end
+
     private
+
+    def index_page
+      return not_found if @posts_rows.nil?
+      @posts = @posts_rows.map { |row| Cache.row_to_post(row) }
+      @contexts = Cache.contexts(@posts)
+      @authors = Cache.authors_from_cites(@contexts)
+      @authors.merge!(Cache.authors_from_categories(@posts))
+      @webmention_counts = Cache.webmention_counts(@posts)
+      erb :index
+    end
 
     def require_auth
       return unless settings.production?
@@ -146,7 +294,7 @@ module Transformative
             properties[property] = post.properties[property]
           end
         end
-        { 'type' => [post.type], 'properties' => properties }
+        { 'type' => [post.h_type], 'properties' => properties }
       else
         post.data
       end

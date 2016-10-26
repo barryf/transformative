@@ -1,0 +1,52 @@
+<% @contexts.each do |context| %>
+<% if @post.cite_belongs_to_post?(context) %>
+
+<div class="context external">
+  <dl class="<%= post_type_p_class(context) %> h-cite">
+
+    <dt>
+      <span class="prefix"><%= context_prefix(@post) %></span>
+      <span class="h-card p-author">
+        <% if @authors.key?(context.properties['author'][0]) %>
+          <% author = @authors[context.properties['author'][0]] %>
+          <% if author.properties.key?('photo') %>
+            <img class="u-photo" src="<%= force_https_author_profile author.properties['photo'][0] %>">
+          <% end %>
+          <a class="u-url p-name" href="<%= author.properties['url'][0] %>">
+            <%= author.properties['name'][0]
+            %></a>&lsquo;s
+        <% else %>
+          <%= context.properties['author'][0] %>
+        <% end %>
+      </span>
+      post
+
+      <% if context.properties.key?('name') %>
+        &ldquo;<a href="<%= context.properties['url'][0] %>"
+          ><span class="p-name"><%= post_summary(context.properties['name'][0],
+            40) %></span></a>&rdquo;
+      <% end %>
+      on <%= host_link(context.properties['url'][0]) %>
+    </dt>
+
+    <% if context.content || context.properties.key?('photo') %>
+      <dd>
+        <div class="e-content<% if context.properties.key?('name') %> p-name<% end %>">
+          <% if context.properties.key?('photo') %>
+            <figure>
+              <a href="<%= context.properties['url'][0] %>">
+                <img class="u-photo" src="<%= camo_image context.properties['photo'][0] %>">
+              </a>
+            </figure>
+          <% end %>
+          <% display_content = link_twitter link_urls post_summary(context.content, 250) %>
+          <%= is_tweet?(context) ? link_hashtags_twitter(display_content) : link_hashtags(display_content) %>
+        </div>
+      </dd>
+    <% end %>
+
+  </dl>
+</div>
+
+<% end %>
+<% end %>

@@ -8,9 +8,11 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.4.0)
     backports (3.6.8)
+    builder (3.2.2)
     coderay (1.1.1)
     colorator (1.1.0)
     concurrent-ruby (1.0.2)
+    crass (1.0.2)
     diff-lcs (1.2.5)
     dotenv (2.1.1)
     faraday (0.9.2)
@@ -33,7 +35,8 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    httparty (0.14.0)
+    httparty (0.13.7)
+      json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.7.0)
     jekyll (3.3.0)
@@ -51,8 +54,9 @@ GEM
       sass (~> 3.4)
     jekyll-watch (1.5.0)
       listen (~> 3.0, < 3.1)
-    json (2.0.2)
+    json (1.8.3)
     kramdown (1.12.0)
+    link_header (0.0.8)
     liquid (3.0.6)
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -72,13 +76,16 @@ GEM
     nenv (0.3.0)
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
+    nokogumbo (1.4.9)
+      nokogiri
     notiffany (0.1.1)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    octokit (4.3.0)
+    octokit (4.4.1)
       sawyer (~> 0.7.0, >= 0.5.3)
     pathutil (0.14.0)
       forwardable-extended (~> 2.6)
+    pg (0.19.0)
     pry (0.10.4)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -92,9 +99,10 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
-    rb-fsevent (0.9.7)
+    rb-fsevent (0.9.8)
     rb-inotify (0.9.7)
       ffi (>= 0.5.0)
+    redcarpet (3.3.4)
     rouge (1.11.1)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
@@ -110,10 +118,18 @@ GEM
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
     safe_yaml (1.0.4)
+    sanitize (4.4.0)
+      crass (~> 1.0.2)
+      nokogiri (>= 1.4.4)
+      nokogumbo (~> 1.4.1)
     sass (3.4.22)
     sawyer (0.7.0)
       addressable (>= 2.3.5, < 2.5)
       faraday (~> 0.8, < 0.10)
+    sequel (4.39.0)
+    sequel_pg (1.6.17)
+      pg (>= 0.8.0)
+      sequel (>= 4.0.0)
     shellany (0.0.1)
     shotgun (0.9.2)
       rack (>= 1.0)
@@ -134,11 +150,18 @@ GEM
     tilt (2.0.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    webmention (0.1.5)
+      httparty (~> 0.13.1)
+      json
+      link_header (~> 0.0.8)
+      nokogiri
+    will_paginate (3.1.5)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  builder
   dotenv
   guard
   guard-rspec
@@ -151,13 +174,18 @@ DEPENDENCIES
   puma
   rack-contrib
   rack-test
+  redcarpet
   rspec
+  sanitize
+  sequel_pg
   shotgun
   sinatra
   sinatra-contrib
+  webmention
+  will_paginate
 
 RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.13.3
+   1.13.5

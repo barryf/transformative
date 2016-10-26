@@ -1,0 +1,8 @@
+<li class="timestamp">
+  <a class="u-url" href="<%= @post.absolute_url %>">
+    <time class="dt-published" datetime="<%= @post.properties['published'][0] %>" pubdate>
+      <%= Time.parse(@post.properties['published'][0]).utc.strftime('%Y-%m-%d %H:%M') %>
+    </time>
+    <abbr title="Coordinated Universal Time">UTC</abbr>
+  </a>
+</li>

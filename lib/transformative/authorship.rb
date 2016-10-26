@@ -47,16 +47,16 @@ module Transformative
     end
 
     def construct_author_hcard(author)
-      url = "/cards/" + Utils.slugify_url(author['properties']['url'][0])
-      Post.new(url, 'h-card', author['properties'])
+      url = "/cards/#{Utils.slugify_url(author['properties']['url'][0])}"
+      Card.new(author['properties'], url)
     end
 
     def get_author_hcard(url)
       body = HTTParty.get(url).body
       json = Microformats2.parse(body).to_json
       properties = JSON.parse(json)['items'][0]['properties']
-      card_url = "/cards/" + Utils.slugify_url(url)
-      Post.new(card_url, 'h-card', properties)
+      card_url = "/cards/#{Utils.slugify_url(url)}"
+      Card.new(properties, card_url)
     end
 
   end

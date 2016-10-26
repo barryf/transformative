@@ -14,13 +14,12 @@ module Transformative
       return if parsed.nil?
       # create author h-card
       unless parsed[1].nil?
-        author_url = "/cards/#{Utils.slugify_url(parsed[1][:url])}"
-        author = Post.new(author_url, ['h-cite'], parsed[1])
+        author = Cite.new(parsed[1])
         Store.save(author)
       end
       # create h-cite
       cite_url = "/cites/#{Utils.slugify_url(url)}"
-      cite = Post.new(cite_url, ['h-cite'], parsed[0])
+      cite = Cite.new(parsed[0], cite_url)
       Store.save(cite)
     end
 

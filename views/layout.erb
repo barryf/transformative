@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <title><% if @title %><%= @title %> &middot; <% end %>Barry Frost</title>
+    <link rel="micropub" href="<%= ENV['API_URL'] %>micropub">
+    <% if @webmention_link %><link rel="webmention" href="<%= ENV['API_URL'] %>webmention"><% end %>
+    <link rel="authorization_endpoint" href="https://indieauth.com/auth">
+    <link rel="token_endpoint" href="https://tokens.indieauth.com/token">
+    <link rel="indieauth" href="https://indieauth.com/">
+    <link rel="feed" type="text/html" href="<%= ENV['SITE_URL'] %>all">
+    <link rel="feed alternate" type="application/rss+xml"
+      href="<%= ENV['SITE_URL'] %>rss" title="RSS feed">
+    <link rel="stylesheet" href="https://barryfrost.com/moof.css">
+    <link rel="stylesheet"
+      href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <header>
+      <div>
+        <a href="/"><img src="https://barryf.s3.amazonaws.com/barryfrost.jpg"
+          alt="Barry Frost"></a>
+        <h1>This is <a href="/about">Barry Frost</a>’s personal website.</h1>
+        <nav>
+          <ul>
+            <%= nav('/', 'Stream') %>
+            <%= nav('/all', 'All') %>
+            <li>&middot;</li>
+            <%= nav('/notes', 'Notes') %>
+            <%= nav('/articles', 'Articles') %>
+            <%= nav('/bookmarks', 'Bookmarks') %>
+            <%= nav('/photos', 'Photos') %>
+            <li>&middot;</li>
+            <%= nav('/replies', 'Replies') %>
+            <%= nav('/reposts', 'Reposts') %>
+            <%= nav('/likes', 'Likes') %>
+            <li>&middot;</li>
+            <%= nav('/archives', 'Archives') %>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <%= yield %>
+
+    <% unless @no_footer %>
+      <footer>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li>&middot;</li>
+          <li><a href="/colophon">Colophon</a></li>
+          <li>&middot;</li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+        <ul>
+          <li>I&lsquo;m also on</li>
+          <li><a rel="me" href="https://twitter.com/barryf">Twitter</a></li>
+          <li><a rel="me" href="https://github.com/barryf">GitHub</a></li>
+          <li><a rel="me" href="http://www.linkedin.com/in/barryfrost">LinkedIn</a></li>
+          <li><a rel="me" href="https://pinboard.in/u:barryf">Pinboard</a></li>
+          <li><a rel="me" href="http://instagram.com/barryf">Instagram</a></li>
+          <li><a rel="me" href="http://www.last.fm/user/barryf">Last.fm</a></li>
+        </ul>
+        <%= erb :_search_form %>
+        <p>Hosted on <a href="https://m.do.co/c/c8168661cd99"
+          title="Referral link to DigitalOcean">DigitalOcean</a></p>
+      </footer>
+    <% end %>
+
+  </body>
+</html>

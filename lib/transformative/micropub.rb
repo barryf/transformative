@@ -5,9 +5,10 @@ module Transformative
     def create(params)
       safe_params = sanitise_params(params)
       post = if params.key?('h')
-        Post.new_from_form(safe_params)
+        Entry.new_from_form(safe_params)
       else
-        Post.new(nil, safe_params['type'][0], safe_params['properties'])
+        klass = Post.class_from_type(params['type'][0])
+        klass.new(safe_params['properties'])
       end
 
       Store.save(post)

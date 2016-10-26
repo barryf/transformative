@@ -1,0 +1,92 @@
+<div id="container" class="h-feed">
+
+  <div class="h-card p-author" style="display: none;">
+    <img class="u-photo" src="https://barryf.s3.amazonaws.com/barryfrost.jpg">
+    <a class="u-url" rel="author" href="https://barryfrost.com/">Barry Frost</a>
+  </div>
+
+  <% if @page_title %>
+    <div class="title p-name"><%= @page_title %></div>
+  <% else %>
+    <div class="p-name" style="display: none;">
+      <% if @title %><%= @title %> &middot; <% end %>Barry Frost
+    </div>
+  <% end %>
+
+<% @posts.each do |post| %><% @post = post %>
+<article class="h-entry post post-summary <%= @post.properties['entry-type'][0] %>">
+
+<% if @post.is_deleted? %>
+  <a class="post-type" href="<%= @post.url %>">
+    <i class="fa fa-ban"></i>
+  </a>
+  <%= erb :'_deleted' %>
+<% else %>
+
+  <%= erb :'_contexts' unless @contexts.nil? %>
+
+  <a class="post-type" href="<%= @post.url %>">
+    <%= post_type_icon(@post.properties['entry-type'][0]) %>
+  </a>
+
+  <% if @post.properties['entry-type'][0] == 'bookmark' %>
+    <h1>
+      <a href="<%= @post.properties['bookmark-of'][0] %>">
+        <span class="p-name"><%= @post.properties['name'][0] %></span>
+        <span class="fa fa-external-link-square"></span>
+      </a>
+    </h1>
+  <% elsif @post.properties['entry-type'][0] == 'article' %>
+    <h1>
+      <a href="<%= @post.url %>" class="p-name">
+        <%= @post.properties['name'][0] %>
+      </a>
+    </h1>
+  <% end %>
+
+  <% unless @post.content.nil? %>
+    <div class="e-content<% unless @post.properties['entry-type'][0] == 'article' or
+        @post.properties['entry-type'][0] == 'bookmark' %> p-name<% end %> content">
+      <%= filter_all filter_markdown @post.content %>
+      <% if @post.properties.key?('photo') %>
+        <figure>
+          <a href="<%= @post.properties['photo'][0] %>">
+            <img class="u-photo" src="<%= @post.properties['photo'][0] %>">
+          </a>
+        </figure>
+      <% end %>
+
+      <!-- embeds? -->
+
+    </div>
+  <% end %>
+
+  <% if @post.properties['entry-type'][0] == 'rsvp' %>
+    <data class="p-rsvp" value="<%= @post.properties['rsvp'][0] %>"></data>
+  <% end %>
+
+  <ul class="metadata">
+
+    <%= erb :'_timestamp' %>
+
+    <%= erb :_webmention_counts %>
+
+    <%= erb :'_categories' %>
+
+    <%= erb :'_syndications' %>
+
+    <%= erb :'_location' %>
+  </ul>
+
+<% end %>
+
+</article>
+<% end %>
+
+  <% if @posts_rows.respond_to?(:total_pages) %>
+    <%= will_paginate @posts_rows,
+      previous_label: "<i class=\"fa fa-chevron-left\"></i> Newer",
+      next_label: "Older <i class=\"fa fa-chevron-right\"></i>",
+      page_links: false %>
+  <% end %>
+</div>

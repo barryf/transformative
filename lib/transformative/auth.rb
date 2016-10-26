@@ -9,7 +9,6 @@ module Transformative
       end
 
       response_hash = CGI.parse(response.parsed_response)
-      puts "scope=#{scope} response_hash=#{response_hash}"
       if response_hash.key?('scope') && response_hash['scope'].is_a?(Array)
         scopes = response_hash['scope'][0].split(' ')
         return if scopes.include?(scope)
