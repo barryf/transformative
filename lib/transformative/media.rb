@@ -1,22 +1,25 @@
-# TODO: upload file to s3
-
 module Transformative
   module Media
     module_function
 
-    def store(file, dir)
+    def save(file, dir='photo')
       filename = "#{Time.now.strftime('%Y%m%d')}-#{SecureRandom.hex.to_s}"
       ext = file[:filename].match(/\./) ? '.' +
         file[:filename].split('.').last : ""
+      filepath = "#{dir}/#{filename}#{ext}"
 
-      File.write("#{ENV['MEDIA_PATH']}#{dir}/#{filename}#{ext}", file[:tempfile].read)
+      if ENV['RACK_ENV'] == 'production'
+        Store.upload(filepath, file[:tempfile].read)
+      else
+        FileSystem.new.upload(filepath, file[:tempfile].read)
+      end
 
       URI.join(ENV['MEDIA_URL'], "#{dir}/", "#{filename}#{ext}")
     end
 
     def upload_files(files, dir)
       files.map do |file|
-        store(file, dir)
+        save(file, dir)
       end
     end
 

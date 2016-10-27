@@ -15,7 +15,8 @@ module Transformative
 
       author = store_author(source, source_body)
 
-      cite = store_cite(source, source_body, author.properties['url'][0])
+      cite = store_cite(source, source_body, author.properties['url'][0],
+        target)
 
       send_notification(author, source_body, target)
     end
@@ -74,17 +75,33 @@ module Transformative
       Store.save(author_post)
     end
 
-    # TODO check this - is it broken?
-    def store_cite(source, source_body, author_url)
+    def store_cite(source, source_body, author_url, target)
       json = Microformats2.parse(source_body).to_json
+      json = mf2.to_json
       # remove the 'items' container at the top
       properties = JSON.parse(json)['items'][0]['properties']
+      puts "properties=#{properties}"
       # override the author and url
       properties['author'] = [author_url]
       properties['url'] = [source]
-      url = "/cites/#{Utils.slugify_url(source)}"
-      cite_post = Cite.new(properties, url)
-      Store.save(cite_post)
+      properties[webmention_property(source_body, target)] = [target]
+      cite = Cite.new(properties)
+      Store.save(cite)
+    end
+
+    def webmention_property(body, url)
+      doc = Nokogiri::HTML(body)
+      if doc.css("a[href=\"#{url}\"].u-in-reply-to").any? ||
+          doc.css("a[href=\"#{url}\"][rel=\"in-reply-to\"]").any?
+        return 'in-reply-to'
+      elsif doc.css("a[href=\"#{url}\"].u-like-of").any? ||
+          doc.css("a[href=\"#{url}\"].u-like").any?
+        return 'like-of'
+      elsif doc.css("a[href=\"#{url}\"].u-repost-of").any? ||
+          doc.css("a[href=\"#{url}\"].u-repost").any?
+        return 'repost-of'
+      end
+      'mention-of'
     end
 
     def send_notification(author, content, url)

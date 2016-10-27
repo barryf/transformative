@@ -43,13 +43,15 @@ module Transformative
     def generate_url_slug
       prefix = case h_type
         when 'h_card'
-          '/cards/'
+          '/card'
         when 'h_cite'
-          '/cites'
+          '/cite'
         else
           '/'
         end
-      "#{prefix}#{Utils.slugify_url(@properties['url'][0])}"
+      slugify_url = Utils.slugify_url(@properties['url'][0]).gsub('-','/')
+      puts "slugify_url=#{slugify_url}"
+      "#{prefix}#{slugify_url}"
     end
 
     def slugify

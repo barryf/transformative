@@ -24,7 +24,7 @@ module Transformative
 
       # find author properties
       if author.is_a?(Hash) && author['type'][0] == 'h-card'
-        construct_author_hcard(author)
+        Card.new(author['properties'])
       elsif author.is_a?(String) && Utils.valid_url?(author)
         get_author_hcard(author)
       end
@@ -46,17 +46,11 @@ module Transformative
       end
     end
 
-    def construct_author_hcard(author)
-      url = "/cards/#{Utils.slugify_url(author['properties']['url'][0])}"
-      Card.new(author['properties'], url)
-    end
-
     def get_author_hcard(url)
       body = HTTParty.get(url).body
       json = Microformats2.parse(body).to_json
       properties = JSON.parse(json)['items'][0]['properties']
-      card_url = "/cards/#{Utils.slugify_url(url)}"
-      Card.new(properties, card_url)
+      Card.new(properties)
     end
 
   end

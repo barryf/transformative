@@ -4,8 +4,8 @@ require 'json'
 require 'jekyll'
 
 path_moof = "/Users/barry/data-2016-10-22/contexts"
-path_new  = "/Users/barry/Dropbox/barryfrost.com/content/cites"
-path_card = "/Users/barry/Dropbox/barryfrost.com/content/cards"
+path_new  = "/Users/barry/Dropbox/barryfrost.com/content/cite"
+path_card = "/Users/barry/Dropbox/barryfrost.com/content/card"
 
 Dir.glob("#{path_moof}/**/*.md").each do |file|
 

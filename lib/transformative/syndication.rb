@@ -2,6 +2,8 @@ module Transformative
   module Syndication
     module_function
 
+    SILOPUB_MICROPUB_ENDPOINT = "https://silo.pub/micropub"
+
     def send(post, service)
       if service.start_with?('https://twitter.com/')
         send_twitter(post)
@@ -61,7 +63,7 @@ module Transformative
 
     def micropub_request(body, token)
       HTTParty.post(
-        ENV['SILOPUB_MICROPUB_ENDPOINT'],
+        SILOPUB_MICROPUB_ENDPOINT,
         body: body,
         headers: { 'Authorization' => "Bearer #{token}" }
       )

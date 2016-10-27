@@ -10,7 +10,7 @@ module Transformative
     end
 
     def filename
-      "/cards/#{@url}.json"
+      "/card/#{@url}.json"
     end
 
     def generate_url

@@ -140,6 +140,11 @@ module Transformative
       status 204
     end
 
+    get '/test' do
+      post = Store.get("/2016/10/hello-world-2.json")
+      Context.fetch_contexts(post)
+    end
+
     post '/micropub' do
       puts "MICROPUB PARAMS #{params}"
       # start by assuming this is a non-create action
@@ -153,8 +158,8 @@ module Transformative
       elsif params.key?('file')
         require_auth
         # assume this a file (photo) upload
-        filename = Media.store(params[:file])
-        headers 'Location' => URI.join(settings.media_url, filename)
+        filename = Media.save(params[:file])
+        headers 'Location' => URI.join(ENV['MEDIA_URL'], filename).to_s
         status 201
       else
         require_auth
@@ -278,7 +283,7 @@ module Transformative
     def render_config
       content_type :json
       {
-        "media-endpoint" => settings.media_endpoint,
+        "media-endpoint" => "#{ENV['SITE_URL']}micropub",
         "syndicate-to" => syndication_targets
       }.to_json
     end

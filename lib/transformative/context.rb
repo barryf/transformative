@@ -2,6 +2,16 @@ module Transformative
   module Context
     module_function
 
+    def fetch_contexts(post)
+      if post.properties.key?('in-reply-to')
+        post.properties['in-reply-to'].each { |url| fetch(url) }
+      elsif post.properties.key?('repost-of')
+        post.properties['repost-of'].each { |url| fetch(url) }
+      elsif post.properties.key?('like-of')
+        post.properties['like-of'].each { |url| fetch(url) }
+      end
+    end
+
     def fetch(url)
       parsed = if url.match(/^https?:\/\/twitter\.com/) ||
           url.match(/^https?:\/\/mobile\.twitter\.com/)
@@ -14,55 +24,52 @@ module Transformative
       return if parsed.nil?
       # create author h-card
       unless parsed[1].nil?
-        author = Cite.new(parsed[1])
-        Store.save(author)
+        Store.save(parsed[1])
       end
       # create h-cite
-      cite_url = "/cites/#{Utils.slugify_url(url)}"
-      cite = Cite.new(parsed[0], cite_url)
-      Store.save(cite)
+      puts "p=#{parsed[0]}"
+      Store.save(parsed[0])
     end
 
-    def parse_mf2
+    def parse_mf2(url)
       response = HTTParty.get(url)
-      return unless response.status.to_i == 200
-      collection = Microformats2.parse(response.body)
-      object = if collection.respond_to?(:entry)
-        collection.entry
-      elsif collection.respond_to?(:event)
-        collection.event
-      end
-      return if object.nil?
-      cite = {
-        url: [object.url.to_s],
-        name: [object.name.to_s],
-        published: [Time.parse(object.published.to_s).utc.iso8601.to_s],
-        content: [object.content.to_s],
-        author: [object.author.to_s]
-      }
-      author = Authorship.fetch(object.author.to_s)
+      return unless response.code.to_i == 200
+      json = Microformats2.parse(response.body).to_json
+      items = JSON.parse(json)['items']
+      item = find_first_hentry_or_hevent(items)
+      return if item.nil?
+      cite = Cite.new({
+        'url' => [item['properties']['url'][0]],
+        'name' => [item['properties']['name'][0]],
+        'published' =>
+          [Time.parse(item['properties']['published'][0]).utc.iso8601],
+        'content' => [item['properties']['content'][0]],
+        'author' =>
+          [item['properties']['author'][0]['properties']['url'][0]]
+      })
+      author = Authorship.fetch(url)
       [cite, author]
     end
 
     def parse_twitter(url)
       tweet_id = url.split('/').last
       tweet = twitter_client.status(tweet_id)
-      cite = {
-        url: [url],
-        content: [tweet.text.dup],
-        author: ["https://twitter.com/#{tweet.user.screen_name}"],
-        published: [Time.parse(tweet.created_at.to_s).utc]
+      cite_properties = {
+        'url' => [url],
+        'content' => [tweet.text.dup],
+        'author' => ["https://twitter.com/#{tweet.user.screen_name}"],
+        'published' => [Time.parse(tweet.created_at.to_s).utc]
       }
       # does the tweet have photo(s)?
-      cite[:photo] = tweet.media.map { |m| m.media_url.to_s }
+      cite_properties['photo'] = tweet.media.map { |m| m.media_url.to_s }
       # replace t.co links with expanded versions
       tweet.urls.each do |u|
-        cite[:content][0].sub!(u.url.to_s, u.expanded_url.to_s)
+        cite_properties['content'][0].sub!(u.url.to_s, u.expanded_url.to_s)
       end
-      author = {
-        url: ["https://twitter.com/#{tweet.user.screen_name}"],
-        name: [tweet.user.name],
-        photo: ["#{tweet.user.profile_image_url.scheme}://" +
+      author_properties = {
+        'url' => ["https://twitter.com/#{tweet.user.screen_name}"],
+        'name' => [tweet.user.name],
+        'photo' => ["#{tweet.user.profile_image_url.scheme}://" +
           tweet.user.profile_image_url.host +
           tweet.user.profile_image_url.path]
       }
@@ -75,15 +82,15 @@ module Transformative
       json = HTTParty.get(
         "http://api.instagram.com/oembed?url=#{CGI::escape(url)}").body
       body = JSON.parse(json)
-      cite = {
-        url: [url],
-        author: [body['author_url']],
-        photo: [body['thumbnail_url']],
-        content: [body['title']]
+      cite_properties = {
+        'url' => [url],
+        'author' => [body['author_url']],
+        'photo' => [body['thumbnail_url']],
+        'content' => [body['title']]
       }
-      author = {
-        url: [body['author_url']],
-        name: [body['author_name']]
+      author_properties = {
+        'url' => [body['author_url']],
+        'name' => [body['author_name']]
       }
       [cite, author]
     end
@@ -94,6 +101,14 @@ module Transformative
       uri.fragment = nil
       uri.query = nil
       uri.to_s
+    end
+
+    def find_first_hentry_or_hevent(items)
+      items.each do |item|
+        if item['type'][0] == 'h-entry' || item['type'][0] == 'h-event'
+          return item
+        end
+      end
     end
 
     private

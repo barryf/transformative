@@ -3,6 +3,8 @@ require 'openssl'
 module Transformative
   module ViewHelper
 
+    CAMO_URL = "https://barryfrost-camo.herokuapp.com/"
+
     def h(text)
       Rack::Utils.escape_html(text)
     end
@@ -88,6 +90,16 @@ module Transformative
         return "p-repost"
       end
     end
+    def post_type_u_class(type)
+      case type
+      when "reply", "rsvp"
+        return "u-in-reply-to"
+      when "repost"
+        return "u-repost-of u-repost"
+      when "like"
+        return "u-like-of u-like"
+      end
+    end
     def post_type_p_class(post)
       if post.properties.key?('in-reply-to')
         "p-in-reply-to"
@@ -97,6 +109,19 @@ module Transformative
         "p-like-of"
       elsif post.properties.key?('rsvp')
         "p-rsvp"
+      end
+    end
+    def context_tag(post)
+      url = post.absolute_url
+      if post.h_type == 'h-entry'
+        case post.entry_type
+        when "reply", "rsvp"
+          return "<a class=\"u-in-reply-to\" href=\"#{url}\"></a>"
+        when "repost"
+          return "<a class=\"u-repost-of\" href=\"#{url}\"></a>"
+        when "like"
+          return "<a class=\"u-like-of\" href=\"#{url}\"></a>"
+        end
       end
     end
 
@@ -186,7 +211,7 @@ module Transformative
       hexdigest = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'),
         ENV['CAMO_KEY'], image_url)
       encoded_image_url = hexenc(image_url)
-      "#{ENV['CAMO_URL']}#{hexdigest}/#{encoded_image_url}"
+      "#{CAMO_URL}#{hexdigest}/#{encoded_image_url}"
     end
 
     def is_tweet?(post)

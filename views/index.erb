@@ -13,7 +13,8 @@
     </div>
   <% end %>
 
-<% @posts.each do |post| %><% @post = post %>
+<% @posts.each do |post| %>
+<% @post = post %>
 <article class="h-entry post post-summary <%= @post.properties['entry-type'][0] %>">
 
 <% if @post.is_deleted? %>
@@ -55,9 +56,6 @@
           </a>
         </figure>
       <% end %>
-
-      <!-- embeds? -->
-
     </div>
   <% end %>
 
@@ -66,15 +64,10 @@
   <% end %>
 
   <ul class="metadata">
-
     <%= erb :'_timestamp' %>
-
     <%= erb :_webmention_counts %>
-
     <%= erb :'_categories' %>
-
     <%= erb :'_syndications' %>
-
     <%= erb :'_location' %>
   </ul>
 

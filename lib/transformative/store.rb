@@ -39,6 +39,15 @@ module Transformative
       )
     end
 
+    def upload(filename, file)
+      octokit.create_contents(
+        github_full_repo,
+        filename,
+        "Adding new file using Transformative",
+        file
+      )
+    end
+
     def get(filename)
       file_content = get_file_content(filename)
       data = JSON.parse(file_content)
@@ -61,6 +70,7 @@ module Transformative
 
     def exists_url?(url)
       relative_url = Utils.relative_url(url)
+      puts "relative_url=#{relative_url}"
       exists?("#{relative_url}.json")
     end
 
@@ -82,6 +92,7 @@ module Transformative
         post = klass.new(data['properties'], url)
         Cache.put(post)
         Utils.send_webmentions(post.absolute_url)
+        Store.fetch_contexts(post)
       end
     end
 
@@ -105,7 +116,12 @@ module Transformative
     end
 
     def octokit
-      @octokit ||= Octokit::Client.new(access_token: ENV['GITHUB_ACCESS_TOKEN'])
+      @octokit ||= case ENV['RACK_ENV'].to_sym
+        when :production
+          Octokit::Client.new(access_token: ENV['GITHUB_ACCESS_TOKEN'])
+        else
+          FileSystem.new
+        end
     end
 
   end

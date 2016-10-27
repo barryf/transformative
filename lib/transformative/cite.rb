@@ -10,7 +10,7 @@ module Transformative
     end
 
     def filename
-      "/cites/#{@url}.json"
+      "/cite/#{@url}.json"
     end
 
     def generate_url

@@ -28,9 +28,6 @@
         @post.properties['entry-type'][0] == 'bookmark' %> p-name<% end %> content">
       <%= filter_all filter_markdown @post.content %>
       <%= erb :'_photos' %>
-
-      <!-- embeds? -->
-
     </div>
   <% end %>
 
@@ -45,17 +42,11 @@
   <% end %>
 
   <ul class="metadata">
-
     <%= erb :'_timestamp' %>
-
     <%= erb :'_indie_actions' %>
-
     <%= erb :'_categories' %>
-
     <%= erb :'_syndications' %>
-
     <%= erb :'_location' %>
-
   </ul>
 
   <%= erb :'_webmentions' unless @webmentions.nil? %>

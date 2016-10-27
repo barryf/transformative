@@ -14,12 +14,12 @@ gem 'redcarpet'
 gem 'sanitize'
 gem 'builder'
 gem 'webmention'
-gem 'dotenv'
 gem 'sequel_pg', require: 'sequel'
 gem 'will_paginate'
 gem 'jekyll'
 
 group :development do
+  gem 'dotenv'
   gem 'shotgun'
   gem 'guard'
   gem 'guard-rspec'

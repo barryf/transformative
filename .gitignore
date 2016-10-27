@@ -11,8 +11,7 @@
 /tmp/
 
 # Used by dotenv library to load environment variables.
-.env.development
-.env.production
+.env
 
 ## Environment normalization:
 /.bundle/
