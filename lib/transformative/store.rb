@@ -92,7 +92,7 @@ module Transformative
         post = klass.new(data['properties'], url)
         Cache.put(post)
         Utils.send_webmentions(post.absolute_url)
-        Store.fetch_contexts(post)
+        Context.fetch_contexts(post)
       end
     end
 
