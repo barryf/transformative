@@ -2,8 +2,6 @@ module Transformative
   module Media
     module_function
 
-    BUCKET = "media-barryfrost-com"
-
     def save(file, dir='photo')
       filename = "#{Time.now.strftime('%Y%m%d')}-#{SecureRandom.hex.to_s}"
       ext = file[:filename].match(/\./) ? '.' +
@@ -44,7 +42,7 @@ module Transformative
     end
 
     def bucket
-      @bucket ||= s3.bucket(BUCKET)
+      @bucket ||= s3.bucket(ENV['AWS_BUCKET'])
     end
 
   end
