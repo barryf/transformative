@@ -12,7 +12,7 @@ module Transformative
         # upload to github (canonical store)
         Store.upload(filepath, file[:tempfile].read)
         # upload to s3 (serves file)
-        s3_upload(filepath, file[:tempfile].read)
+        #s3_upload(filepath, file[:tempfile].read)
       else
         rootpath = "#{File.dirname(__FILE__)}/../../../content/media/"
         FileSystem.new.upload(rootpath + filepath, file[:tempfile].read)
