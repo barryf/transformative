@@ -7,15 +7,16 @@ module Transformative
       ext = file[:filename].match(/\./) ? '.' +
         file[:filename].split('.').last : ""
       filepath = "file/#{filename}#{ext}"
+      content = file[:tempfile].read
 
       if ENV['RACK_ENV'] == 'production'
         # upload to github (canonical store)
-        Store.upload(filepath, file[:tempfile].read)
+        Store.upload(filepath, content)
         # upload to s3 (serves file)
-        #s3_upload(filepath, file[:tempfile].read)
+        s3_upload(filepath, content)
       else
         rootpath = "#{File.dirname(__FILE__)}/../../../content/media/"
-        FileSystem.new.upload(rootpath + filepath, file[:tempfile].read)
+        FileSystem.new.upload(rootpath + filepath, content)
       end
 
       URI.join(ENV['MEDIA_URL'], filepath).to_s
