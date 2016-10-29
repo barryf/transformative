@@ -13,7 +13,7 @@ module Transformative
         # upload to github (canonical store)
         Store.upload(filepath, content)
         # upload to s3 (serves file)
-        s3_upload(filepath, content)
+        s3_upload(filepath, content, ext)
       else
         rootpath = "#{File.dirname(__FILE__)}/../../../content/media/"
         FileSystem.new.upload(rootpath + filepath, content)
@@ -28,9 +28,10 @@ module Transformative
       end
     end
 
-    def s3_upload(filepath, content)
+    def s3_upload(filepath, content, ext)
       object = bucket.objects.build(filepath)
       object.content = content
+      object.content_type = content_type_from_ext(ext)
       object.acl = :public_read
       object.save
     end
@@ -44,6 +45,23 @@ module Transformative
 
     def bucket
       @bucket ||= s3.bucket(ENV['AWS_BUCKET'])
+    end
+
+    def content_type_from_ext(ext)
+      case ext
+      when 'jpg', 'jpeg'
+        'image/jpeg'
+      when 'gif'
+        'image/gif'
+      when 'png'
+        'image/png'
+      when 'mp4'
+        'video/mp4'
+      when 'pdf'
+        'application/pdf'
+      else
+        'application/octet-stream'
+      end
     end
 
   end
