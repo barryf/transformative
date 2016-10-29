@@ -48,7 +48,7 @@ module Transformative
     end
 
     def content_type_from_ext(ext)
-      case ext
+      case ext.sub(/^\./,'')
       when 'jpg', 'jpeg'
         'image/jpeg'
       when 'gif'
