@@ -17,6 +17,7 @@ gem 'webmention'
 gem 'sequel_pg', require: 'sequel'
 gem 'will_paginate'
 gem 'jekyll'
+gem 's3'
 
 group :development do
   gem 'dotenv'

@@ -158,8 +158,8 @@ module Transformative
       elsif params.key?('file')
         require_auth
         # assume this a file (photo) upload
-        filename = Media.save(params[:file])
-        headers 'Location' => URI.join(ENV['MEDIA_URL'], filename).to_s
+        url = Media.save(params[:file])
+        headers 'Location' => url
         status 201
       else
         require_auth

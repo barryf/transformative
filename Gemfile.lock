@@ -86,6 +86,7 @@ GEM
     pathutil (0.14.0)
       forwardable-extended (~> 2.6)
     pg (0.19.0)
+    proxies (0.2.1)
     pry (0.10.4)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -117,6 +118,8 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
+    s3 (0.3.25)
+      proxies (~> 0.2.0)
     safe_yaml (1.0.4)
     sanitize (4.4.0)
       crass (~> 1.0.2)
@@ -176,6 +179,7 @@ DEPENDENCIES
   rack-test
   redcarpet
   rspec
+  s3
   sanitize
   sequel_pg
   shotgun
