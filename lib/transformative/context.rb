@@ -41,7 +41,7 @@ module Transformative
       properties = item['properties']
       hash = {
         'url' => [properties['url'][0]],
-        'name' => [properties['name'][0]].strip,
+        'name' => [properties['name'][0].strip],
         'published' => [Time.parse(properties['published'][0]).utc.iso8601],
         'content' => [{ html: properties['content'][0].strip }],
         'author' => [properties['author'][0]['properties']['url'][0]]
