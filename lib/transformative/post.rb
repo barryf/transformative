@@ -66,6 +66,8 @@ module Transformative
          else
            @properties['content'][0]
          end
+      else
+        return Time.now.strftime('%d-%H%M%S')
       end
 
       content.downcase.gsub(/[^\w-]/, ' ').strip.gsub(' ', '-').

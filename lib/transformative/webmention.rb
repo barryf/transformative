@@ -77,7 +77,6 @@ module Transformative
 
     def store_cite(source, source_body, author_url, target)
       json = Microformats2.parse(source_body).to_json
-      json = mf2.to_json
       # remove the 'items' container at the top
       properties = JSON.parse(json)['items'][0]['properties']
       puts "properties=#{properties}"
