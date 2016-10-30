@@ -22,10 +22,10 @@ module Transformative
     end
 
     def content
-      if properties.key?('content') and !properties['content'].empty?
-        if properties['content'].is_a?(Hash) and
-            properties['content'].key?('html')
-          properties['content']['html']
+      if properties.key?('content')
+        if properties['content'][0].is_a?(Hash) &&
+            properties['content'][0].key?('html')
+          properties['content'][0]['html']
         else
           properties['content'][0]
         end
