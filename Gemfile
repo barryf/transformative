@@ -16,7 +16,6 @@ gem 'builder'
 gem 'webmention'
 gem 'sequel_pg', require: 'sequel'
 gem 'will_paginate'
-gem 'jekyll'
 gem 's3'
 
 group :production do
