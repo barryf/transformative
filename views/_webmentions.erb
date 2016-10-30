@@ -22,10 +22,10 @@
 
         <%= webmention_type_text(type) %>
 
-        <% if webmention.properties.key?('name') %>
-          &ldquo;<a href="<%= webmention.properties['url'][0] %>" rel="nofollow">
-            <span class="p-name"><%= post_summary(webmention.properties['name'][0], 40) %></span>
-          </a>&rdquo;
+        <% if type == 'reply' && webmention.properties.key?('name') %>
+          &ldquo;<a href="<%= webmention.properties['url'][0] %>"
+            rel="nofollow"><span class="p-name"
+            ><%= post_summary(webmention.properties['name'][0], 40) %></span></a>&rdquo;
         <% end %>
         on <%= host_link(webmention.properties['url'][0]) %>
       </dt>

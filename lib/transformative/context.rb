@@ -36,17 +36,19 @@ module Transformative
       return unless response.code.to_i == 200
       json = Microformats2.parse(response.body).to_json
       items = JSON.parse(json)['items']
-      item = find_first_hentry_or_hevent(items)
+      properties = find_first_hentry_or_hevent(items)['properties']
       return if item.nil?
-      cite = Cite.new({
-        'url' => [item['properties']['url'][0]],
-        'name' => [item['properties']['name'][0]].strip,
-        'published' =>
-          [Time.parse(item['properties']['published'][0]).utc.iso8601],
-        'content' => [{ html: item['properties']['content'][0].strip }],
-        'author' =>
-          [item['properties']['author'][0]['properties']['url'][0]]
-      })
+      hash = {
+        'url' => [properties['url'][0]],
+        'name' => [properties['name'][0]].strip,
+        'published' => [Time.parse(properties['published'][0]).utc.iso8601],
+        'content' => [{ html: properties['content'][0].strip }],
+        'author' => [properties['author'][0]['properties']['url'][0]]
+      }
+      if properties.key?('photo')
+        hash['photo'] = properties['photo']
+      end
+      cite = Cite.new(hash)
       author = Authorship.fetch(url)
       [cite, author]
     end

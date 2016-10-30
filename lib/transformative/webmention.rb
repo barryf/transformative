@@ -83,8 +83,7 @@ module Transformative
       hash = {
         'url' => [source],
         'name' => [properties['name'][0].strip],
-        'published' =>
-          [Time.parse(properties['published'][0]).utc.iso8601],
+        'published' => [Time.parse(properties['published'][0]).utc.iso8601],
         'content' => [{ html: properties['content'][0].strip }],
         'author' => [author_url],
         webmention_property(source_body, target) => [target]
