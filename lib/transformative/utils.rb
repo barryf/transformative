@@ -11,7 +11,7 @@ module Transformative
     end
 
     def slugify_url(url)
-      url.to_s.downcase.gsub(/[^a-z0-9\-]/,' ').gsub(/\s+/,'/')
+      url.to_s.downcase.gsub(/[^a-z0-9\-]/,' ').strip.gsub(/\s+/,'/')
     end
 
     def relative_url(url)
