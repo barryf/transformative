@@ -40,10 +40,10 @@ module Transformative
       return if item.nil?
       cite = Cite.new({
         'url' => [item['properties']['url'][0]],
-        'name' => [item['properties']['name'][0]],
+        'name' => [item['properties']['name'][0]].strip,
         'published' =>
           [Time.parse(item['properties']['published'][0]).utc.iso8601],
-        'content' => [{ html: item['properties']['content'][0] }],
+        'content' => [{ html: item['properties']['content'][0].strip }],
         'author' =>
           [item['properties']['author'][0]['properties']['url'][0]]
       })
