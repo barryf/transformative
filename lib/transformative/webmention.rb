@@ -3,6 +3,8 @@ module Transformative
     module_function
 
     def receive(source, target)
+      return if source == target
+
       verify_source(source)
 
       verify_target(target)
