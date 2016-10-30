@@ -19,6 +19,10 @@ gem 'will_paginate'
 gem 'jekyll'
 gem 's3'
 
+group :production do
+  gem 'sentry-raven'
+end
+
 group :development do
   gem 'dotenv'
   gem 'shotgun'
