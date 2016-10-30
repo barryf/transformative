@@ -49,7 +49,7 @@ module Transformative
         else
           '/'
         end
-      slugify_url = Utils.slugify_url(@properties['url'][0]).gsub('-','/')
+      slugify_url = Utils.slugify_url(@properties['url'][0])
       puts "slugify_url=#{slugify_url}"
       "#{prefix}#{slugify_url}"
     end
