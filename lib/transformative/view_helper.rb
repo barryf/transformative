@@ -112,14 +112,16 @@ module Transformative
       end
     end
     def context_tag(post)
-      url = post.absolute_url
       if post.h_type == 'h-entry'
         case post.entry_type
         when "reply", "rsvp"
+          url = post.properties['in-reply-to'][0]
           return "<a class=\"u-in-reply-to\" href=\"#{url}\"></a>"
         when "repost"
+          url = post.properties['repost-of'][0]
           return "<a class=\"u-repost-of\" href=\"#{url}\"></a>"
         when "like"
+          url = post.properties['like-of'][0]
           return "<a class=\"u-like-of\" href=\"#{url}\"></a>"
         end
       end
