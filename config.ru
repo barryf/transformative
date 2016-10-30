@@ -8,9 +8,11 @@ Bundler.require(:default, env)
 
 Dotenv.load unless env == :production
 
-if env == :production
+# optionally use sentry in production
+if env == :production && ENV.key?('SENTRY_DSN')
   Raven.configure do |config|
     config.dsn = ENV['SENTRY_DSN']
+    config.processors -= [Raven::Processor::PostData]
   end
   use Raven::Rack
 end
