@@ -36,8 +36,9 @@ module Transformative
       return unless response.code.to_i == 200
       json = Microformats2.parse(response.body).to_json
       items = JSON.parse(json)['items']
-      properties = find_first_hentry_or_hevent(items)['properties']
+      item = find_first_hentry_or_hevent(items)
       return if item.nil?
+      properties = item['properties']
       hash = {
         'url' => [properties['url'][0]],
         'name' => [properties['name'][0]].strip,
