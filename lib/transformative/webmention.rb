@@ -84,10 +84,12 @@ module Transformative
         'url' => [source],
         'name' => [properties['name'][0].strip],
         'published' => [Time.parse(properties['published'][0]).utc.iso8601],
-        'content' => [{ html: properties['content'][0].strip }],
         'author' => [author_url],
         webmention_property(source_body, target) => [target]
       }
+      if properties.key?('content')
+        hash['content'] = [{ html: properties['content'][0].strip }]
+      end
       if properties.key?('photo')
         hash['photo'] = properties['photo']
       end
