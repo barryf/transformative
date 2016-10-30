@@ -5,6 +5,7 @@ module Transformative
     def create(params)
       safe_params = sanitise_params(params)
       post = if params.key?('h')
+        # TODO support other types?
         Entry.new_from_form(safe_params)
       else
         klass = Post.class_from_type(params['type'][0])
@@ -50,7 +51,8 @@ module Transformative
     def sanitise_params(params)
       safe_params = {}
       params.keys.each do |param|
-        unless param.start_with?('mp-') || param == 'access_token'
+        unless param.start_with?('mp-') || param == 'access_token' ||
+            param == 'h'
           safe_params[param] = params[param]
         end
       end
