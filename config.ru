@@ -8,10 +8,12 @@ Bundler.require(:default, env)
 
 Dotenv.load unless env == :production
 
-Raven.configure do |config|
-  config.dsn = ENV['SENTRY_DSN']
+if env == :production
+  Raven.configure do |config|
+    config.dsn = ENV['SENTRY_DSN']
+  end
+  use Raven::Rack
 end
-use Raven::Rack
 
 # automatically parse json in the body
 use Rack::PostBodyContentTypeParser
