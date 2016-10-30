@@ -207,7 +207,7 @@ module Transformative
     end
 
     error do
-      erb :'500'
+      erb :'500', layout: false
     end
 
     def deleted

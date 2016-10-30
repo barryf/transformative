@@ -1,7 +1,11 @@
-<div id="container" class="static">
-
-  <h1>500 Error</h1>
-
-  <h3><%= h env['sinatra.error'].message %></h3>
-
-</div>
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Status" content="500 Error">
+</head>
+<body>
+<h1>500 Error</h1>
+<h3><%= h env['sinatra.error'].message %></h3>
+</body>
+</html>
