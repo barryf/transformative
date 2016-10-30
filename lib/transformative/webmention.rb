@@ -80,15 +80,19 @@ module Transformative
     def store_cite(source, source_body, author_url, target)
       json = Microformats2.parse(source_body).to_json
       properties = JSON.parse(json)['items'][0]['properties']
-      cite = Cite.new({
+      hash = {
         'url' => [source],
         'name' => [properties['name'][0].strip],
         'published' =>
           [Time.parse(properties['published'][0]).utc.iso8601],
-        'content' => [{ html: item['properties']['content'][0].strip }],
+        'content' => [{ html: properties['content'][0].strip }],
         'author' => [author_url],
         webmention_property(source_body, target) => [target]
-      })
+      }
+      if properties.key?('photo')
+        hash['photo'] = properties['photo']
+      end
+      cite = Cite.new(hash)
       Store.save(cite)
     end
 
