@@ -2,7 +2,7 @@ module Transformative
   module Media
     module_function
 
-    def save(file, dir='photo')
+    def save(file)
       filename = "#{Time.now.strftime('%Y%m%d')}-#{SecureRandom.hex.to_s}"
       ext = file[:filename].match(/\./) ? '.' +
         file[:filename].split('.').last : ""
@@ -22,9 +22,14 @@ module Transformative
       URI.join(ENV['MEDIA_URL'], filepath).to_s
     end
 
-    def upload_files(files, dir)
+    def upload_files(files)
       files.map do |file|
-        save(file, dir)
+        if valid_url?(file)
+          # TODO extract file from url and store?
+          file
+        else
+          save(file)
+        end
       end
     end
 

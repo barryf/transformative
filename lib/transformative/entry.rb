@@ -76,13 +76,13 @@ module Transformative
       props = Hash[ params.map { |k, v| [k, Array(v)] } ]
 
       if params.key?('photo')
-        props['photo'] = Media.upload_files(props['photo'],'photo')
+        props['photo'] = Media.upload_files(props['photo'])
       end
       if params.key?('video')
-        props['video'] = Media.upload_files(props['video'],'video')
+        props['video'] = Media.upload_files(props['video'])
       end
       if params.key?('audio')
-        props['audio'] = Media.upload_files(props['audio'],'audio')
+        props['audio'] = Media.upload_files(props['audio'])
       end
 
       self.new(props)
