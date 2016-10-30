@@ -24,7 +24,7 @@ module Transformative
 
     def upload_files(files)
       files.map do |file|
-        if valid_url?(file)
+        if Utils.valid_url?(file)
           # TODO extract file from url and store?
           file
         else
