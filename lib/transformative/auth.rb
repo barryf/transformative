@@ -15,7 +15,7 @@ module Transformative
         scopes = response_hash['scope'][0].split(' ')
         return if scopes.include?(scope)
         # special case? TODO: find out what to do here
-        return if scope == 'create' && scopes.include?('post')
+        return if scope == 'post'
       end
       raise InsufficientScope.new
     end
