@@ -162,14 +162,14 @@ module Transformative
         syndicate(post)
         status 204
       elsif params.key?('file')
-        require_auth
         # assume this a file (photo) upload
+        require_auth
         url = Media.save(params[:file])
         headers 'Location' => url
         status 201
       else
-        require_auth
         # assume this is a create
+        require_auth
         verify_create
         post = Micropub.create(params)
         syndicate(post)
@@ -315,9 +315,12 @@ module Transformative
     end
 
     def syndicate(post)
-      if params.key?('mp-syndicate-to') && !params['mp-syndicate-to'].empty?
-        post.syndicate(params['mp-syndicate-to'])
-      end
+      services = if params.key?('mp-syndicate-to')
+          params['mp-syndicate-to']
+        elsif params.key?('syndicate-to')
+          params['syndicate-to']
+        end
+      post.syndicate(services) unless services.nil?
     end
 
     error TransformativeError do

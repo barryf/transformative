@@ -48,11 +48,12 @@ module Transformative
       end
     end
 
+    # TODO rewrite this wrapped in a Hash[]
     def sanitise_params(params)
       safe_params = {}
       params.keys.each do |param|
         unless param.start_with?('mp-') || param == 'access_token' ||
-            param == 'h'
+            param == 'h' || param == 'syndicate-to'
           safe_params[param] = params[param]
         end
       end
