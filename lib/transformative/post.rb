@@ -126,9 +126,9 @@ module Transformative
       end
 
       return if new_syndications.empty?
-      # add to syndications list
-      @properties['syndications'] ||= []
-      @properties['syndications'] += new_syndications
+      # add to syndication list
+      @properties['syndication'] ||= []
+      @properties['syndication'] += new_syndications
       Store.save(self)
     end
 
