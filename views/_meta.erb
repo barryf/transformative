@@ -1,0 +1,20 @@
+<meta name="og:type" content="website">
+<meta name="twitter:card" content="summary">
+
+<meta property="og:url" content="<%= @post.absolute_url %>">
+<meta property="twitter:url" content="<%= @post.absolute_url %>">
+
+<% if @post.properties.key?('name') %>
+<meta property="og:title" content="<%= h @post.properties['name'][0] %>">
+<meta name="twitter:title" content="<%= h @post.properties['name'][0] %>">
+<% end %>
+
+<% if @post.content %>
+<meta property="og:description" content="<%= h post_summary @post.content %>">
+<meta property="twitter:description" content="<%= h post_summary @post.content %>">
+<% end %>
+
+<% if @post.properties.key?('photo') %>
+<meta property="og:image" content="<%= @post.properties['photo'][0] %>">
+<meta property="twitter:image" content="<%= @post.properties['photo'][0] %>">
+<% end %>
