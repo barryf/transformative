@@ -127,7 +127,8 @@ module Transformative
 
       return if new_syndications.empty?
       # add to syndications list
-      @properties['syndications'].merge!(new_syndications)
+      @properties['syndications'] ||= []
+      @properties['syndications'] += new_syndications
       Store.put_post(self)
     end
 
