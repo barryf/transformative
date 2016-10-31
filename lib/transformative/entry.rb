@@ -71,18 +71,16 @@ module Transformative
       @properties[property].include?(cite.properties['url'][0])
     end
 
-    def self.new_from_form(params, safe_params)
+    def self.new_from_form(params)
       # wrap each non-array value in an array
-      props = Hash[ safe_params.map { |k, v| [k, Array(v)] } ]
+      props = Hash[ params.map { |k, v| [k, Array(v)] } ]
 
       if props.key?('photo')
-        props['photo'] = Media.upload_files(params['photo'])
-      end
-      if props.key?('video')
-        props['video'] = Media.upload_files(params['video'])
-      end
-      if props.key?('audio')
-        props['audio'] = Media.upload_files(params['audio'])
+        props['photo'] = if params['photo'].is_a?(Array)
+            Media.upload_files(params['photo'])
+          else
+            [Media.upload_file(params['photo'])]
+          end
       end
 
       self.new(props)

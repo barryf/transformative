@@ -24,12 +24,16 @@ module Transformative
 
     def upload_files(files)
       files.map do |file|
-        if Utils.valid_url?(file)
-          # TODO extract file from url and store?
-          file
-        else
-          save(file)
-        end
+        upload_file(file)
+      end
+    end
+
+    def upload_file(file)
+      if Utils.valid_url?(file)
+        # TODO extract file from url and store?
+        file
+      else
+        save(file)
       end
     end
 

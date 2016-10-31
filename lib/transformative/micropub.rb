@@ -6,7 +6,7 @@ module Transformative
       safe_params = sanitise_params(params)
       post = if params.key?('h')
         # TODO support other types?
-        Entry.new_from_form(params, safe_params)
+        Entry.new_from_form(safe_params)
       else
         klass = Post.class_from_type(params['type'][0])
         klass.new(safe_params['properties'])
