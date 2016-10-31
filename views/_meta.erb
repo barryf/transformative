@@ -15,6 +15,8 @@
 <% end %>
 
 <% if @post.properties.key?('photo') %>
-<meta property="og:image" content="<%= @post.properties['photo'][0] %>">
-<meta property="twitter:image" content="<%= @post.properties['photo'][0] %>">
+<% content = @post.properties['photo'][0].is_a?(Hash) ?
+  @post.properties['photo'][0]['value'] : @post.properties['photo'][0] %>
+<meta property="og:image" content="<%= content %>">
+<meta property="twitter:image" content="<%= content %>">
 <% end %>
