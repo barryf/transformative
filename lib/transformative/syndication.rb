@@ -19,36 +19,36 @@ module Transformative
       body = { 'h' => 'entry', 'url' => post.absolute_url }
 
       # prefer the (hand-crafted) summary to the main content
-      body['content'] = if post['properties'].key?('summary')
-        post['properties']['summary'][0]
-      elsif post['properties'].key?('content')
-        if post['properties']['content'][0].is_a?(Hash) &&
-            post['properties']['content'][0].key?('html')
-          post['properties']['content'][0]['html']
+      body['content'] = if post.properties.key?('summary')
+        post.properties['summary'][0]
+      elsif post.properties.key?('content')
+        if post.properties['content'][0].is_a?(Hash) &&
+            post.properties['content'][0].key?('html')
+          post.properties['content'][0]['html']
         else
-          post['properties']['content'][0]
+          post.properties['content'][0]
         end
       end
 
-      if post['properties'].key?('in-reply-to')
-        body['in-reply-to'] = post['properties']['in-reply-to']
+      if post.properties.key?('in-reply-to')
+        body['in-reply-to'] = post.properties['in-reply-to']
       end
 
-      if post['properties'].key?('repost-of')
-        body['repost-of'] = post['properties']['repost-of']
+      if post.properties.key?('repost-of')
+        body['repost-of'] = post.properties['repost-of']
       end
 
-      if post['properties'].key?('like-of')
-        body['like-of'] = post['properties']['like-of']
+      if post.properties.key?('like-of')
+        body['like-of'] = post.properties['like-of']
       end
 
-      if post['properties'].key?('name')
-        body['name'] = post['properties']['name'][0]
+      if post.properties.key?('name')
+        body['name'] = post.properties['name'][0]
       end
 
       # TODO limit to 4? may not be necessary
-      if post['properties'].key?('photo')
-        body['photo'] = post['properties']['photo']
+      if post.properties.key?('photo')
+        body['photo'] = post.properties['photo']
       end
 
       response = micropub_request(body, ENV['SILOPUB_TWITTER_TOKEN'])
