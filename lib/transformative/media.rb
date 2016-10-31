@@ -24,6 +24,10 @@ module Transformative
     end
 
     def upload_files(files)
+      if files.is_a?(Hash)
+        return save(files)
+      end
+
       files.map do |file|
         if Utils.valid_url?(file)
           # TODO extract file from url and store?
