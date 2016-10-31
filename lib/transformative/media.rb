@@ -3,6 +3,7 @@ module Transformative
     module_function
 
     def save(file)
+      puts "file=#{file}"
       filename = "#{Time.now.strftime('%Y%m%d')}-#{SecureRandom.hex.to_s}"
       ext = file.key?(:filename) && file[:filename].match(/\./) ? '.' +
         file[:filename].split('.').last : ".jpg"
