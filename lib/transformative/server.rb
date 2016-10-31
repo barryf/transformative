@@ -136,8 +136,13 @@ module Transformative
 
     post '/webhook' do
       return not_found unless params.key?('commits')
-      return not_allowed unless params[:secret] == ENV['GITHUB_SECRET']
-      Store.webhook(params[:commits])
+      commits = params[:commits]
+
+      request.body.rewind
+      Auth.verify_github_signature(request.body.read,
+        request.env['HTTP_X_HUB_SIGNATURE'])
+
+      Store.webhook(commits)
       status 204
     end
 
@@ -215,11 +220,6 @@ module Transformative
     def deleted
       status 410
       erb :'410'
-    end
-
-    def not_allowed
-      status 403
-      "403 Not Allowed"
     end
 
     private

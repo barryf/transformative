@@ -29,6 +29,14 @@ module Transformative
         })
     end
 
+    def verify_github_signature(body, header_signature)
+      signature = 'sha1=' + OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'),
+        ENV['GITHUB_SECRET'], body)
+      unless Rack::Utils.secure_compare(signature, header_signature)
+        raise ForbiddenError.new("GitHub webhook signatures did not match.")
+      end
+    end
+
     class NoTokenError < TransformativeError
       def initialize(message="Micropub endpoint did not return an access token.")
         super("unauthorized", message, 401)
