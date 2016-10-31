@@ -4,7 +4,7 @@ module Transformative
 
     def save(file)
       filename = "#{Time.now.strftime('%Y%m%d')}-#{SecureRandom.hex.to_s}"
-      ext = file.key?(:filename) && file[:filename].match(/\./) ? '.' +
+      ext = file[:filename].match(/\./) ? '.' +
         file[:filename].split('.').last : ".jpg"
       filepath = "file/#{filename}#{ext}"
       content = file[:tempfile].read
