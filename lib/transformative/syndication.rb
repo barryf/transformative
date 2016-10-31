@@ -52,8 +52,9 @@ module Transformative
       end
 
       response = micropub_request(body, ENV['SILOPUB_TWITTER_TOKEN'])
-      unless response.code.to_i == 200
-        raise SyndicationError.new("Twitter syndication failed (#{response.body}).")
+      unless response.code.to_i == 201
+        raise SyndicationError.new(
+          "Twitter syndication failed (#{response.body}).")
       end
 
       # find the twitter id from its api's json response
