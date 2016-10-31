@@ -69,6 +69,7 @@ module Transformative
       tweet.urls.each do |u|
         cite_properties['content'][0].sub!(u.url.to_s, u.expanded_url.to_s)
       end
+      cite = Cite.new(cite_properties)
       author_properties = {
         'url' => ["https://twitter.com/#{tweet.user.screen_name}"],
         'name' => [tweet.user.name],
@@ -77,6 +78,7 @@ module Transformative
           tweet.user.profile_image_url.path]
       }
       # TODO: copy the photo somewhere else and reference it
+      author = Card.new(author_properties)
       [cite, author]
     end
 
@@ -91,10 +93,12 @@ module Transformative
         'photo' => [body['thumbnail_url']],
         'content' => [body['title']]
       }
+      cite = Cite.new(cite_properties)
       author_properties = {
         'url' => [body['author_url']],
         'name' => [body['author_name']]
       }
+      author = Card.new(author_properties)
       [cite, author]
     end
 
