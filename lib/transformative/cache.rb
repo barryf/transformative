@@ -146,15 +146,18 @@ module Transformative
     def webmention_counts(posts)
       post_urls = posts.map { |post| post.absolute_url }
 
-      replies = db[:posts].where(
-        data['properties']['in-reply-to'].contain_any(post_urls)).map { |row|
-          row_to_post(row) }
-      reposts = db[:posts].where(
-        data['properties']['repost-of'].contain_any(post_urls)).map { |row|
-          row_to_post(row) }
-      likes = db[:posts].where(
-        data['properties']['like-of'].contain_any(post_urls)).map { |row|
-          row_to_post(row) }
+      replies = db[:posts]
+        .where(data['properties']['in-reply-to'].contain_any(post_urls))
+        .and(data['type'].get_text(0) => 'h-cite')
+        .map { |row| row_to_post(row) }
+      reposts = db[:posts]
+        .where(data['properties']['repost-of'].contain_any(post_urls))
+        .and(data['type'].get_text(0) => 'h-cite')
+        .map { |row| row_to_post(row) }
+      likes = db[:posts]
+        .where(data['properties']['like-of'].contain_any(post_urls))
+        .and(data['type'].get_text(0) => 'h-cite')
+        .map { |row| row_to_post(row) }
 
       counts = {}
       posts.each do |post|
