@@ -136,6 +136,7 @@ module Transformative
 
     post '/webhook' do
       return not_found unless params.key?('commits')
+      return not_allowed unless params[:secret] == ENV['GITHUB_SECRET']
       Store.webhook(params[:commits])
       status 204
     end
@@ -203,6 +204,7 @@ module Transformative
     end
 
     not_found do
+      status 404
       erb :'404'
     end
 
@@ -213,6 +215,11 @@ module Transformative
     def deleted
       status 410
       erb :'410'
+    end
+
+    def not_allowed
+      status 403
+      "403 Not Allowed"
     end
 
     private
@@ -234,7 +241,7 @@ module Transformative
       if token.empty?
         raise Auth::NoTokenError.new
       end
-      scope = params.key('action') ? params['action'] : 'create'
+      scope = params.key('action') ? params['action'] : 'post'
       Auth.verify_token_and_scope(token, scope)
     end
 
