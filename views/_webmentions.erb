@@ -32,7 +32,7 @@
 
       <% if type == 'reply' %>
         <dd class="e-content<% if webmention.properties.key?('name') %> p-name<% end %>">
-          <%= link_twitter link_hashtags link_urls webmention.content %>
+          <%= link_twitter link_hashtags link_urls post_summary webmention.content %>
         </dd>
       <% end %>
 
