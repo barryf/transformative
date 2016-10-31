@@ -6,11 +6,12 @@ module Transformative
 
     def send(post, service)
       if service.start_with?('https://twitter.com/')
-        send_twitter(post)
+        account = service.split('/').last
+        send_twitter(post, account)
       end
     end
 
-    def send_twitter(post)
+    def send_twitter(post, account)
       # we can only send entries to twitter so ignore anything else
       # TODO syndicate other objects
       return unless post.h_type == 'h-entry'
@@ -57,8 +58,7 @@ module Transformative
 
       # find the twitter id from its api's json response
       hash = JSON.parse(response.body)
-      twitter_id = hash['id']
-      "https://twitter.com/#{ENV['GITHUB_USER']}/status/#{twitter_id}"
+      "https://twitter.com/#{account}/status/#{hash['id']}"
     end
 
     def micropub_request(body, token)
