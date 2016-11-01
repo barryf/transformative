@@ -14,7 +14,8 @@
       </a>
 
     <% elsif @post.properties['location'][0].start_with?('geo:') %>
-      <% geo = @post.properties['location'][0].match(/^geo:([0-9\.]+),([0-9\.]+)/) %>
+      <% geo = @post.properties['location'][0].match(
+        /^geo:(\-?[0-9\.]+),(\-?[0-9\.]+)/) %>
       <% unless geo.nil? %>
         <a class="p-location h-geo"
             href="https://maps.google.com/maps?q=<%= geo[1] %>,<%= geo[2] %>">
