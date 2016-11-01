@@ -14,17 +14,19 @@
       </a>
 
     <% elsif @post.properties['location'][0].start_with?('geo:') %>
-      <% geo = @post.properties['location'][0].sub(/^geo:/,'').split(',') %>
-      <a class="p-location h-geo"
-          href="https://maps.google.com/maps?q=<%= geo[0] %>,<%= geo[1] %>">
-        <data class="p-latitude" value="<%= geo[0] %>"></data>
-        <data class="p-longitude" value="<%= geo[1] %>"></data>
-        <% if @post.properties.key?('place-name') %>
-          <span class="p-name"><%= @post.properties['place-name'][0] %></span>
-        <% else %>
-          <%= geo[0] %>, <%= geo[1] %>
-        <% end %>
-      </a>
+      <% geo = @post.properties['location'][0].match(/^geo:([0-9\.]+),([0-9\.]+)/) %>
+      <% unless geo.nil? %>
+        <a class="p-location h-geo"
+            href="https://maps.google.com/maps?q=<%= geo[1] %>,<%= geo[2] %>">
+          <data class="p-latitude" value="<%= geo[1] %>"></data>
+          <data class="p-longitude" value="<%= geo[2] %>"></data>
+          <% if @post.properties.key?('place-name') %>
+            <span class="p-name"><%= @post.properties['place-name'][0] %></span>
+          <% else %>
+            <%= geo[1] %>, <%= geo[2] %>
+          <% end %>
+        </a>
+      <% end %>
 
     <% elsif valid_url?(@post.properties['location'][0]) %>
       <!-- TODO: support h-card location -->
