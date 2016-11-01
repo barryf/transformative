@@ -175,7 +175,6 @@ module Transformative
       counts
     end
 
-    # TODO: need to do threading: check for replies to any of these...
     def webmentions(post)
       url = post.absolute_url
       db[:posts]
