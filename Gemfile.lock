@@ -1,3 +1,14 @@
+GIT
+  remote: https://github.com/barryf/mention-client-ruby
+  revision: 752bb46b500013c7c92ef13fc33ceab573790654
+  branch: rels-with-hrefs
+  specs:
+    webmention (0.1.5)
+      httparty (~> 0.13.1)
+      json
+      link_header (~> 0.0.8)
+      nokogiri
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -132,11 +143,6 @@ GEM
     tilt (2.0.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    webmention (0.1.5)
-      httparty (~> 0.13.1)
-      json
-      link_header (~> 0.0.8)
-      nokogiri
     will_paginate (3.1.5)
 
 PLATFORMS
@@ -164,7 +170,7 @@ DEPENDENCIES
   shotgun
   sinatra
   sinatra-contrib
-  webmention
+  webmention!
   will_paginate
 
 RUBY VERSION
