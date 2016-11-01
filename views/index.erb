@@ -49,13 +49,7 @@
     <div class="e-content<% unless @post.properties['entry-type'][0] == 'article' or
         @post.properties['entry-type'][0] == 'bookmark' %> p-name<% end %> content">
       <%= filter_all filter_markdown @post.content %>
-      <% if @post.properties.key?('photo') %>
-        <figure>
-          <a href="<%= @post.properties['photo'][0] %>">
-            <img class="u-photo" src="<%= @post.properties['photo'][0] %>">
-          </a>
-        </figure>
-      <% end %>
+      <%= erb :'_photos' %>
     </div>
   <% end %>
 
