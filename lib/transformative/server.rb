@@ -213,6 +213,15 @@ module Transformative
       erb :'404'
     end
 
+    error TransformativeError do
+      e = env['sinatra.error']
+      json = {
+        error: e.type,
+        error_description: e.message
+      }.to_json
+      halt(e.status, { 'Content-Type' => 'application/json' }, json)
+    end
+
     error do
       erb :'500', layout: false
     end
@@ -321,15 +330,6 @@ module Transformative
           params['syndicate-to']
         end
       post.syndicate(services) unless services.nil?
-    end
-
-    error TransformativeError do
-      e = env['sinatra.error']
-      json = {
-        error: e.type,
-        error_description: e.message
-      }.to_json
-      halt(e.status, { 'Content-Type' => 'application/json' }, json)
     end
 
   end

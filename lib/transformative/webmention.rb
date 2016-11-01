@@ -121,7 +121,7 @@ module Transformative
 
   class WebmentionError < TransformativeError
     def initialize(type, message)
-      super(type, message)
+      super(type, message, 400)
     end
   end
 

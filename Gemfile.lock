@@ -1,7 +1,6 @@
 GIT
-  remote: https://github.com/barryf/mention-client-ruby
-  revision: 752bb46b500013c7c92ef13fc33ceab573790654
-  branch: rels-with-hrefs
+  remote: https://github.com/indieweb/mention-client-ruby
+  revision: a09388c2b8d79a2e689a920a4a63be3989fe724e
   specs:
     webmention (0.1.5)
       httparty (~> 0.13.1)
