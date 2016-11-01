@@ -2,7 +2,7 @@
 <% if @post.cite_belongs_to_post?(context) %>
 
 <div class="context external">
-  <dl class="<%= post_type_p_class(context) %> h-cite">
+  <dl class="<%= post_type_p_class(@post) %> h-cite">
 
     <dt>
       <span class="prefix"><%= context_prefix(@post) %></span>
