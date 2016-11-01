@@ -11,11 +11,13 @@
     <link rel="feed" type="text/html" href="<%= ENV['SITE_URL'] %>all">
     <link rel="feed alternate" type="application/rss+xml"
       href="<%= ENV['SITE_URL'] %>rss" title="RSS feed">
-    <link rel="stylesheet" href="https://barryfrost.com/moof.css">
+    <link rel="stylesheet" href="https://barryf.s3.amazonaws.com/moof.css">
     <link rel="stylesheet"
       href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <% if @post %><%= erb :'_meta' %><% end %>
+    <% if @post && @post.h_type == 'h-entry' && @post.entry_type == 'article' %>
+      <%= erb :'_meta' %>
+    <% end %>
   </head>
   <body>
     <header>
