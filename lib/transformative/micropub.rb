@@ -21,15 +21,15 @@ module Transformative
       case properties['action'].to_sym
       when :update
         if properties.key?('replace')
-          verify_array(properties, 'replace')
+          verify_hash(properties, 'replace')
           post.replace(properties['replace'])
         end
         if properties.key?('add')
-          verify_array(properties, 'add')
+          verify_hash(properties, 'add')
           post.add(properties['add'])
         end
         if properties.key?('delete')
-          verify_array(properties, 'delete')
+          verify_array_or_hash(properties, 'delete')
           post.remove(properties['delete'])
         end
       when :delete
@@ -42,9 +42,17 @@ module Transformative
       Store.save(post)
     end
 
-    def verify_array(properties, key)
-      unless properties[key].is_a?(Array)
-        raise InvalidRequestError.new("Invalid request: the '#{key}' property should be an array.")
+    def verify_hash(properties, key)
+      unless properties[key].is_a?(Hash)
+        raise InvalidRequestError.new(
+          "Invalid request: the '#{key}' property should be a hash.")
+      end
+    end
+
+    def verify_array_or_hash(properties, key)
+      unless properties[key].is_a?(Array) || properties[key].is_a?(Hash)
+        raise InvalidRequestError.new(
+          "Invalid request: the '#{key}' property should be an array or hash.")
       end
     end
 
