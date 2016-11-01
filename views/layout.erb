@@ -3,8 +3,10 @@
   <head>
     <meta charset="utf-8">
     <title><% if @title %><%= @title %> &middot; <% end %>Barry Frost</title>
-    <% if @post %><link rel="canonical" href="<%= @post.absolute_url %>"><% end %>
-    <% if @webmention_link %><link rel="webmention" href="<%= ENV['SITE_URL'] %>webmention"><% end %>
+    <% if @post_page %>
+      <link rel="canonical" href="<%= @post.absolute_url %>">
+      <link rel="webmention" href="<%= ENV['SITE_URL'] %>webmention">
+    <% end %>
     <link rel="micropub" href="<%= ENV['SITE_URL'] %>micropub">
     <link rel="authorization_endpoint" href="https://indieauth.com/auth">
     <link rel="token_endpoint" href="https://tokens.indieauth.com/token">
@@ -16,7 +18,8 @@
     <link rel="stylesheet"
       href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <% if @post && @post.h_type == 'h-entry' && @post.entry_type == 'article' %>
+    <% if @post_page && @post.h_type == 'h-entry'
+        && @post.entry_type == 'article' %>
       <%= erb :'_meta' %>
     <% end %>
   </head>

@@ -54,7 +54,7 @@ module Transformative
       @contexts = Cache.contexts(@post)
       @authors = Cache.authors_from_cites(@webmentions, @contexts)
       @authors.merge!(Cache.authors_from_categories(@post))
-      @webmention_link = true
+      @post_page = true
       erb :entry
     end
 
