@@ -13,10 +13,9 @@ module Transformative
       response_hash = CGI.parse(response.parsed_response)
       if response_hash.key?('scope') && response_hash['scope'].is_a?(Array)
         scopes = response_hash['scope'][0].split(' ')
-        puts "scopes=#{scopes} scope=#{scope}"
         return if scopes.include?(scope)
         # special case? TODO: find out what to do here
-        return if scope == 'post'
+        return if scope == 'post' && scopes.include('create')
       end
       raise InsufficientScope.new
     end
