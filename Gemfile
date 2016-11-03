@@ -17,6 +17,7 @@ gem 'webmention', git: 'https://github.com/indieweb/mention-client-ruby'
 gem 'sequel_pg', require: 'sequel'
 gem 'will_paginate'
 gem 's3'
+gem 'twitter'
 
 group :production do
   gem 'sentry-raven'
