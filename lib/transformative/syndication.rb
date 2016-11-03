@@ -2,13 +2,27 @@ module Transformative
   module Syndication
     module_function
 
-    SILOPUB_MICROPUB_ENDPOINT = "https://silo.pub/micropub"
-
     def send(post, service)
       if service.start_with?('https://twitter.com/')
         account = service.split('/').last
         send_twitter(post, account)
+      elsif service.start_with?('https://pinboard.in/')
+        send_pinboard(post)
       end
+    end
+
+    def send_pinboard(post)
+      opts = {
+        'auth_token' => ENV['PINBOARD_AUTH_TOKEN'],
+        'url' => post.absolute_url,
+        'description' => post.properties['name'][0],
+        'extended' => post.content,
+        'tags' => post.properties['category'].join(','),
+        'dt' => post.properties['published'][0]
+      }
+      pinboard_url = "https://api.pinboard.in/v1/posts/add"
+      HTTParty.get(pinboard_url, query: opts)
+      return
     end
 
     def send_twitter(post, account)
@@ -64,7 +78,7 @@ module Transformative
 
     def micropub_request(body, token)
       HTTParty.post(
-        SILOPUB_MICROPUB_ENDPOINT,
+        "https://silo.pub/micropub",
         body: body,
         headers: { 'Authorization' => "Bearer #{token}" }
       )
