@@ -146,11 +146,6 @@ module Transformative
       status 204
     end
 
-    get '/test' do
-      post = Store.get("/2016/10/hello-world-2.json")
-      Context.fetch_contexts(post)
-    end
-
     post '/micropub' do
       puts "MICROPUB PARAMS #{params}"
       # start by assuming this is a non-create action
