@@ -97,6 +97,8 @@ module Transformative
           existing_webmention_client.crawl
           Cache.put(post)
           existing_webmention_client.send_mentions
+        else
+          Cache.put(post)
         end
         ::Webmention::Client.new(post.absolute_url).send_mentions
 
