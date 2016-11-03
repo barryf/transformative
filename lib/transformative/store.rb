@@ -79,19 +79,27 @@ module Transformative
       puts "webhook=#{commits}"
       commits.each do |commit|
         process_files(commit['added']) if commit['added'].any?
-        process_files(commit['modified']) if commit['modified'].any?
+        process_files(commit['modified'], true) if commit['modified'].any?
       end
     end
 
-    def process_files(files)
+    def process_files(files, modified=false)
       files.each do |file|
         file_content = get_file_content(file)
         url = "/" + file.sub(/\.json$/,'')
         data = JSON.parse(file_content)
         klass = Post.class_from_type(data['type'][0])
         post = klass.new(data['properties'], url)
-        Cache.put(post)
-        Utils.send_webmentions(post.absolute_url)
+
+        if modified
+          existing_webmention_client =
+            ::Webmention::Client.new(post.absolute_url)
+          existing_webmention_client.crawl
+          Cache.put(post)
+          existing_webmention_client.send_mentions
+        end
+        ::Webmention::Client.new(post.absolute_url).send_mentions
+
         Context.fetch_contexts(post)
       end
     end

@@ -19,9 +19,5 @@ module Transformative
       url.start_with?('/') ? url : "/#{url}"
     end
 
-    def send_webmentions(url)
-      ::Webmention::Client.new(url).send_mentions
-    end
-
   end
 end
