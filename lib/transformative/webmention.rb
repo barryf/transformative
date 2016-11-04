@@ -106,7 +106,7 @@ module Transformative
       if properties.key?('content')
         hash['content'] = [{ html: properties['content'][0].strip }]
       end
-      if properties.key?('photo')
+      if properties.key?('photo') && properties['photo'].any?
         hash['photo'] = properties['photo']
       end
       cite = Cite.new(hash)
