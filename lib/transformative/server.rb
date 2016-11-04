@@ -174,8 +174,8 @@ module Transformative
     end
 
     get '/micropub' do
-      require_auth
       if params.key?('q')
+        require_auth
         content_type :json
         case params[:q]
         when 'source'
