@@ -123,7 +123,7 @@ module Transformative
       # iterate over the mp-syndicate-to services
       new_syndications = services.map do |service|
         Syndication.send(self, service)
-      end.compact!
+      end.compact
 
       return if new_syndications.empty?
       # add to syndication list
