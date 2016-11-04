@@ -61,11 +61,24 @@ module Transformative
 
     def get_source_and_check_it_links_to_target(source, target)
       response = HTTParty.get(source)
-      unless response.code.to_i == 200
+      case response.code.to_i
+      when 410
+        # the post has been deleted to remove any existing webmentions
+        remove_webmention_if_exists(source)
+      when 200
+        # that's fine - continue...
+      else
         raise WebmentionError.new("invalid_source",
         "The specified source URI could not be retrieved.")
       end
-      unless Nokogiri::HTML(response.body).css("a[href=\"#{target}\"]").any?
+
+      doc = Nokogiri::HTML(response.body)
+      unless doc.css("a[href=\"#{target}\"]").any? ||
+          doc.css("img[src=\"#{target}\"]").any? ||
+          doc.css("video[src=\"#{target}\"]").any? ||
+          doc.css("audio[src=\"#{target}\"]").any?
+        # there is no match so remove any existing webmentions
+        remove_webmention_if_exists(source)
         raise WebmentionError.new("no_link_found",
           "The source URI does not contain a link to the target URI.")
       end
@@ -84,7 +97,7 @@ module Transformative
         Time.parse(properties['published'][0]) :
         Time.now
       hash = {
-        'url' => [source],
+        'url' => [properties['url'][0]],
         'name' => [properties['name'][0].strip],
         'published' => [published.utc.iso8601],
         'author' => [author_url],
@@ -113,6 +126,12 @@ module Transformative
         return 'repost-of'
       end
       'mention-of'
+    end
+
+    def remove_webmention_if_exists(url)
+      return unless cite = Cache.get_by_properties_url(url)
+      cite.properties.delete('url')
+      Store.save(cite)
     end
 
     def send_notification(author, content, url)

@@ -41,6 +41,13 @@ module Transformative
       db[:posts].where(url: url).first[:data].to_json
     end
 
+    def get_by_properties_url(url)
+      row = db[:posts].where(data['properties']['url'].get_text(0) => url)
+      return if row.nil?
+      klass = Post.class_from_type(row[:data]['type'][0])
+      klass.new(row[:data]['properties'], row[:url])
+    end
+
     def get_first_by_slug(slug)
       db[:posts]
         .where(data['properties']['slug'].get_text(0) => slug)
