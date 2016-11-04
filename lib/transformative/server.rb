@@ -198,6 +198,7 @@ module Transformative
     end
 
     post '/webmention' do
+      puts "Webmention received=#{params}"
       Webmention.receive(params[:source], params[:target])
       headers 'Location' => params[:target]
       status 202
