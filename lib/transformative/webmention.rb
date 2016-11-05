@@ -63,13 +63,13 @@ module Transformative
       response = HTTParty.get(source)
       case response.code.to_i
       when 410
-        # the post has been deleted to remove any existing webmentions
+        # the post has been deleted so remove any existing webmentions
         remove_webmention_if_exists(source)
       when 200
         # that's fine - continue...
       else
         raise WebmentionError.new("invalid_source",
-        "The specified source URI could not be retrieved.")
+          "The specified source URI could not be retrieved.")
       end
 
       doc = Nokogiri::HTML(response.body)
@@ -129,7 +129,9 @@ module Transformative
     end
 
     def remove_webmention_if_exists(url)
-      return unless cite = Cache.get_by_properties_url(url)
+      cite = Cache.get_by_properties_url(url)
+      puts "remove_webmention_if_exists=#{cite}"
+      return unless cite
       cite.properties.delete('url')
       Store.save(cite)
     end
