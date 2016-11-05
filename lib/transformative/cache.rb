@@ -42,7 +42,7 @@ module Transformative
     end
 
     def get_by_properties_url(url)
-      row = db[:posts].where(data['properties']['url'].get_text(0) => url)
+      row = db[:posts].where(data['properties']['url'].get_text(0) => url).first
       return if row.nil?
       klass = Post.class_from_type(row[:data]['type'][0])
       klass.new(row[:data]['properties'], row[:url])
