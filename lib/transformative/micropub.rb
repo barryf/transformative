@@ -3,13 +3,13 @@ module Transformative
     module_function
 
     def create(params)
-      safe_params = sanitise_params(params)
       post = if params.key?('h')
+        safe_params = sanitise_params(params)
         # TODO support other types?
         Entry.new_from_form(safe_params)
       else
         klass = Post.class_from_type(params['type'][0])
-        klass.new(safe_params['properties'])
+        klass.new(params['properties'])
       end
 
       Store.save(post)
@@ -56,16 +56,15 @@ module Transformative
       end
     end
 
-    # TODO rewrite this wrapped in a Hash[]
     def sanitise_params(params)
-      safe_params = {}
-      params.keys.each do |param|
-        unless param.start_with?('mp-') || param == 'access_token' ||
-            param == 'h' || param == 'syndicate-to'
-          safe_params[param] = params[param]
+      Hash[
+        params.map do |k, v|
+          unless k.start_with?('mp-') || k == 'access_token' || k == 'h' ||
+              k == 'syndicate-to'
+            [k, v]
+          end
         end
-      end
-      safe_params
+      ]
     end
 
     class ForbiddenError < TransformativeError
