@@ -127,7 +127,7 @@ module Transformative
         end
     end
 
-g  end
+  end
 
   class StoreError < TransformativeError
     def initialize(message)
