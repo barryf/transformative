@@ -65,7 +65,7 @@ module Transformative
 
     def exists_url?(url)
       relative_url = Utils.relative_url(url)
-      get_file("#{relative_url}.json").nil?
+      get_file("#{relative_url}.json") != nil
     end
 
     def get_file(filename)
