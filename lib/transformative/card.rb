@@ -9,12 +9,8 @@ module Transformative
       'h-card'
     end
 
-    def filename
-      "/card/#{@url}.json"
-    end
-
     def generate_url
-      generate_url_slug
+      generate_url_slug('/card')
     end
 
   end

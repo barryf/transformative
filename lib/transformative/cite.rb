@@ -9,12 +9,8 @@ module Transformative
       'h-cite'
     end
 
-    def filename
-      "/cite/#{@url}.json"
-    end
-
     def generate_url
-      generate_url_slug
+      generate_url_slug('/cite')
     end
 
   end

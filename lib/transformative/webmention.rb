@@ -129,12 +129,8 @@ module Transformative
     end
 
     def remove_webmention_if_exists(url)
-      cite = Cache.get_by_properties_url(url)
-      puts "remove_webmention_if_exists=#{cite}"
-      return unless cite
-      %w( in-reply-to repost-of like-of mention-of ).each do |k|
-        cite.properties.delete(k)
-      end
+      return unless cite = Cache.get_by_properties_url(url)
+      cite.properties.delete('url')
       Store.save(cite)
     end
 

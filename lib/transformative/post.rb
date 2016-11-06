@@ -12,6 +12,10 @@ module Transformative
       { 'type' => [h_type], 'properties' => @properties }
     end
 
+    def filename
+      "#{@url}.json"
+    end
+
     def absolute_url
       URI.join(ENV['SITE_URL'], @url).to_s
     end
@@ -40,17 +44,8 @@ module Transformative
       "/#{Time.parse(@properties['published'][0]).strftime('%Y/%m')}/#{slug}"
     end
 
-    def generate_url_slug
-      prefix = case h_type
-        when 'h_card'
-          '/card'
-        when 'h_cite'
-          '/cite'
-        else
-          '/'
-        end
+    def generate_url_slug(prefix='/')
       slugify_url = Utils.slugify_url(@properties['url'][0])
-      puts "slugify_url=#{slugify_url}"
       "#{prefix}#{slugify_url}"
     end
 
