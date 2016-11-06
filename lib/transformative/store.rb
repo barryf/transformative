@@ -13,8 +13,10 @@ module Transformative
 
     def put(filename, data)
       content = JSON.pretty_generate(data)
-      if sha = exists?(filename)
-        update(sha, filename, content)
+      if existing = get_file(filename)
+        unless Base64.decode64(existing['content']) == content
+          update(existing['sha'], filename, content)
+        end
       else
         create(filename, content)
       end
@@ -61,19 +63,25 @@ module Transformative
       get("#{relative_url}.json")
     end
 
-    def exists?(filename)
-      file = get_file(filename)
-      unless file.nil?
-        file['sha']
+    def exists_url?(url)
+      relative_url = Utils.relative_url(url)
+      get_file("#{relative_url}.json").nil?
+    end
+
+    def get_file(filename)
+      begin
+        octokit.contents(github_full_repo, { path: filename })
+      rescue Octokit::NotFound
       end
     end
 
-    def exists_url?(url)
-      relative_url = Utils.relative_url(url)
-      puts "relative_url=#{relative_url}"
-      exists?("#{relative_url}.json")
+    def get_file_content(filename)
+      base64_content = octokit.contents(
+        github_full_repo,
+        { path: filename }
+      ).content
+      Base64.decode64(base64_content)
     end
-
 
     def webhook(commits)
       puts "webhook=#{commits}"
@@ -106,21 +114,6 @@ module Transformative
       end
     end
 
-    def get_file(filename)
-      begin
-        octokit.contents(github_full_repo, { path: filename })
-      rescue Octokit::NotFound
-      end
-    end
-
-    def get_file_content(filename)
-      base64_content = octokit.contents(
-        github_full_repo,
-        { path: filename }
-      ).content
-      Base64.decode64(base64_content)
-    end
-
     def github_full_repo
       "#{ENV['GITHUB_USER']}/#{ENV['GITHUB_REPO']}"
     end
@@ -134,7 +127,7 @@ module Transformative
         end
     end
 
-  end
+g  end
 
   class StoreError < TransformativeError
     def initialize(message)
