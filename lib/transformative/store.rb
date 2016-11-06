@@ -84,7 +84,6 @@ module Transformative
     end
 
     def webhook(commits)
-      puts "webhook=#{commits}"
       commits.each do |commit|
         process_files(commit['added']) if commit['added'].any?
         process_files(commit['modified'], true) if commit['modified'].any?

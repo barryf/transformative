@@ -18,7 +18,6 @@ module Transformative
           url: url
         }
       })
-      puts "Pushover=#{response.body}"
     end
 
   end

@@ -135,6 +135,7 @@ module Transformative
     end
 
     post '/webhook' do
+      puts "Webhook params=#{params}"
       return not_found unless params.key?('commits')
       commits = params[:commits]
 
@@ -147,7 +148,7 @@ module Transformative
     end
 
     post '/micropub' do
-      puts "MICROPUB PARAMS #{params}"
+      puts "Micropub params=#{params}"
       # start by assuming this is a non-create action
       if params.key?('action')
         verify_action
@@ -198,7 +199,7 @@ module Transformative
     end
 
     post '/webmention' do
-      puts "Webmention received=#{params}"
+      puts "Webmention params=#{params}"
       Webmention.receive(params[:source], params[:target])
       headers 'Location' => params[:target]
       status 202
@@ -316,7 +317,6 @@ module Transformative
       else
         post.data
       end
-      puts "render_source=#{data}"
       data.to_json
     end
 

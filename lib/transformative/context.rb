@@ -27,7 +27,6 @@ module Transformative
         Store.save(parsed[1])
       end
       # create h-cite
-      puts "p=#{parsed[0]}"
       Store.save(parsed[0])
     end
 
