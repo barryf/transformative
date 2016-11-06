@@ -14,7 +14,7 @@ xml.rss version: "2.0" do
         xml.link post.properties['entry-type'][0] == 'bookmark' ?
           post.properties['bookmark-of'][0] :
           "#{URI.join(ENV['SITE_URL'], post.url)}"
-        xml.description rss_description(post) #markdown(post.content) unless post.content.nil?
+        xml.description rss_description(post)
         xml.pubDate Time.parse(post.properties['published'][0]).rfc822()
         xml.guid "#{URI.join(ENV['SITE_URL'], post.url)}"
       end
