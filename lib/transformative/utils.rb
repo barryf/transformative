@@ -19,5 +19,14 @@ module Transformative
       url.start_with?('/') ? url : "/#{url}"
     end
 
+    def ping_pubsubhubbub
+      HTTParty.post(ENV['PUBSUBHUBBUB_HUB'], {
+        body: {
+          "hub.mode": "publish",
+          "hub.url": ENV['SITE_URL']
+        }
+      })
+    end
+
   end
 end

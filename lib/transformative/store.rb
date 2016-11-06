@@ -110,6 +110,7 @@ module Transformative
         end
         ::Webmention::Client.new(post.absolute_url).send_mentions
 
+        Utils.ping_pubsubhubbub
         Context.fetch_contexts(post)
       end
     end
