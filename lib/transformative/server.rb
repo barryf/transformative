@@ -236,6 +236,7 @@ module Transformative
       @authors = Cache.authors_from_cites(@contexts)
       @authors.merge!(Cache.authors_from_categories(@posts))
       @webmention_counts = Cache.webmention_counts(@posts)
+      @footer = true
       erb :index
     end
 

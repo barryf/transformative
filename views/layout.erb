@@ -50,7 +50,7 @@
 
     <%= yield %>
 
-    <% unless @no_footer %>
+    <% if @footer %>
       <footer>
         <ul>
           <li><a href="/about">About</a></li>
