@@ -3,7 +3,7 @@ module Transformative
     module_function
 
     def save(file)
-      filename = "#{Time.now.strftime('%Y%m%d')}-#{SecureRandom.hex.to_s}"
+      filename = "#{Time.now.strftime('%Y/%m/%d')}-#{SecureRandom.hex.to_s}"
       ext = file[:filename].match(/\./) ? '.' +
         file[:filename].split('.').last : ".jpg"
       filepath = "file/#{filename}#{ext}"
@@ -15,7 +15,7 @@ module Transformative
         # upload to s3 (serves file)
         s3_upload(filepath, content, ext, file[:type])
       else
-        rootpath = "#{File.dirname(__FILE__)}/../../../content/media/"
+        rootpath = "#{File.dirname(__FILE__)}/../../../content/"
         FileSystem.new.upload(rootpath + filepath, content)
       end
 
