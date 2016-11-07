@@ -55,6 +55,12 @@ module Transformative
         .first
     end
 
+    def find_via_syndication(syndication)
+      db[:posts]
+        .where(data['properties']['syndication'].contain_any(syndication))
+        .map { |row| row_to_post(row) }
+    end
+
     def authors_from_cites(*cites)
       author_urls = cites.compact.flatten.map do |cite|
         if cite.properties.key?('author') &&

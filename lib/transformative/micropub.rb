@@ -8,6 +8,7 @@ module Transformative
         # TODO support other types?
         Entry.new_from_form(safe_params)
       else
+        check_if_syndicated(params['properties'])
         klass = Post.class_from_type(params['type'][0])
         klass.new(params['properties'])
       end
@@ -56,6 +57,14 @@ module Transformative
       end
     end
 
+    # has this post already been syndicated, perhaps via a pesos method?
+    def check_if_syndicated(properties)
+      if properties.key?('syndication') &&
+          Cache.find_via_syndication(properties['syndication']).any?
+        raise ConflictError.new
+      end
+    end
+
     def sanitise_params(params)
       Hash[
         params.map do |k, v|
@@ -88,6 +97,13 @@ module Transformative
     class NotFoundError < TransformativeError
       def initialize(message="The post with the requested URL was not found.")
         super("not_found", message, 400)
+      end
+    end
+
+    class ConflictError < TransformativeError
+      def initialize(
+          message="The post has already been created and syndicated.")
+        super("conflict", message, 409)
       end
     end
 
