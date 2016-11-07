@@ -1,8 +1,6 @@
 <% if @webmentions.any? %>
 <ul class="webmentions external">
 <% @webmentions.each do |webmention| %>
-  <% next if webmention.properties.key?('deleted') %>
-
   <% type = webmention_type(webmention) %>
 
   <li class="<%= type %>">
