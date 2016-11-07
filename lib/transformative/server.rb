@@ -57,6 +57,7 @@ module Transformative
       return deleted if @post.is_deleted?
       @title = page_title(@post)
       @webmentions = Cache.webmentions(@post)
+      puts "@webmentions=#{@webmentions}"
       @contexts = Cache.contexts(@post)
       @authors = Cache.authors_from_cites(@webmentions, @contexts)
       @authors.merge!(Cache.authors_from_categories(@post))
