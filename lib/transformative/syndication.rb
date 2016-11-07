@@ -73,6 +73,12 @@ module Transformative
         body['photo'] = post.properties['photo']
       end
 
+      if post.properties.key?('location') &&
+          !post.properties['location'][0].is_a?(Hash) &&
+          post.properties['location'][0].start_with?('geo:')
+        body['location'] = post.properties['location'][0]
+      end
+
       response = micropub_request(body, ENV['SILOPUB_TWITTER_TOKEN'])
       unless response.code.to_i == 201
         raise SyndicationError.new(
