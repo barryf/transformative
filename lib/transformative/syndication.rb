@@ -12,12 +12,20 @@ module Transformative
     end
 
     def send_pinboard(post)
+      # no person-tags (or other urls)
+      tags = if post.properties.key?('category')
+          post.properties['category'].map { |tag|
+            tag unless Utils.valid_url?(tag)
+          }.compact.join(',')
+        else
+          ""
+        end
       opts = {
         'auth_token' => ENV['PINBOARD_AUTH_TOKEN'],
         'url' => post.absolute_url,
         'description' => post.properties['name'][0],
         'extended' => post.content,
-        'tags' => post.properties['category'].join(','),
+        'tags' => tags,
         'dt' => post.properties['published'][0]
       }
       pinboard_url = "https://api.pinboard.in/v1/posts/add"
