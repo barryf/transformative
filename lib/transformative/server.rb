@@ -56,14 +56,17 @@ module Transformative
       return not_found if @post.nil?
       return deleted if @post.is_deleted?
       @title = page_title(@post)
-      @webmentions = Cache.webmentions(@post)
-      puts "@webmentions=#{@webmentions}"
-      @contexts = Cache.contexts(@post)
       @authors = Cache.authors_from_cites(@webmentions, @contexts)
-      @authors.merge!(Cache.authors_from_categories(@post))
+      @webmentions = Cache.webmentions(@post)
       @post_page = true
       link "#{ENV['SITE_URL']}webmention", rel: 'webmention'
-      erb :entry
+      if @post.h_type == 'h-entry'
+        @contexts = Cache.contexts(@post)
+        @authors.merge!(Cache.authors_from_categories(@post))
+        erb :entry
+      else
+        erb :event
+      end
     end
 
     get %r{^/([0-9]{4})/([0-9]{2})/([a-z0-9-]+)\.json$} do |y, m, slug|

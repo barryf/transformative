@@ -55,18 +55,15 @@
   <% end %>
 
   <ul class="metadata">
-
     <%= erb :'_timestamp' %>
-
     <%= erb :'_indie_actions' %>
-
     <%= erb :'_categories' %>
-
     <%= erb :'_syndications' %>
-
   </ul>
 
   <%= erb :'_webmentions' unless @webmentions.nil? %>
 
 </article>
 </div>
+
+<%= erb :'_sources' %>

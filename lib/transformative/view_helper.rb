@@ -248,6 +248,10 @@ module Transformative
     end
 
     def page_title(post)
+      if post.h_type == 'h-event'
+        return post.properties['name'][0] || 'Event'
+      end
+
       case post.properties['entry-type'][0]
       when 'article'
         post.properties['name'][0] || 'Article'
