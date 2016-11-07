@@ -10,7 +10,7 @@ module Transformative
     end
 
     def generate_url
-      generate_url_slug('/cite')
+      generate_url_slug('/cite/')
     end
 
   end

@@ -10,7 +10,7 @@ module Transformative
     end
 
     def generate_url
-      generate_url_slug('/card')
+      generate_url_slug('/card/')
     end
 
   end
