@@ -26,13 +26,15 @@ module Transformative
     end
 
     def content
-      if properties.key?('content')
-        if properties['content'][0].is_a?(Hash) &&
-            properties['content'][0].key?('html')
-          properties['content'][0]['html']
+      if @properties.key?('content')
+        if @properties['content'][0].is_a?(Hash) &&
+            @properties['content'][0].key?('html')
+          @properties['content'][0]['html']
         else
-          properties['content'][0]
+          @properties['content'][0]
         end
+      elsif @properties.key?('summary')
+        @properties['summary'][0]
       end
     end
 
