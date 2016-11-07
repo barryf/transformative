@@ -98,7 +98,7 @@ module Transformative
         klass = Post.class_from_type(data['type'][0])
         post = klass.new(data['properties'], url)
 
-        if %w( h-entry h-event ).include(data['type'][0])
+        if %w( h-entry h-event ).include?(data['type'][0])
           if modified
             existing_webmention_client =
               ::Webmention::Client.new(post.absolute_url)
