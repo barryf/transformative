@@ -98,19 +98,22 @@ module Transformative
         klass = Post.class_from_type(data['type'][0])
         post = klass.new(data['properties'], url)
 
-        if modified
-          existing_webmention_client =
-            ::Webmention::Client.new(post.absolute_url)
-          existing_webmention_client.crawl
-          Cache.put(post)
-          existing_webmention_client.send_mentions
+        if %w( h-entry h-event ).include(data['type'][0])
+          if modified
+            existing_webmention_client =
+              ::Webmention::Client.new(post.absolute_url)
+            existing_webmention_client.crawl
+            Cache.put(post)
+            existing_webmention_client.send_mentions
+          else
+            Cache.put(post)
+          end
+          ::Webmention::Client.new(post.absolute_url).send_mentions
+          Utils.ping_pubsubhubbub
+          Context.fetch_contexts(post)
         else
           Cache.put(post)
         end
-        ::Webmention::Client.new(post.absolute_url).send_mentions
-
-        Utils.ping_pubsubhubbub
-        Context.fetch_contexts(post)
       end
     end
 
