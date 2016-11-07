@@ -130,7 +130,11 @@ module Transformative
 
     def remove_webmention_if_exists(url)
       return unless cite = Cache.get_by_properties_url(url)
-      cite.properties['deleted'] = [Time.now.utc.iso8601]
+      %w( in-reply-to repost-of like-of ).each do |property|
+        if cite.properties.key?(property)
+          cite.properties.delete(property)
+        end
+      end
       Store.save(cite)
     end
 
