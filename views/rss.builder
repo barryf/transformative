@@ -7,6 +7,7 @@ xml.rss version: "2.0" do
 
     xml.link rel: "hub", href: ENV['PUBSUBHUBBUB_HUB']
     xml.link rel: "self", href: "#{ENV['SITE_URL']}rss"
+    xml.link rel: "alternate", href: ENV['SITE_URL']
 
     @posts.each do |post|
       xml.item do

@@ -13,6 +13,12 @@ module Transformative
     get '/' do
       @posts_rows = Cache.stream(%w( note article photo repost ),
         params[:page] || 1)
+      link 'https://indieauth.com/auth', rel: 'authorization_endpoint'
+      link 'https://tokens.indieauth.com/token', rel: 'token_endpoint'
+      link "#{ENV['SITE_URL']}micropub", rel: 'micropub'
+      link ENV['SITE_URL'], rel: 'feed'
+      link ENV['PUBSUBHUBBUB_HUB'], rel: 'hub'
+      link ENV['SITE_URL'], rel: 'self'
       index_page
     end
 
@@ -55,6 +61,7 @@ module Transformative
       @authors = Cache.authors_from_cites(@webmentions, @contexts)
       @authors.merge!(Cache.authors_from_categories(@post))
       @post_page = true
+      link "#{ENV['SITE_URL']}webmention", rel: 'webmention'
       erb :entry
     end
 
