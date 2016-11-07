@@ -13,5 +13,17 @@ module Transformative
       generate_url_slug('/cite/')
     end
 
+    def webmention_type
+      if @properties.key?('in-reply-to')
+        'Reply'
+      elsif @properties.key?('repost-of')
+        'Repost'
+      elsif @properties.key?('like-of')
+        'Like'
+      else
+        'Mention'
+      end
+    end
+
   end
 end

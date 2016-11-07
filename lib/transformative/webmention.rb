@@ -20,7 +20,7 @@ module Transformative
       cite = store_cite(source, source_body, author.properties['url'][0],
         target)
 
-      send_notification(author, source_body, target)
+      send_notification(cite, author, target)
     end
 
     def verify_source(source)
@@ -138,9 +138,10 @@ module Transformative
       Store.save(cite)
     end
 
-    def send_notification(author, content, url)
+    def send_notification(cite, author, target)
       name = author.properties['name'][0]
-      Notification.send("Webmention from #{name}", content, url)
+      type = cite.webmention_type
+      Notification.send("Webmention (#{type}) from #{name}", "", target)
     end
 
   end
