@@ -51,8 +51,7 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
     if key == 'published'
       properties[key] = [Time.parse(data[key]).utc.iso8601.to_s]
     elsif k == 'photo'
-      # TODO move old photos to s3
-      properties[key] = ["https://media.barryfrost.com/photo/#{data[key]}"]
+      properties[key] = ["https://barryfrost-media.s3.amazonaws.com/file/#{data[key]}"]
     end
   end
 
