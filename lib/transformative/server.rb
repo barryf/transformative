@@ -4,6 +4,8 @@ module Transformative
     helpers ViewHelper
 
     configure do
+      use Rack::SSL if settings.production?
+
       root_path = "#{File.dirname(__FILE__)}/../../"
       set :config_path, "#{root_path}config/"
       set :markdown, layout_engine: :erb
