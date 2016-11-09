@@ -27,12 +27,4 @@ end
 group :development do
   gem 'dotenv'
   gem 'shotgun'
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'pry'
-end
-
-group :test do
-  gem 'rack-test'
-  gem 'rspec'
 end
