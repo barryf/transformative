@@ -2,7 +2,7 @@ require 'yaml'
 require 'time'
 require 'json'
 
-path_moof = "/Users/barry/data-2016-10-22/posts"
+path_moof = "/Users/barry/data-2016-11-08/posts"
 path_new  = "/Users/barry/Dropbox/barryfrost.com/content"
 
 Dir.glob("#{path_moof}/**/*.md").each do |file|

@@ -1,9 +1,8 @@
 require 'yaml'
 require 'time'
 require 'json'
-require 'jekyll'
 
-path_moof = "/Users/barry/data-2016-10-22/contexts"
+path_moof = "/Users/barry/data-2016-11-08/contexts"
 path_new  = "/Users/barry/Dropbox/barryfrost.com/content/cite"
 path_card = "/Users/barry/Dropbox/barryfrost.com/content/card"
 
@@ -47,9 +46,9 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
   end
 
   # create card
-  card_slug = Jekyll::Utils.slugify(properties['author'][0])
+  card_slug = properties['author'][0].to_s.downcase.gsub(/[^a-z0-9\-]/,' ').
+    strip.gsub(/\s+/,'/')
   next if card_slug.nil?
-  card_slug.gsub!('-','/')
   cp = {}
   cp['name'] = [data['author_name']] if data.key?('author_name')
   cp['photo'] = [data['author_photo']] if data.key?('author_photo')
@@ -63,9 +62,8 @@ Dir.glob("#{path_moof}/**/*.md").each do |file|
   File.write(filename, card_content)
 
   # create cite
-  slug = Jekyll::Utils.slugify(data['url'])
+  slug = data['url'].to_s.downcase.gsub(/[^a-z0-9\-]/,' ').strip.gsub(/\s+/,'/')
   next if slug.nil?
-  slug.gsub!('-','/')
   file_content = JSON.pretty_generate({
     type: ['h-cite'],
     properties: properties
