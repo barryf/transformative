@@ -48,7 +48,7 @@
   <% unless @post.content.nil? %>
     <div class="e-content<% unless @post.properties['entry-type'][0] == 'article' or
         @post.properties['entry-type'][0] == 'bookmark' %> p-name<% end %> content">
-      <%= filter_all filter_markdown @post.content %>
+      <%= post_split filter_all filter_markdown @post.content %>
       <%= erb :'_photos' %>
     </div>
   <% end %>

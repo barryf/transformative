@@ -174,6 +174,13 @@ module Transformative
       summary
     end
 
+    def post_split(content)
+      paragraph_ends = content.split(/\n\n/)
+      return content unless paragraph_ends.size > 3
+      paragraph_ends.first + " <a href=\"#{@post.absolute_url}\">" +
+        "Read&nbsp;full&nbsp;post&hellip;</a>"
+    end
+
     def filter_all(content)
       content = link_twitter(content)
       content = link_hashtags(content)
