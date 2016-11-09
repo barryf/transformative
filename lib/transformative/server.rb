@@ -261,7 +261,7 @@ module Transformative
       if token.empty?
         raise Auth::NoTokenError.new
       end
-      scope = params.key('action') ? params['action'] : 'post'
+      scope = params.key?('action') ? params['action'] : 'post'
       Auth.verify_token_and_scope(token, scope)
     end
 
