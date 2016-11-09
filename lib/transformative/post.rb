@@ -123,7 +123,7 @@ module Transformative
         unless @properties.key?('syndication') &&
             @properties['syndication'].map { |s|
               s.start_with?(service)
-            end.include?(true)
+            }.include?(true)
           Syndication.send(self, service)
         end
       }.compact
