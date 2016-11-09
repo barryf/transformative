@@ -33,7 +33,7 @@
     <% if context.content || context.properties.key?('photo') %>
       <dd>
         <div class="e-content<% if context.properties.key?('name') %> p-name<% end %>">
-          <% if context.properties.key?('photo') %>
+          <% if context.properties.key?('photo') && context.properties['photo'].any? %>
             <figure>
               <a href="<%= context.properties['url'][0] %>">
                 <img class="u-photo" src="<%= camo_image context.properties['photo'][0] %>">
