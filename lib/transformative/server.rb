@@ -244,7 +244,7 @@ module Transformative
     private
 
     def index_page
-      return not_found if @posts_rows.nil?
+      not_found if @posts_rows.nil? || @posts_rows.empty?
       @posts = @posts_rows.map { |row| Cache.row_to_post(row) }
       @contexts = Cache.contexts(@posts)
       @authors = Cache.authors_from_cites(@contexts)
