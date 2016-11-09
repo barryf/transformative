@@ -63,7 +63,9 @@ module Transformative
         'published' => [Time.parse(tweet.created_at.to_s).utc]
       }
       # does the tweet have photo(s)?
-      cite_properties['photo'] = tweet.media.map { |m| m.media_url.to_s }
+      if tweet.media.any?
+        cite_properties['photo'] = tweet.media.map { |m| m.media_url.to_s }
+      end
       # replace t.co links with expanded versions
       tweet.urls.each do |u|
         cite_properties['content'][0].sub!(u.url.to_s, u.expanded_url.to_s)
