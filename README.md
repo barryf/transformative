@@ -16,7 +16,7 @@ All my notes, articles, bookmarks, photos and more are hosted on my personal dom
 - [PubSub(HubBub)][pubsub] hub pinging
 - [`person-tag`][persontag] support
 
-Implementation reports are available showing compliance with the [Webmention][wm-ir] and [Micropub][mp-ir] specifications.
+Implementation reports are available showing Transformative's compliance with the [Webmention][wm-ir] and [Micropub][mp-ir] specifications.
 
 ## How it works
 
@@ -65,7 +65,7 @@ I recommend hosting Transformative with [Heroku][]. I started building a new VPS
 
 Create a fresh database instance with one table named `posts`:
 
-```sql
+```
 # CREATE TABLE posts (url VARCHAR(255) PRIMARY KEY, data JSONB);
 ```
 
@@ -116,8 +116,8 @@ _This README also appears on my site as its [Colophon][]._
 [relme]: http://indieweb.org/rel-me
 [pubsub]: http://indieweb.org/pubsub
 [persontag]: http://indieweb.org/person-tag
-[wm-ir]: 
-[mp-ir]: 
+[wm-ir]: https://github.com/w3c/webmention/blob/master/implementation-reports/transformative.md
+[mp-ir]: https://micropub.rocks/implementation-report/server/30/Qr4kVp0CSxFGY9Zfpsfh
 [sinatra]: sinatrarb.com
 [content]: https://github.com/barryf/content
 [mf2json]: http://microformats.org/wiki/microformats2-parsing
