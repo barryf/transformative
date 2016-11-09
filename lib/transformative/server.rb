@@ -339,7 +339,7 @@ module Transformative
         elsif params.key?('syndicate-to')
           params['syndicate-to']
         end
-      post.syndicate(services) unless services.nil?
+      post.syndicate(Array(services)) unless services.nil?
     end
 
   end
