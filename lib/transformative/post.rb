@@ -118,9 +118,15 @@ module Transformative
       return unless ['h-entry','h-event'].include?(h_type)
 
       # iterate over the mp-syndicate-to services
-      new_syndications = services.map do |service|
-        Syndication.send(self, service)
-      end.compact
+      new_syndications = services.map { |service|
+        # have we already syndicated to this service?
+        unless @properties.key?('syndication') &&
+            @properties['syndication'].map { |s|
+              s.start_with?(service)
+            end.include?(true)
+          Syndication.send(self, service)
+        end
+      }.compact
 
       return if new_syndications.empty?
       # add to syndication list
