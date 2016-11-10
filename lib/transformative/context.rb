@@ -38,10 +38,12 @@ module Transformative
       item = find_first_hentry_or_hevent(items)
       return if item.nil?
       properties = item['properties']
+      published = properties.key?('published') ?
+        Time.parse(properties['published'][0]) : Time.now
       hash = {
         'url' => [properties['url'][0]],
         'name' => [properties['name'][0].strip],
-        'published' => [Time.parse(properties['published'][0]).utc.iso8601],
+        'published' => [published.utc.iso8601],
         'content' => [{ html: properties['content'][0].strip }],
         'author' => [properties['author'][0]['properties']['url'][0]]
       }
