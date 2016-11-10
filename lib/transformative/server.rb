@@ -132,19 +132,19 @@ module Transformative
       redirect post.url, 301
     end
     get '/feed' do
-      redirect '/rss', 301
+      redirect '/rss', 302
     end
     get '/posts' do
       redirect '/', 301
     end
     get '/about' do
-      redirect '/2015/01/about', 301
+      redirect '/2015/01/about', 302
     end
     get '/colophon' do
-      redirect '/2016/11/colophon', 301
+      redirect '/2016/11/colophon', 302
     end
     get '/contact' do
-      redirect '/2015/01/contact', 301
+      redirect '/2015/01/contact', 302
     end
 
     post '/webhook' do
