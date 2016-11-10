@@ -143,6 +143,9 @@ module Transformative
     get '/colophon' do
       redirect '/2016/11/colophon', 302
     end
+    get '/2015/01/colophon' do
+      redirect '/2016/11/colophon', 302
+    end
     get '/contact' do
       redirect '/2015/01/contact', 302
     end
