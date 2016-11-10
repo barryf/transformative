@@ -19,7 +19,7 @@ module Transformative
       end
 
       # find author in the entry or on the page
-      author = find_author(entry)
+      author = find_author(entry, body)
       return if author.nil?
 
       # find author properties
@@ -38,7 +38,7 @@ module Transformative
       end
     end
 
-    def find_author(entry)
+    def find_author(entry, body)
       if entry['properties'].key?('author')
         entry['properties']['author'][0]
       elsif author_rel = Nokogiri::HTML(body).css("[rel=author]")
