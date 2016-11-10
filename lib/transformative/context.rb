@@ -37,6 +37,9 @@ module Transformative
       items = JSON.parse(json)['items']
       item = find_first_hentry_or_hevent(items)
       return if item.nil?
+      # get author first
+      author = Authorship.fetch(url)
+      # construct entry
       properties = item['properties']
       published = properties.key?('published') ?
         Time.parse(properties['published'][0]) : Time.now
@@ -45,13 +48,12 @@ module Transformative
         'name' => [properties['name'][0].strip],
         'published' => [published.utc.iso8601],
         'content' => [{ html: properties['content'][0].strip }],
-        'author' => [properties['author'][0]['properties']['url'][0]]
+        'author' => [author.properties['url'][0]]
       }
       if properties.key?('photo')
         hash['photo'] = properties['photo']
       end
       cite = Cite.new(hash)
-      author = Authorship.fetch(url)
       [cite, author]
     end
 
