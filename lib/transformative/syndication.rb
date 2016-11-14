@@ -22,7 +22,7 @@ module Transformative
         end
       opts = {
         'auth_token' => ENV['PINBOARD_AUTH_TOKEN'],
-        'url' => post.absolute_url,
+        'url' => post.properties['bookmark-of'][0],
         'description' => post.properties['name'][0],
         'extended' => post.content,
         'tags' => tags,
