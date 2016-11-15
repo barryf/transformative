@@ -53,6 +53,15 @@ module Transformative
       if properties.key?('photo')
         hash['photo'] = properties['photo']
       end
+      if properties.key?('start')
+        hash['start'] = properties['start']
+      end
+      if properties.key?('end')
+        hash['end'] = properties['end']
+      end
+      if properties.key?('location')
+        hash['location'] = properties['location']
+      end
       cite = Cite.new(hash)
       [cite, author]
     end

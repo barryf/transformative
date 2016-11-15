@@ -46,6 +46,19 @@
       </dd>
     <% end %>
 
+    <% if context.properties.key?('start') && context.properties.key?('end') %>
+      <dd class="metadata">
+        <time class="dt-start" datetime="<%= context.properties['start'][0] %>">
+          <%= Time.parse(context.properties['start'][0]).utc.strftime('%Y-%m-%d %H:%M') %>
+        </time>
+        &mdash;
+        <time class="dt-end" datetime="<%= context.properties['end'][0] %>">
+          <%= Time.parse(context.properties['end'][0]).utc.strftime('%H:%M') %>
+        </time>
+        <abbr title="Coordinated Universal Time">UTC</abbr>
+      </dd>
+    <% end %>
+
   </dl>
 </div>
 
