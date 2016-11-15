@@ -39,7 +39,7 @@ module Transformative
     end
 
     def find_author(entry, body)
-      if entry['properties'].key?('author')
+      if entry.key?('properties') && entry['properties'].key?('author')
         entry['properties']['author'][0]
       elsif author_rel = Nokogiri::HTML(body).css("[rel=author]")
         author_rel.attribute('href').value
