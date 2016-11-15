@@ -9,6 +9,8 @@ require 'time'
 require 'dotenv'
 Dotenv.load
 
+require_relative 'lib/transformative.rb'
+
 DB = Sequel.connect(ENV['DATABASE_URL'])
 DB[:posts].truncate
 
@@ -41,4 +43,10 @@ task :recent do
   files.each do |file|
     parse(file)
   end
+end
+
+desc "Fetch a context and store."
+task :context_fetch, :url do |t, args|
+  url = args[:url]
+  Transformative::Context.fetch(url)
 end

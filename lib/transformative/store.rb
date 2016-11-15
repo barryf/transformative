@@ -122,7 +122,7 @@ module Transformative
     end
 
     def octokit
-      @octokit ||= case ENV['RACK_ENV'].to_sym
+      @octokit ||= case (ENV['RACK_ENV'] || 'development').to_sym
         when :production
           Octokit::Client.new(access_token: ENV['GITHUB_ACCESS_TOKEN'])
         else
