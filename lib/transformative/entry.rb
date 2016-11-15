@@ -59,7 +59,7 @@ module Transformative
 
     def cite_belongs_to_post?(cite)
       property = case @properties['entry-type'][0]
-        when 'reply'
+        when 'reply', 'rsvp'
           'in-reply-to'
         when 'repost'
           'repost-of'

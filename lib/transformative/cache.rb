@@ -143,7 +143,8 @@ module Transformative
       entry_type_property = {
         'reply' => 'in-reply-to',
         'repost' => 'repost-of',
-        'like' => 'like-of'
+        'like' => 'like-of',
+        'rsvp' => 'in-reply-to'
       }
       urls = posts.map do |post|
         post.properties[entry_type_property[post.properties['entry-type'][0]]]
