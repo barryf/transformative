@@ -32,9 +32,7 @@
   <% end %>
 
   <% if @post.properties.key?('summary') and !@post.properties['summary'][0].empty? %>
-    <div class="p-summary" style="display: none;">
-      <%= @post.properties['summary'][0] %>
-    </div>
+    <div class="p-summary" style="display: none;"><%= @post.properties['summary'][0] %></div>
   <% end %>
 
   <% if @post.properties['entry-type'][0] == 'rsvp' %>
