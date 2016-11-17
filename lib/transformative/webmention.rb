@@ -139,9 +139,13 @@ module Transformative
     end
 
     def send_notification(cite, author, target)
-      name = author.properties['name'][0]
+      author_name = author.properties['name'][0]
+      author_url = author.properties['url'][0]
       type = cite.webmention_type
-      Notification.send("Webmention (#{type}) from #{name}", "", target)
+      Notification.send(
+        "New #{type}",
+        "New #{type} of #{target} from #{author_name} - #{author_url}",
+        target)
     end
 
   end
