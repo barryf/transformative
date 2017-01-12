@@ -87,7 +87,9 @@ module Transformative
 
       # find the twitter id from its api's json response
       hash = JSON.parse(response.body)
-      "https://twitter.com/#{account}/status/#{hash['id']}"
+      screen_name = hash['user']['screen_name']
+      id = hash['id_str']
+      "https://twitter.com/#{screen_name}/status/#{id}"
     end
 
     def micropub_request(body, token)
