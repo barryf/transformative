@@ -5,7 +5,7 @@ module Transformative
 
     def initialize(properties, url=nil)
       @properties = properties
-      @url = url || generate_url
+      @url = url
     end
 
     def data
@@ -13,11 +13,19 @@ module Transformative
     end
 
     def filename
-      "#{@url}.json"
+      "#{url}.json"
+    end
+
+    def slug
+      @slug || slugify
+    end
+
+    def url
+      @url || generate_url
     end
 
     def absolute_url
-      URI.join(ENV['SITE_URL'], @url).to_s
+      URI.join(ENV['SITE_URL'], url).to_s
     end
 
     def is_deleted?
@@ -42,7 +50,6 @@ module Transformative
       unless @properties.key('published')
         @properties['published'] = [Time.now.utc.iso8601]
       end
-      slug = @properties.key?('slug') ? @properties['slug'][0] : slugify
       "/#{Time.parse(@properties['published'][0]).strftime('%Y/%m')}/#{slug}"
     end
 
@@ -111,6 +118,10 @@ module Transformative
 
     def set_updated
       @properties['updated'] = [Time.now.utc.iso8601]
+    end
+
+    def set_slug(params)
+      @slug = params['mp-slug'][0] if params.key?('mp-slug')
     end
 
     def syndicate(services)

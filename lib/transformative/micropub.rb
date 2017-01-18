@@ -4,15 +4,16 @@ module Transformative
 
     def create(params)
       post = if params.key?('h')
-        safe_params = sanitise_params(params)
+        safe_properties = sanitise_properties(params)
         # TODO support other types?
-        Entry.new_from_form(safe_params)
+        Entry.new_from_form(safe_properties)
       else
         check_if_syndicated(params['properties'])
+        safe_properties = sanitise_properties(params['properties'])
         klass = Post.class_from_type(params['type'][0])
-        klass.new(params['properties'])
+        klass.new(safe_properties)
       end
-
+      post.set_slug(params)
       Store.save(post)
     end
 
@@ -65,14 +66,14 @@ module Transformative
       end
     end
 
-    def sanitise_params(params)
+    def sanitise_properties(properties)
       Hash[
-        params.map do |k, v|
+        properties.map { |k, v|
           unless k.start_with?('mp-') || k == 'access_token' || k == 'h' ||
               k == 'syndicate-to'
             [k, v]
           end
-        end
+        }.compact
       ]
     end
 
