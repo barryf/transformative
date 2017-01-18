@@ -321,7 +321,7 @@ module Transformative
     def render_source
       content_type :json
       relative_url = Utils.relative_url(params[:url])
-      not_found unless post = Store.get("#{relative_url}.json")
+      not_found unless post == Store.get("#{relative_url}.json")
       data = if params.key?('properties')
         properties = {}
         params[:properties].each do |property|
