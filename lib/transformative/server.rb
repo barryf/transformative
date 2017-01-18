@@ -8,6 +8,8 @@ module Transformative
 
       root_path = "#{File.dirname(__FILE__)}/../../"
       set :config_path, "#{root_path}config/"
+      set :syndication_targets,
+        JSON.parse(File.read("#{settings.config_path}syndication_targets.json"))
       set :markdown, layout_engine: :erb
       set :server, :puma
     end
@@ -300,21 +302,16 @@ module Transformative
       end
     end
 
-    def syndication_targets
-      @syndication_targets ||=
-        JSON.parse(File.read("#{settings.config_path}syndication_targets.json"))
-    end
-
     def render_syndication_targets
       content_type :json
-      { "syndicate-to" => syndication_targets }.to_json
+      { "syndicate-to" => settings.syndication_targets }.to_json
     end
 
     def render_config
       content_type :json
       {
         "media-endpoint" => "#{ENV['SITE_URL']}micropub",
-        "syndicate-to" => syndication_targets
+        "syndicate-to" => settings.syndication_targets
       }.to_json
     end
 
