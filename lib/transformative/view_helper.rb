@@ -202,7 +202,8 @@ module Transformative
       content.gsub /\B#(\w*[a-zA-Z0-9]+)\w*/i, %Q{ <a href="https://twitter.com/search/\\1">#<span class=\"p-category\">\\1</span></a> }
     end
 
-    def force_https_author_profile(url)
+    def force_https_author_profile(photo_url, base_url)
+      url = URI.join(base_url, photo_url).to_s
       if url.start_with?('http://pbs.twimg.com')
         url.gsub 'http://pbs.twimg.com', 'https://pbs.twimg.com'
       elsif !url.start_with?('https')

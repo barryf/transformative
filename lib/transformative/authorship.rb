@@ -25,8 +25,16 @@ module Transformative
       # find author properties
       if author.is_a?(Hash) && author['type'][0] == 'h-card'
         Card.new(author['properties'])
-      elsif author.is_a?(String) && Utils.valid_url?(author)
-        get_author_hcard(author)
+      elsif author.is_a?(String)
+        url = if Utils.valid_url?(author)
+            author
+          else
+            begin
+              URI.join(url, author).to_s
+            rescue URI::InvalidURIError
+            end
+          end
+        get_author_hcard(url) if url
       end
     end
 
@@ -50,6 +58,8 @@ module Transformative
       body = HTTParty.get(url).body
       json = Microformats2.parse(body).to_json
       properties = JSON.parse(json)['items'][0]['properties']
+      # force the url to be this absolute url
+      properties['url'] = [url]
       Card.new(properties)
     end
 

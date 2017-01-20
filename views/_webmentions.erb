@@ -13,7 +13,7 @@
           <% if @authors.key?(webmention.properties['author'][0]) %>
             <% author = @authors[webmention.properties['author'][0]] %>
             <% if author.properties.key?('photo') %>
-              <img class="u-photo" src="<%= force_https_author_profile author.properties['photo'][0] %>">
+              <img class="u-photo" src="<%= force_https_author_profile(author.properties['photo'][0], author.properties['url'][0]) %>">
             <% end %>
             <a class="u-url" rel="nofollow" href="<%= author.properties['url'][0] %>">
               <%= author.properties['name'][0] %>
