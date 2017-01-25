@@ -334,10 +334,11 @@ module Transformative
     end
 
     def syndicate(post)
-      services = if params.key?('mp-syndicate-to')
-          params['mp-syndicate-to']
-        elsif params.key?('syndicate-to')
-          params['syndicate-to']
+      properties = params.key?('properties') ? params['properties'] : params
+      services = if properties.key?('mp-syndicate-to')
+          properties['mp-syndicate-to']
+        elsif properties.key?('syndicate-to')
+          properties['syndicate-to']
         end
       post.syndicate(Array(services)) unless services.nil?
     end

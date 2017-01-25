@@ -13,6 +13,7 @@ module Transformative
         klass = Post.class_from_type(params['type'][0])
         klass.new(safe_properties)
       end
+
       post.set_slug(params)
       Store.save(post)
     end
