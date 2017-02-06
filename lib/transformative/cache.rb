@@ -38,7 +38,8 @@ module Transformative
     end
 
     def get_json(url)
-      db[:posts].where(url: url).first[:data].to_json
+      data = db[:posts].where(url: url).first[:data]
+      JSON.pretty_generate(data)
     end
 
     def get_by_properties_url(url)
