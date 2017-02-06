@@ -23,6 +23,8 @@
           <data class="p-longitude" value="<%= geo[2] %>"></data>
           <% if @post.properties.key?('place-name') %>
             <span class="p-name"><%= @post.properties['place-name'][0] %></span>
+          <% elsif @post.properties.key?('place_name') %>
+            <span class="p-name"><%= @post.properties['place_name'][0] %></span>
           <% else %>
             <%= geo[1] %>, <%= geo[2] %>
           <% end %>
