@@ -5,4 +5,10 @@
     </time>
     <abbr title="Coordinated Universal Time">UTC</abbr>
   </a>
+
+  <% if @post.properties.key?('updated') %>
+    <time class="dt-updated" datetime="<%= @post.properties['updated'][0] %>" style="display: none;">
+      <%= Time.parse(@post.properties['updated'][0]).utc.strftime('%Y-%m-%d %H:%M') %>
+    </time>
+  <% end %>
 </li>
