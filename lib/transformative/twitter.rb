@@ -69,7 +69,7 @@ module Transformative
     def favorite(urls)
       return unless tweet_id = find_first_tweet_id_from_urls(urls)
       tweet = client.favorite(tweet_id)
-      "https://twitter.com/#{tweet.screen_name}/status/#{tweet.id_str}"
+      "https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
     end
 
     def tweet_id_from_url(url)
