@@ -47,7 +47,7 @@ module Transformative
     end
 
     def generate_url_published
-      unless @properties.key('published')
+      unless @properties.key?('published')
         @properties['published'] = [Time.now.utc.iso8601]
       end
       "/#{Time.parse(@properties['published'][0]).strftime('%Y/%m')}/#{slug}"
