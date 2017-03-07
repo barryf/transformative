@@ -63,13 +63,13 @@ module Transformative
     def retweet(urls)
       return unless tweet_id = find_first_tweet_id_from_urls(urls)
       tweet = client.retweet(tweet_id)
-      "https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
+      "https://twitter.com/#{tweet[0].user.screen_name}/status/#{tweet[0].id}"
     end
 
     def favorite(urls)
       return unless tweet_id = find_first_tweet_id_from_urls(urls)
       tweet = client.favorite(tweet_id)
-      "https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
+      "https://twitter.com/#{tweet[0].user.screen_name}/status/#{tweet[0].id}"
     end
 
     def tweet_id_from_url(url)
