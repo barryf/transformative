@@ -9,10 +9,6 @@ module Transformative
       'h-entry'
     end
 
-    def filename
-      "/#{url}.json"
-    end
-
     def generate_url
       generate_url_published
     end
