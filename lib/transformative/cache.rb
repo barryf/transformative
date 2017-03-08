@@ -150,6 +150,7 @@ module Transformative
       urls = posts.map do |post|
         post.properties[entry_type_property[post.properties['entry-type'][0]]]
       end
+      urls.flatten!
 
       cites = db[:posts]
         .where(data['type'].get_text(0) => 'h-cite')

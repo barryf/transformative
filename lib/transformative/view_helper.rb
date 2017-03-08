@@ -115,15 +115,21 @@ module Transformative
       if post.h_type == 'h-entry'
         case post.entry_type
         when "reply", "rsvp"
-          url = post.properties['in-reply-to'][0]
-          return "<a class=\"u-in-reply-to\" href=\"#{url}\"></a>"
+          property = "in-reply-to"
+          klass = "u-in-reply-to"
         when "repost"
-          url = post.properties['repost-of'][0]
-          return "<a class=\"u-repost-of\" href=\"#{url}\"></a>"
+          property = "repost-of"
+          klass = "u-repost-of"
         when "like"
-          url = post.properties['like-of'][0]
-          return "<a class=\"u-like-of\" href=\"#{url}\"></a>"
+          property = "like-of"
+          klass = "u-like-of"
+        else
+          return
         end
+        tags = post.properties[property].map do |url|
+          "<a class=\"#{klass}\" href=\"#{url}\"></a>"
+        end
+        tags.join('')
       end
     end
 
