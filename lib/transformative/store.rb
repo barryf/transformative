@@ -12,6 +12,7 @@ module Transformative
     end
 
     def put(filename, data)
+      puts "put: filename=#{filename}"
       content = JSON.pretty_generate(data)
       if existing = get_file(filename)
         unless Base64.decode64(existing['content']) == content
