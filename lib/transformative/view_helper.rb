@@ -35,7 +35,7 @@ module Transformative
         when 'rsvp'
           "calendar"
         when 'checkin'
-          "map-marker"
+          "globe"
         else
           "comment"
         end
@@ -278,7 +278,7 @@ module Transformative
       when 'rsvp'
         "RSVP #{post.url}"
       when 'checkin'
-        "Checkin"
+        "Check-in"
       else
         post_summary(post.content, 100)
       end

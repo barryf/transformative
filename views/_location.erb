@@ -1,24 +1,23 @@
 <% if @post.properties.key?('location') %>
+  <% location = @post.properties['location'][0] %>
   <li class="location">
-    <span class="fa fa-map-marker"></span>
-
-    <% if @post.properties['location'][0].is_a?(Hash) &&
-         @post.properties['location'][0]['type'][0] == 'h-adr' %>
-      <% adr = @post.properties['location'][0] %>
-      <a class="p-location h-geo"
-          href="https://maps.google.com/maps?q=<%= adr['properties']['latitude'][0] %>,<%= adr['properties']['longitude'][0] %>">
-        <data class="p-latitude" value="<%= adr['properties']['latitude'][0] %>"></data>
-        <data class="p-longitude" value="<%= adr['properties']['longitude'][0] %>"></data>
-        <%= adr['properties']['latitude'][0] %>,
-        <%= adr['properties']['longitude'][0] %>
+    <% if location.is_a?(Hash) && location['type'][0] == 'h-card' %>
+      <a class="p-location h-card"
+          href="https://maps.google.com/maps?q=<%= location['properties']['latitude'][0] %>,<%= location['properties']['longitude'][0] %>">
+        <span class="fa fa-map-marker"></span>
+        <data class="p-latitude" value="<%= location['properties']['latitude'][0] %>"></data>
+        <data class="p-longitude" value="<%= location['properties']['longitude'][0] %>"></data>
+        <span class="p-name">
+          <%= location['properties']['name'][0] %>
+        </span>
       </a>
 
-    <% elsif @post.properties['location'][0].start_with?('geo:') %>
-      <% geo = @post.properties['location'][0].match(
-        /^geo:(\-?[0-9\.]+),(\-?[0-9\.]+)/) %>
+    <% elsif location.is_a?(String) && location.start_with?('geo:') %>
+      <% geo = location.match(/^geo:(\-?[0-9\.]+),(\-?[0-9\.]+)/) %>
       <% unless geo.nil? %>
         <a class="p-location h-geo"
             href="https://maps.google.com/maps?q=<%= geo[1] %>,<%= geo[2] %>">
+          <span class="fa fa-map-marker"></span>
           <data class="p-latitude" value="<%= geo[1] %>"></data>
           <data class="p-longitude" value="<%= geo[2] %>"></data>
           <% if @post.properties.key?('place-name') %>
