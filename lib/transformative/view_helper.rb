@@ -35,7 +35,7 @@ module Transformative
         when 'rsvp'
           "calendar"
         when 'checkin'
-          "globe"
+          "compass"
         else
           "comment"
         end
@@ -63,6 +63,8 @@ module Transformative
         "<span class=\"fa fa-instagram\"></span> Instagram"
       when 'facebook.com', 'www.facebook.com'
         "<span class=\"fa fa-facebook\"></span> Facebook"
+      when 'swarmapp.com', 'www.swarmapp.com'
+        "<span class=\"fa fa-foursquare\"></span> Swarm"
       else
         host
       end
