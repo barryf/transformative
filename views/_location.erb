@@ -7,7 +7,9 @@
           <span class="fa fa-map-marker"></span>
           <data class="p-latitude" value="<%= location['properties']['latitude'][0] %>"></data>
           <data class="p-longitude" value="<%= location['properties']['longitude'][0] %>"></data>
-          <span class="p-name"><%= location['properties']['name'][0] %></span>
+          <span class="p-name"><%= location['properties']['name'][0] %></span><% if location['properties'].key?('locality') %>,
+          <%= location['properties']['locality'][0] %><% end %><% if location['properties'].key?('region') %>,
+          <%= location['properties']['region'][0] %><% end %>
         </a>
       </div>
 
