@@ -38,7 +38,7 @@ module Transformative
       elsif @properties.key?('name') && !@properties['name'].empty? &&
           !content_start_with_name?
         'article'
-      elsif @properties.key?('location')
+      elsif @properties.key?('checkin')
         'checkin'
       else
         'note'
