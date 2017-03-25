@@ -40,7 +40,7 @@ module Transformative
       index_page
     end
 
-    get %r{^/(note|article|bookmark|photo|repost|like|replie)s/?$} do |type|
+    get %r{^/(note|article|bookmark|photo|checkin|repost|like|replie)s/?$} do |type|
       @title = "#{type}s".capitalize
       type = 'reply' if type == 'replie'
       @posts_rows = Cache.stream([type], params[:page] || 1)
