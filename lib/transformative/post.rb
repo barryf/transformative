@@ -146,7 +146,6 @@ module Transformative
       # add to syndication list
       @properties['syndication'] ||= []
       @properties['syndication'] += new_syndications
-      Store.save(self)
     end
 
     def self.class_from_type(type)

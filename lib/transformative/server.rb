@@ -173,7 +173,6 @@ module Transformative
         require_auth
         verify_url
         post = Micropub.action(params)
-        syndicate(post)
         status 204
       elsif params.key?('file')
         # assume this a file (photo) upload
@@ -186,7 +185,6 @@ module Transformative
         require_auth
         verify_create
         post = Micropub.create(params)
-        syndicate(post)
         headers 'Location' => post.absolute_url
         status 202
       end
@@ -331,16 +329,6 @@ module Transformative
         post.data
       end
       data.to_json
-    end
-
-    def syndicate(post)
-      properties = params.key?('properties') ? params['properties'] : params
-      services = if properties.key?('mp-syndicate-to')
-          properties['mp-syndicate-to']
-        elsif properties.key?('syndicate-to')
-          properties['syndicate-to']
-        end
-      post.syndicate(Array(services)) unless services.nil?
     end
 
   end

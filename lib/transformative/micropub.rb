@@ -3,18 +3,23 @@ module Transformative
     module_function
 
     def create(params)
-      post = if params.key?('h')
+      if params.key?('h')
         safe_properties = sanitise_properties(params)
         # TODO support other types?
-        Entry.new_from_form(safe_properties)
+        post = Entry.new_from_form(safe_properties)
+        services = params.key?('mp-syndicate-to') ?
+          Array(params['mp-syndicate-to']) : []
       else
         check_if_syndicated(params['properties'])
         safe_properties = sanitise_properties(params['properties'])
         klass = Post.class_from_type(params['type'][0])
-        klass.new(safe_properties)
+        post = klass.new(safe_properties)
+        services = params['properties'].key?('mp-syndicate-to') ?
+          params['properties']['mp-syndicate-to'] : []
       end
 
       post.set_slug(params)
+      post.syndicate(services) if services.any?
       Store.save(post)
     end
 
@@ -41,6 +46,9 @@ module Transformative
         post.undelete
       end
 
+      if properties.key?('mp-syndicate-to') && properties['mp-syndicate-to'].any?
+        post.syndicate(properties['mp-syndicate-to'])
+      end
       post.set_updated
       Store.save(post)
     end
