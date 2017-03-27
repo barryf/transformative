@@ -25,7 +25,8 @@ module Transformative
         'description' => post.properties['name'][0],
         'extended' => post.content,
         'tags' => tags,
-        'dt' => post.properties['published'][0]
+        'dt' => post.properties.key?('published') ?
+          post.properties['published'][0] : Time.now.utc.iso8601
       }
       pinboard_url = "https://api.pinboard.in/v1/posts/add"
       HTTParty.get(pinboard_url, query: opts)
