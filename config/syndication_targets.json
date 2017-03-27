@@ -6,5 +6,9 @@
   {
     "uid": "https://pinboard.in/barryf",
     "name": "Pinboard"
+  },
+  {
+    "uid": "https://news.indieweb.org/en",
+    "name": "IndieNews"
   }
 ]
