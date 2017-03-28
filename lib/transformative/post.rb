@@ -121,10 +121,14 @@ module Transformative
     end
 
     def set_slug(params)
-      properties = params.key?('properties') ? params['properties'] : params
-      return unless properties.key?('mp-slug')
-      slug = properties['mp-slug'][0].downcase.gsub(/[^\w-]/, '-')
-      @slug = slug
+      if params.key?('properties')
+        return unless params['properties'].key?('mp-slug')
+        mp_slug = params['properties']['mp-slug'][0]
+      else
+        return unless params.key?('mp-slug')
+        mp_slug = params['mp-slug']
+      end
+      @slug = mp_slug.strip.downcase.gsub(/[^\w-]/, '-')
     end
 
     def syndicate(services)
