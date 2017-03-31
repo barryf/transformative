@@ -43,8 +43,9 @@ module Transformative
       properties = item['properties']
       published = properties.key?('published') ?
         Time.parse(properties['published'][0]) : Time.now
+      post_url = properties.key?('url') ? properties['url'][0] : url
       hash = {
-        'url' => [properties['url'][0]],
+        'url' => [URI.join(url, post_url).to_s],
         'name' => [properties['name'][0].strip],
         'published' => [published.utc.iso8601],
         'content' => [{ html: properties['content'][0].strip }],
