@@ -27,7 +27,7 @@
   <%= erb :'_contexts' unless @contexts.nil? %>
 
   <a class="post-type" href="<%= @post.url %>">
-    <%= post_type_icon(@post.properties['entry-type'][0]) %>
+    <%= post_type_icon(@post) %>
   </a>
 
   <% if @post.properties['entry-type'][0] == 'bookmark' %>

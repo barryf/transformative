@@ -18,8 +18,8 @@ module Transformative
       )
     end
 
-    def post_type_icon(type)
-      icon = case type
+    def post_type_icon(post)
+      icon = case post.properties['entry-type'][0]
         when 'article'
           "file-text"
         when 'bookmark'
@@ -33,7 +33,18 @@ module Transformative
         when 'like'
           "heart"
         when 'rsvp'
-          "calendar"
+          if post.properties.key?('rsvp')
+            case post.properties['rsvp'][0]
+            when 'yes', true
+              'calendar-check-o'
+            when 'no', false
+              'calendar-times-o'
+            else
+              'calendar-o'
+            end
+          else
+            "calendar"
+          end
         when 'checkin'
           "compass"
         else
