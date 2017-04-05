@@ -17,11 +17,11 @@ module Transformative
     end
 
     def slug
-      @slug || slugify
+      @slug ||= slugify
     end
 
     def url
-      @url || generate_url
+      @url ||= generate_url
     end
 
     def absolute_url
@@ -71,7 +71,7 @@ module Transformative
            @properties['content'][0]
          end
       end
-      return Time.now.strftime('%d-%H%M%S') if content.nil?
+      return Time.now.utc.strftime('%d-%H%M%S') if content.nil?
 
       content.downcase.gsub(/[^\w-]/, ' ').strip.gsub(' ', '-').
         gsub(/[-_]+/,'-').split('-')[0..5].join('-')
