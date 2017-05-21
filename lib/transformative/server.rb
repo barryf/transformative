@@ -17,8 +17,8 @@ module Transformative
     get '/' do
       @posts_rows = Cache.stream(%w( note article photo repost ),
         params[:page] || 1)
-      link 'https://whispering-bayou-15552.herokuapp.com/auth', rel: 'authorization_endpoint'
-      link 'https://tokens.indieauth.com/token', rel: 'token_endpoint'
+      link ENV['AUTHORIZATION_ENDPOINT'], rel: 'authorization_endpoint'
+      link ENV['TOKEN_ENDPOINT'], rel: 'token_endpoint'
       link "#{ENV['SITE_URL']}micropub", rel: 'micropub'
       link ENV['SITE_URL'], rel: 'feed'
       link ENV['PUBSUBHUBBUB_HUB'], rel: 'hub'
