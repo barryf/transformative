@@ -2,10 +2,8 @@ module Transformative
   module Auth
     module_function
 
-    TOKEN_ENDPOINT = "https://tokens.indieauth.com/token"
-
     def verify_token_and_scope(token, scope)
-      response = get_token_response(token, TOKEN_ENDPOINT)
+      response = get_token_response(token, ENV['TOKEN_ENDPOINT'])
       unless response.code.to_i == 200
         raise ForbiddenError.new
       end
