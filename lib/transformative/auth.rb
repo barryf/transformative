@@ -22,7 +22,7 @@ module Transformative
       HTTParty.get(
         token_endpoint,
         headers: {
-          'Content-Type' => 'application/x-www-form-urlencoded',
+          'Accept' => 'application/x-www-form-urlencoded',
           'Authorization' => "Bearer #{token}"
         })
     end
