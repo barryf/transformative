@@ -14,6 +14,10 @@ module Transformative
       set :server, :puma
     end
 
+    before do
+      redirect(request.url.sub(/www\./, ''), 301) if request.host =~ /^www/
+    end
+
     get '/' do
       @posts_rows = Cache.stream(%w( note article photo repost ),
         params[:page] || 1)
