@@ -310,5 +310,52 @@ module Transformative
       content
     end
 
+    def jsonfeed(posts)
+      feed = {
+        "version" => "https://jsonfeed.org/version/1",
+        "title" => "Barry Frost",
+        "home_page_url" => ENV['SITE_URL'],
+        "feed_url" => "#{ENV['SITE_URL']}feed.json",
+        "author" => {
+          "name" => "Barry Frost",
+          "url" => "https://barryfrost.com/",
+          "avatar" => "https://barryf.s3.amazonaws.com/barryfrost.jpg"
+        },
+        "items" => []
+      }
+      posts.each do |post|
+        item = {
+          "id" => post.url,
+          "url" => URI.join(ENV['SITE_URL'], post.url),
+          "date_published" => post.properties['published'][0]
+        }
+        if post.properties.key?('updated')
+          item["date_modified"] = post.properties['updated'][0]
+        end
+        if post.properties.key?('name')
+          item["title"] = post.properties['name'][0]
+        end
+        if post.properties['entry-type'][0] == 'bookmark'
+          item["title"] = "Bookmark: " + item["title"]
+          item["external_url"] = post.properties['bookmark-of'][0]
+        end
+        if post.properties.key?('content')
+          if post.properties['content'][0].is_a?(Hash)
+            item["content_html"] = post.properties['content'][0]['html']
+          elsif !post.properties['content'][0].empty?
+            item["content_text"] = post.properties['content'][0]
+          end
+        end
+        if post.properties.key?('photo')
+          item["image"] = post.properties['photo'][0]
+        end
+        if post.properties.key?('category')
+          item["tags"] = post.properties['category']
+        end
+        feed["items"] << item
+      end
+      feed.to_json
+    end
+
   end
 end

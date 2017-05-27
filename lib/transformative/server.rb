@@ -90,6 +90,13 @@ module Transformative
       builder :rss
     end
 
+    get '/feed.json' do
+      posts_rows = Cache.stream(%w( note article bookmark photo ), 1)
+      posts = posts_rows.map { |row| Cache.row_to_post(row) }
+      content_type :json, charset: 'utf-8'
+      jsonfeed(posts)
+    end
+
     get '/archives/?' do
       posts = Cache.stream_all(1, 99999).map { |row| Cache.row_to_post(row) }
       year = 0
