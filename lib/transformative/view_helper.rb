@@ -76,6 +76,8 @@ module Transformative
         "<span class=\"fa fa-facebook\"></span> Facebook"
       when 'swarmapp.com', 'www.swarmapp.com'
         "<span class=\"fa fa-foursquare\"></span> Swarm"
+      when 'news.indieweb.org'
+        "IndieNews"
       else
         host
       end
