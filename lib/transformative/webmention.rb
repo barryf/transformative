@@ -13,12 +13,11 @@ module Transformative
 
       check_target_is_valid_post(target)
 
-      source_body = get_source_and_check_it_links_to_target(source, target)
+      get_source_and_check_it_links_to_target(source, target)
 
-      author = store_author(source, source_body)
+      author = store_author(source)
 
-      cite = store_cite(source, source_body, author.properties['url'][0],
-        target)
+      cite = store_cite(source, author.properties['url'][0], target)
 
       send_notification(cite, author, target)
     end
@@ -82,16 +81,15 @@ module Transformative
         raise WebmentionError.new("no_link_found",
           "The source URI does not contain a link to the target URI.")
       end
-      response.body
     end
 
-    def store_author(source, source_body)
-      author_post = Authorship.get_author(source, source_body)
+    def store_author(source)
+      author_post = Authorship.get_author(source)
       Store.save(author_post)
     end
 
-    def store_cite(source, source_body, author_url, target)
-      json = Microformats2.parse(source_body).to_json
+    def store_cite(source, author_url, target)
+      json = Microformats.parse(source).to_json
       properties = JSON.parse(json)['items'][0]['properties']
       published = properties.key?('published') ?
         Time.parse(properties['published'][0]) :

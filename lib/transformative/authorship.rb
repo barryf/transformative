@@ -7,9 +7,8 @@ module Transformative
       get_author(url)
     end
 
-    def get_author(url, body=nil)
-      body ||= HTTParty.get(url).body
-      json = Microformats2.parse(body).to_json
+    def get_author(url)
+      json = Microformats.parse(url).to_json
       items = JSON.parse(json)['items']
 
       # find first h-entry
@@ -55,8 +54,7 @@ module Transformative
     end
 
     def get_author_hcard(url)
-      body = HTTParty.get(url).body
-      json = Microformats2.parse(body).to_json
+      json = Microformats.parse(url).to_json
       properties = JSON.parse(json)['items'][0]['properties']
       # force the url to be this absolute url
       properties['url'] = [url]

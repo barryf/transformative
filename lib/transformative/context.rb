@@ -31,9 +31,7 @@ module Transformative
     end
 
     def parse_mf2(url)
-      response = HTTParty.get(url)
-      return unless response.code.to_i == 200
-      json = Microformats2.parse(response.body).to_json
+      json = Microformats.parse(url).to_json
       items = JSON.parse(json)['items']
       item = find_first_hentry_or_hevent(items)
       return if item.nil?
