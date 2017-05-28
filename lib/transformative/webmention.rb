@@ -99,7 +99,7 @@ module Transformative
         'name' => [properties['name'][0].strip],
         'published' => [published.utc.iso8601],
         'author' => [author_url],
-        webmention_property(source_body, target) => [target]
+        webmention_property(source, target) => [target]
       }
       if properties.key?('content')
         hash['content'] = [{ html: properties['content'][0].strip }]
@@ -111,16 +111,17 @@ module Transformative
       Store.save(cite)
     end
 
-    def webmention_property(body, url)
+    def webmention_property(source, target)
+      body = HTTParty.get(source).body
       doc = Nokogiri::HTML(body)
-      if doc.css("a[href=\"#{url}\"].u-in-reply-to").any? ||
-          doc.css("a[href=\"#{url}\"][rel=\"in-reply-to\"]").any?
+      if doc.css("a[href=\"#{target}\"].u-in-reply-to").any? ||
+          doc.css("a[href=\"#{target}\"][rel=\"in-reply-to\"]").any?
         return 'in-reply-to'
-      elsif doc.css("a[href=\"#{url}\"].u-like-of").any? ||
-          doc.css("a[href=\"#{url}\"].u-like").any?
+      elsif doc.css("a[href=\"#{target}\"].u-like-of").any? ||
+          doc.css("a[href=\"#{target}\"].u-like").any?
         return 'like-of'
-      elsif doc.css("a[href=\"#{url}\"].u-repost-of").any? ||
-          doc.css("a[href=\"#{url}\"].u-repost").any?
+      elsif doc.css("a[href=\"#{target}\"].u-repost-of").any? ||
+          doc.css("a[href=\"#{target}\"].u-repost").any?
         return 'repost-of'
       end
       'mention-of'
