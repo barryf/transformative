@@ -46,7 +46,7 @@ module Transformative
         'url' => [URI.join(url, post_url).to_s],
         'name' => [properties['name'][0].strip],
         'published' => [published.utc.iso8601],
-        'content' => [{ html: properties['content'][0] }],
+        'content' => [properties['content'][0]['value']],
         'author' => [author.properties['url'][0]]
       }
       if properties.key?('photo')

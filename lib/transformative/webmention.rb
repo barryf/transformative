@@ -102,7 +102,7 @@ module Transformative
         webmention_property(source, target) => [target]
       }
       if properties.key?('content')
-        hash['content'] = [{ html: properties['content'][0].strip }]
+        hash['content'] = [properties['content'][0]['value']]
       end
       if properties.key?('photo') && properties['photo'].any?
         hash['photo'] = properties['photo']
