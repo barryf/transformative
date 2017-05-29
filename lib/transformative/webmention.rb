@@ -13,7 +13,7 @@ module Transformative
 
       check_target_is_valid_post(target)
 
-      get_source_and_check_it_links_to_target(source, target)
+      return unless source_links_to_target?(source, target)
 
       author = store_author(source)
 
@@ -58,19 +58,20 @@ module Transformative
       end
     end
 
-    def get_source_and_check_it_links_to_target(source, target)
+    def source_links_to_target?(source, target)
       response = HTTParty.get(source)
       case response.code.to_i
       when 410
         # the post has been deleted so remove any existing webmentions
         remove_webmention_if_exists(source)
+        # source no longer links to target but no need for error
+        return false
       when 200
         # that's fine - continue...
       else
         raise WebmentionError.new("invalid_source",
           "The specified source URI could not be retrieved.")
       end
-
       doc = Nokogiri::HTML(response.body)
       unless doc.css("a[href=\"#{target}\"]").any? ||
           doc.css("img[src=\"#{target}\"]").any? ||
@@ -81,6 +82,7 @@ module Transformative
         raise WebmentionError.new("no_link_found",
           "The source URI does not contain a link to the target URI.")
       end
+      true
     end
 
     def store_author(source)
@@ -112,24 +114,41 @@ module Transformative
     end
 
     def webmention_property(source, target)
-      body = HTTParty.get(source).body
-      doc = Nokogiri::HTML(body)
-      if doc.css("a[href=\"#{target}\"].u-in-reply-to").any? ||
-          doc.css("a[href=\"#{target}\"][rel=\"in-reply-to\"]").any?
-        return 'in-reply-to'
-      elsif doc.css("a[href=\"#{target}\"].u-like-of").any? ||
-          doc.css("a[href=\"#{target}\"].u-like").any?
-        return 'like-of'
-      elsif doc.css("a[href=\"#{target}\"].u-repost-of").any? ||
-          doc.css("a[href=\"#{target}\"].u-repost").any?
-        return 'repost-of'
+      hash = Microformats.parse(source).to_h
+      # use first entry
+      entries = hash['items'].map { |i| i if i['type'].include?('h-entry') }
+      entries.compact!
+      return 'mention-of' unless entries.any?
+      entry = entries[0]
+      # find the webmention type, just one, in order of importance
+      %w( in-reply-to repost-of like-of ).each do |type|
+        if entry['properties'].key?(type)
+          urls = entry['properties'][type].map do |t|
+            if t.is_a?(Hash)
+              if t.key?('type') &&
+                  t['type'].is_a?(Array) &&
+                  t['type'].any? &&
+                  t['type'][0] == 'h-cite' &&
+                  t['properties'].key?('url') &&
+                  t['properties']['url'].is_a?(Array) &&
+                  t['properties']['url'].any? &&
+                  Utils.valid_url?(t['properties']['url'][0])
+                t['properties']['url'][0]
+              end
+            elsif t.is_a?(String) && Utils.valid_url?(t)
+              t
+            end
+          end
+          return type if urls.include?(target)
+        end
       end
+      # no type found so assume it was a simple mention
       'mention-of'
     end
 
     def remove_webmention_if_exists(url)
       return unless cite = Cache.get_by_properties_url(url)
-      %w( in-reply-to repost-of like-of ).each do |property|
+      %w( in-reply-to repost-of like-of mention-of ).each do |property|
         if cite.properties.key?(property)
           cite.properties.delete(property)
         end
