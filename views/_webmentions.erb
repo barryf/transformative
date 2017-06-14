@@ -59,7 +59,7 @@
 
             <%= webmention_type_text(type) %>
 
-            <% if type == 'reply' && webmention.properties.key?('name') && webmention.properties['name'][0] != webmention.content %>
+            <% if type == 'reply' && webmention.properties.key?('name') && !webmention.content.start_with?(webmention.properties['name'][0]) %>
               &ldquo;<span class="p-name"><%= post_summary(webmention.properties['name'][0], 40) %></span>&rdquo;
             <% end %>
             on <%= host_link(webmention.properties['url'][0]) %>
