@@ -1,0 +1,21 @@
+<% case @post.properties['entry-type'][0]
+when 'bookmark' %>
+  <h1>
+    <a href="<%= @post.properties['bookmark-of'][0] %>">
+      <span class="p-name"><%= @post.properties['name'][0] %></span>
+      <span class="fa fa-external-link-square"></span>
+    </a>
+  </h1>
+<% when 'article' %>
+  <h1 class="p-name"><%= @post.properties['name'][0] %></h1>
+<% when 'like' %>
+  <data class="p-name" value="Liked <%= @post.properties['like-of'][0] %>">
+<% when 'repost' %>
+  <% if @post.content.nil? %>
+    <data class="p-name" value="Reposted <%= @post.properties['repost-of'][0] %>">
+  <% end %>
+<% when 'photo' %>
+  <% if @post.content.nil? %>
+    <data class="p-name" value="New photo(s)">
+  <% end %>
+<% end %>

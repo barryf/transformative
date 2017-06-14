@@ -1,4 +1,5 @@
 <% if @webmentions.any? %>
+  <% author = nil %>
   <ul class="webmentions external">
 
     <% likes_count = @webmentions.map { |w| webmention_type(w) == 'like' ? 1 : nil }.compact.size %>
@@ -11,15 +12,16 @@
               <% next unless webmention_type(webmention) == 'like' %>
               <!-- <%= webmention.absolute_url %> -->
               <% if @authors.key?(webmention.properties['author'][0]) %>
+                <% author = @authors[webmention.properties['author'][0]] %>
                 <span class="h-cite p-like">
                   <a class="u-url" href="<%= webmention.properties['url'][0] %>"></a>
+                  <data class="p-name" value="<%= h author.properties['name'][0] %>">
                   <span class="h-card p-author">
-                    <% author = @authors[webmention.properties['author'][0]] %>
-                    <data class="p-name"><%= author.properties['name'][0] %></data>
+                    <data class="p-name" value="<%= h author.properties['name'][0] %>"></data>
                     <% if author.properties.key?('photo') %>
                       <a class="u-url" rel="nofollow" href="<%= author.properties['url'][0] %>">
                         <img class="u-photo" src="<%= force_https_author_profile(author.properties['photo'][0], author.properties['url'][0]) %>"
-                          title="<%= author.properties['name'][0] %>">
+                          title="<%= h author.properties['name'][0] %>">
                       </a>
                     <% end %>
                   </span>
@@ -48,27 +50,33 @@
                   <% if author.properties.key?('photo') %>
                     <img class="u-photo" src="<%= force_https_author_profile(author.properties['photo'][0], author.properties['url'][0]) %>">
                   <% end %>
-                  <span class="p-name"><%= author.properties['name'][0] %></span>
+                  <span class="p-name"><%= h author.properties['name'][0] %></span>
                 </a>
               <% else %>
-                <span class="p-name"><%= webmention.properties['author'][0] %></span>
+                <span class="p-name"><%= h webmention.properties['author'][0] %></span>
               <% end %>
             </span>
 
             <%= webmention_type_text(type) %>
 
             <% if type == 'reply' && webmention.properties.key?('name') && webmention.properties['name'][0] != webmention.content %>
-              &ldquo;<a href="<%= webmention.properties['url'][0] %>"
-                rel="nofollow"><span class="p-name"
-                ><%= post_summary(webmention.properties['name'][0], 40) %></span></a>&rdquo;
+              &ldquo;<span class="p-name"><%= post_summary(webmention.properties['name'][0], 40) %></span>&rdquo;
             <% end %>
             on <%= host_link(webmention.properties['url'][0]) %>
           </dt>
 
           <% if type == 'reply' %>
-            <dd class="e-content<% if webmention.properties.key?('name') %> p-name<% end %>">
+            <dd class="e-content<% unless webmention.properties.key?('name') && webmention.properties['name'][0] != webmention.content %> p-name<% end %>">
               <%= link_twitter link_hashtags link_urls post_summary webmention.content %>
             </dd>
+          <% end %>
+
+          <% if type == 'repost' || type == 'mention' %>
+            <% unless author.nil? %>
+              <data class="p-name" value="<%= h author.properties['name'][0] %>">
+            <% else %>
+              <data class="p-name" value="<%= webmention.properties['url'][0] %>">
+            <% end %>
           <% end %>
 
         </dl>

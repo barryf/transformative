@@ -30,25 +30,12 @@
     <%= post_type_icon(@post) %>
   </a>
 
-  <% if @post.properties['entry-type'][0] == 'bookmark' %>
-    <h1>
-      <a href="<%= @post.properties['bookmark-of'][0] %>">
-        <span class="p-name"><%= @post.properties['name'][0] %></span>
-        <span class="fa fa-external-link-square"></span>
-      </a>
-    </h1>
-  <% elsif @post.properties['entry-type'][0] == 'article' %>
-    <h1>
-      <a href="<%= @post.url %>" class="p-name">
-        <%= @post.properties['name'][0] %>
-      </a>
-    </h1>
-  <% end %>
+  <%= erb :'_name' %>
 
-  <% unless @post.content.nil? %>
-    <div class="e-content<% unless @post.properties['entry-type'][0] == 'article' or
-        @post.properties['entry-type'][0] == 'bookmark' %> p-name<% end %> content">
-      <%= post_split filter_all filter_markdown @post.content %>
+  <% if !@post.content.nil? %>
+    <div class="content">
+      <div class="e-content<% unless @post.properties.key?('name') %> p-name<% end %>"
+        ><%= post_split filter_all filter_markdown @post.content %></div>
       <%= erb :'_photos' %>
     </div>
   <% end %>
@@ -59,7 +46,7 @@
 
   <ul class="metadata">
     <%= erb :'_timestamp' %>
-    <%= erb :_webmention_counts %>
+    <%= erb :'_webmention_counts' %>
     <%= erb :'_categories' %>
     <%= erb :'_location' %>
     <%= erb :'_syndications' %>

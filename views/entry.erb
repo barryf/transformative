@@ -12,27 +12,18 @@
     <%= post_type_icon(@post) %>
   </a>
 
-  <% if @post.properties['entry-type'][0] == 'bookmark' %>
-    <h1 class="p-name">
-      <a href="<%= @post.properties['bookmark-of'][0] %>">
-        <%= @post.properties['name'][0] %>
-        <span class="fa fa-external-link-square"></span>
-      </a>
-    </h1>
-  <% elsif @post.properties['entry-type'][0] == 'article' %>
-    <h1 class="p-name"><%= @post.properties['name'][0] %></h1>
-  <% end %>
+  <%= erb :'_name' %>
 
-  <% unless @post.content.nil? %>
-    <div class="e-content<% unless @post.properties['entry-type'][0] == 'article' or
-        @post.properties['entry-type'][0] == 'bookmark' %> p-name<% end %> content">
-      <%= filter_all filter_markdown @post.content %>
+  <% if !@post.content.nil? %>
+    <div class="content">
+      <div class="e-content<% unless @post.properties.key?('name') %> p-name<% end %>"
+        ><%= filter_all filter_markdown @post.content %></div>
       <%= erb :'_photos' %>
     </div>
   <% end %>
 
   <% if @post.properties.key?('summary') and !@post.properties['summary'][0].empty? %>
-    <div class="p-summary" style="display: none;"><%= @post.properties['summary'][0] %></div>
+    <data class="p-summary" value="<%= h @post.properties['summary'][0] %>"></data>
   <% end %>
 
   <% if @post.properties['entry-type'][0] == 'rsvp' %>

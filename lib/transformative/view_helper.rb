@@ -103,6 +103,8 @@ module Transformative
         return "p-like"
       when "repost"
         return "p-repost"
+      when "mention"
+        "p-mention"
       end
     end
     def post_type_u_class(type)
@@ -113,6 +115,15 @@ module Transformative
         return "u-repost-of u-repost"
       when "like"
         return "u-like-of u-like"
+      end
+    end
+    def context_class(post)
+      if post.properties.key?('in-reply-to')
+        "u-in-reply-to"
+      elsif post.properties.key?('repost-of')
+        "u-repost-of"
+      elsif post.properties.key?('like-of')
+        "u-like-of"
       end
     end
     def post_type_p_class(post)
