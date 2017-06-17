@@ -21,7 +21,8 @@
                     <% if author.properties.key?('photo') %>
                       <a class="u-url" rel="nofollow" href="<%= author.properties['url'][0] %>">
                         <img class="u-photo" src="<%= force_https_author_profile(author.properties['photo'][0], author.properties['url'][0]) %>"
-                          title="<%= h author.properties['name'][0] %>">
+                          title="<%= h author.properties['name'][0] %>"
+                          alt="Photo of <%= h author.properties['name'][0] %>">
                       </a>
                     <% end %>
                   </span>
@@ -48,7 +49,8 @@
                 <% author = @authors[webmention.properties['author'][0]] %>
                 <a class="u-url" rel="nofollow" href="<%= author.properties['url'][0] %>">
                   <% if author.properties.key?('photo') %>
-                    <img class="u-photo" src="<%= force_https_author_profile(author.properties['photo'][0], author.properties['url'][0]) %>">
+                    <img class="u-photo" src="<%= force_https_author_profile(author.properties['photo'][0], author.properties['url'][0]) %>"
+                      alt="<%= h author.properties['name'][0] %>">
                   <% end %>
                   <span class="p-name"><%= h author.properties['name'][0] %></span>
                 </a>
