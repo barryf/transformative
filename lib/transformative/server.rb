@@ -36,7 +36,7 @@ module Transformative
       index_page
     end
 
-    get %r{^/tags?/([A-Za-z0-9\-\+]+)/?$} do |tags|
+    get %r{/tags?/([A-Za-z0-9\-\+]+)/?} do |tags|
       tags.downcase!
       @title = "Tagged  ##{tags.split('+').join(' #')}"
       @page_title = @title
@@ -44,21 +44,21 @@ module Transformative
       index_page
     end
 
-    get %r{^/(note|article|bookmark|photo|checkin|repost|like|replie)s/?$} do |type|
+    get %r{/(note|article|bookmark|photo|checkin|repost|like|replie)s/?} do |type|
       @title = "#{type}s".capitalize
       type = 'reply' if type == 'replie'
       @posts_rows = Cache.stream([type], params[:page] || 1)
       index_page
     end
 
-    get %r{^/([0-9]{4})/([0-9]{2})/?$} do |y, m|
+    get %r{/([0-9]{4})/([0-9]{2})/?} do |y, m|
       @posts_rows = Cache.stream_all_by_month(y, m)
       @title = "#{Date::MONTHNAMES[m.to_i]} #{y}"
       @page_title = @title
       index_page
     end
 
-    get %r{^/([0-9]{4})/([0-9]{2})/([a-z0-9-]+)/?$} do |y, m, slug|
+    get %r{/([0-9]{4})/([0-9]{2})/([a-z0-9-]+)/?} do |y, m, slug|
       url = "/#{y}/#{m}/#{slug}"
       @post = Cache.get(url)
       return not_found if @post.nil?
@@ -77,13 +77,13 @@ module Transformative
       end
     end
 
-    get %r{^/([0-9]{4})/([0-9]{2})/([a-z0-9-]+)\.json$} do |y, m, slug|
+    get %r{/([0-9]{4})/([0-9]{2})/([a-z0-9-]+)\.json} do |y, m, slug|
       url = "/#{y}/#{m}/#{slug}"
       content_type :json, charset: 'utf-8'
       Cache.get_json(url)
     end
 
-    get %r{(index|posts|rss)(\.xml)?$} do
+    get %r{(index|posts|rss)(\.xml)?} do
       posts_rows = Cache.stream(%w( note article bookmark photo ), 1)
       @posts = posts_rows.map { |row| Cache.row_to_post(row) }
       content_type :xml
@@ -123,7 +123,7 @@ module Transformative
     end
 
     # legacy redirects from old sites (baker)
-    get %r{^/posts/([0-9]+)/?$} do |baker_id|
+    get %r{/posts/([0-9]+)/?} do |baker_id|
       post = Cache.get_first_by_slug("baker-#{baker_id}")
       if post.nil?
         not_found
@@ -131,7 +131,7 @@ module Transformative
         redirect post.url, 301
       end
     end
-    get %r{^/([0-9]{1,3})/?$} do |baker_id|
+    get %r{/([0-9]{1,3})/?} do |baker_id|
       post = Cache.get_first_by_slug("baker-#{baker_id}")
       if post.nil?
         not_found
@@ -139,7 +139,7 @@ module Transformative
         redirect post.url, 301
       end
     end
-    get %r{^/articles/([a-z0-9-]+)/?$} do |slug|
+    get %r{/articles/([a-z0-9-]+)/?} do |slug|
       post = Cache.get_first_by_slug(slug)
       not_found if post.nil?
       redirect post.url, 301
