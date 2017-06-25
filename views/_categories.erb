@@ -12,7 +12,8 @@
               <%= @authors[category].properties['name'][0] %>
             </a>
           <% else %>
-            <%= host_link(category) %>
+            <a class="u-category h-card" rel="nofollow"
+              href="<%= category %>"><%= category %></a>
           <% end %>
         </li>
       <% elsif category.is_a?(Hash) &&
