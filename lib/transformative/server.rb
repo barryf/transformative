@@ -83,7 +83,7 @@ module Transformative
       Cache.get_json(url)
     end
 
-    get %r{(index|posts|rss)(\.xml)?} do
+    get %r{/(index|posts|rss|feed)(\.xml)?} do
       posts_rows = Cache.stream(%w( note article bookmark photo ), 1)
       @posts = posts_rows.map { |row| Cache.row_to_post(row) }
       content_type :xml
