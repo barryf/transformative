@@ -5,6 +5,9 @@ module Transformative
     def receive(source, target)
       return if source == target
 
+      # ignore swarm comment junk
+      return if source.start_with?('https://ownyourswarm.p3k.io')
+
       verify_source(source)
 
       verify_target(target)
