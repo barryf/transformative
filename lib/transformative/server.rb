@@ -21,12 +21,6 @@ module Transformative
     get '/' do
       @posts_rows = Cache.stream(%w( note article photo repost ),
         params[:page] || 1)
-      link ENV['AUTHORIZATION_ENDPOINT'], rel: 'authorization_endpoint'
-      link ENV['TOKEN_ENDPOINT'], rel: 'token_endpoint'
-      link "#{ENV['SITE_URL']}micropub", rel: 'micropub'
-      link ENV['SITE_URL'], rel: 'feed'
-      link ENV['PUBSUBHUBBUB_HUB'], rel: 'hub'
-      link ENV['SITE_URL'], rel: 'self'
       index_page
     end
 
