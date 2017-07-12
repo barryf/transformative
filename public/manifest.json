@@ -1,0 +1,18 @@
+{
+  "lang": "en",
+  "dir": "ltr",
+  "name": "Barry Frost's personal website",
+  "short_name": "Barry Frost",
+  "icons": [
+    {
+      "src": "https://barryf.s3.amazonaws.com/barryfrost.jpg",
+      "sizes": "300x300",
+      "type": "image/jpeg"
+    }
+  ],
+  "theme_color": "#f60",
+  "background_color": "#f60",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "natural"
+}
