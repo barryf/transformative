@@ -3,8 +3,6 @@ require 'openssl'
 module Transformative
   module ViewHelper
 
-    CAMO_URL = "https://barryfrost-camo.herokuapp.com/"
-
     def h(text)
       Rack::Utils.escape_html(text)
     end
@@ -253,7 +251,7 @@ module Transformative
       hexdigest = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'),
         ENV['CAMO_KEY'], image_url)
       encoded_image_url = hexenc(image_url)
-      "#{CAMO_URL}#{hexdigest}/#{encoded_image_url}"
+      "#{ENV['CAMO_URL']}#{hexdigest}/#{encoded_image_url}"
     end
 
     def is_tweet?(post)

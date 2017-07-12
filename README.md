@@ -95,6 +95,7 @@ You will need to define the following environment variables:
 Optional variables:
 
 - `CAMO_KEY` -- your [Camo][] instance private key
+- `CAMO_URL` -- your [Camo][] instance root URL
 - `PUSHOVER_USER`, `PUSHOVER_TOKEN` -- account details for use with Pushover
 - `PINBOARD_AUTH_TOKEN` -- Pinboard API key
 - `PUBSUBHUBBUB_HUB` e.g. https://barryfrost.superfeedr.com
