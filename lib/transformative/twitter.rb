@@ -56,7 +56,13 @@ module Transformative
     def get_media(post)
       if post.properties.key?('photo') &&
           post.properties['photo'].is_a?(Array)
-        post.properties['photo'].map { |url| open(url) }
+        post.properties['photo'].map do |photo|
+          if photo.is_a?(Hash)
+            open(photo['value'])
+          else
+            open(photo)
+          end
+        end
       end
     end
 
