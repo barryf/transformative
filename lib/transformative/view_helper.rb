@@ -147,6 +147,9 @@ module Transformative
         when "like"
           property = "like-of"
           klass = "u-like-of"
+        when "bookmark"
+          property = "bookmark-of"
+          klass = "u-bookmark-of"
         else
           return
         end
