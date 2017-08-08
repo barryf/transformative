@@ -78,14 +78,14 @@ module Transformative
     end
 
     get %r{/(index|posts|rss|feed)(\.xml)?} do
-      posts_rows = Cache.stream(%w( note article bookmark photo ), 1)
+      posts_rows = Cache.stream(%w( note article photo ), 1)
       @posts = posts_rows.map { |row| Cache.row_to_post(row) }
       content_type :xml
       builder :rss
     end
 
     get '/feed.json' do
-      posts_rows = Cache.stream(%w( note article bookmark photo ), 1)
+      posts_rows = Cache.stream(%w( note article photo ), 1)
       posts = posts_rows.map { |row| Cache.row_to_post(row) }
       content_type :json, charset: 'utf-8'
       jsonfeed(posts)
