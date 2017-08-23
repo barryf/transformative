@@ -164,15 +164,15 @@ module Transformative
 
       replies = db[:posts]
         .where(data['properties']['in-reply-to'].contain_any(post_urls))
-        .and(data['type'].get_text(0) => 'h-cite')
+        .where(data['type'].get_text(0) => 'h-cite')
         .map { |row| row_to_post(row) }
       reposts = db[:posts]
         .where(data['properties']['repost-of'].contain_any(post_urls))
-        .and(data['type'].get_text(0) => 'h-cite')
+        .where(data['type'].get_text(0) => 'h-cite')
         .map { |row| row_to_post(row) }
       likes = db[:posts]
         .where(data['properties']['like-of'].contain_any(post_urls))
-        .and(data['type'].get_text(0) => 'h-cite')
+        .where(data['type'].get_text(0) => 'h-cite')
         .map { |row| row_to_post(row) }
 
       counts = {}

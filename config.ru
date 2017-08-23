@@ -21,8 +21,8 @@ end
 use Rack::PostBodyContentTypeParser
 
 require 'will_paginate/sequel'
-Sequel::Database.extension(:pagination)
-Sequel.extension(:pg_array, :pg_json, :pg_json_ops)
+Sequel::Database.extension(:pagination, :pg_json)
+Sequel.extension(:pg_array, :pg_json_ops)
 
 require 'transformative'
 run Transformative::Server
