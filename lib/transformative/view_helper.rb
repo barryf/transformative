@@ -357,7 +357,7 @@ module Transformative
           if post.properties['content'][0].is_a?(Hash)
             item["content_html"] = post.properties['content'][0]['html']
           elsif !post.properties['content'][0].empty?
-            item["content_text"] = post.properties['content'][0]
+            item["content_html"] = filter_markdown(post.properties['content'][0])
           end
         end
         if post.properties.key?('photo')
