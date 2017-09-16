@@ -315,7 +315,8 @@ module Transformative
       content = ""
       if post.properties.key?('photo')
         post.properties['photo'].each do |photo|
-          content += "<p><img src=\"#{photo}\"></p>"
+          src = photo.is_a?(Hash) ? photo['value'] : photo
+          content += "<p><img src=\"#{src}\"></p>"
         end
       end
       unless post.content.nil?
