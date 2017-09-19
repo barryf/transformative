@@ -362,7 +362,8 @@ module Transformative
           end
         end
         if post.properties.key?('photo')
-          item["image"] = post.properties['photo'][0]
+          photo = post.properties['photo'][0]
+          item["image"] = photo.is_a?(Hash) ? photo['value'] : photo
         end
         if post.properties.key?('category')
           item["tags"] = post.properties['category']
