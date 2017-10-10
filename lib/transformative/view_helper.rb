@@ -227,6 +227,7 @@ module Transformative
       content.gsub /\B@(\w*[a-zA-Z0-9_-]+)\w*/i, %Q{<a href="https://twitter.com/\\1">@\\1</a>\\2}
     end
     def link_hashtags(content)
+      return content
       # hashtags => link internally
       content.gsub /\B#(\w*[a-zA-Z0-9]+)\w*/i, %Q{ <a href="/tag/\\1">#<span class=\"p-category\">\\1</span></a> }
     end
