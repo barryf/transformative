@@ -72,6 +72,7 @@ module Transformative
       url = "/#{y}/#{m}/#{slug}"
       json = Cache.get_json(url)
       etag Digest::SHA1.hexdigest(json)
+      cache_control :s_maxage => 300, :max_age => 600
       content_type :json, charset: 'utf-8'
       json
     end
@@ -81,6 +82,7 @@ module Transformative
       @posts = posts_rows.map { |row| Cache.row_to_post(row) }
       xml = builder :rss
       etag Digest::SHA1.hexdigest(xml)
+      cache_control :s_maxage => 300, :max_age => 600
       content_type :xml
       xml
     end
@@ -90,6 +92,7 @@ module Transformative
       posts = posts_rows.map { |row| Cache.row_to_post(row) }
       json = jsonfeed(posts)
       etag Digest::SHA1.hexdigest(json)
+      cache_control :s_maxage => 300, :max_age => 600
       content_type :json, charset: 'utf-8'
       json
     end
@@ -256,7 +259,7 @@ module Transformative
 
     def index_page
       not_found if @posts_rows.nil? || @posts_rows.empty?
-      cache_control :public, :must_revalidate, :s_maxage => 300, :maxage => 600
+      cache_control :s_maxage => 300, :max_age => 600
       @posts = @posts_rows.map { |row| Cache.row_to_post(row) }
       @contexts = Cache.contexts(@posts)
       @authors = Cache.authors_from_cites(@contexts)
@@ -344,7 +347,7 @@ module Transformative
     def cache_unless_new
       published = Time.parse(@post.properties['published'][0])
       if Time.now - published > 600
-        cache_control :public, :must_revalidate, :s_maxage => 300, :maxage => 600
+        cache_control :s_maxage => 300, :max_age => 600
       end
     end
   end
