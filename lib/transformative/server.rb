@@ -53,7 +53,6 @@ module Transformative
       @post = Cache.get(url)
       return not_found if @post.nil?
       return deleted if @post.is_deleted?
-      set_last_modified_header
       @title = page_title(@post)
       @webmentions = Cache.webmentions(@post)
       @contexts = Cache.contexts(@post)
@@ -61,6 +60,7 @@ module Transformative
       @authors.merge!(Cache.authors_from_categories(@post))
       @post_page = true
       link "#{ENV['SITE_URL']}webmention", rel: 'webmention'
+      cache_unless_new
       if @post.h_type == 'h-entry'
         erb :entry
       else
@@ -256,7 +256,7 @@ module Transformative
 
     def index_page
       not_found if @posts_rows.nil? || @posts_rows.empty?
-      expires 300, :public, :must_revalidate
+      cache_control :public, :must_revalidate, :s_maxage => 300
       @posts = @posts_rows.map { |row| Cache.row_to_post(row) }
       @contexts = Cache.contexts(@posts)
       @authors = Cache.authors_from_cites(@contexts)
@@ -340,11 +340,12 @@ module Transformative
       data.to_json
     end
 
-    def set_last_modified_header
-      date = @post.properties.key?('updated') ?
-        @post.properties['updated'][0] :
-        @post.properties['published'][0]
-      last_modified date
+    # don't cache posts for the first 10 mins (to allow editing)
+    def cache_unless_new
+      published = Time.parse(@post.properties['published'][0])
+      if Time.now - published > 600
+        cache_control :public, :must_revalidate, :s_maxage => 300
+      end
     end
   end
 end
