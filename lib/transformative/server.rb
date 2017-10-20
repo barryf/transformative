@@ -14,10 +14,6 @@ module Transformative
       set :server, :puma
     end
 
-    before do
-      redirect(request.url.sub(/www\./, ''), 301) if request.host =~ /^www/
-    end
-
     get '/' do
       @posts_rows = Cache.stream(%w( note article photo repost ),
         params[:page] || 1)
@@ -57,6 +53,7 @@ module Transformative
       @post = Cache.get(url)
       return not_found if @post.nil?
       return deleted if @post.is_deleted?
+      set_last_modified_header
       @title = page_title(@post)
       @webmentions = Cache.webmentions(@post)
       @contexts = Cache.contexts(@post)
@@ -73,22 +70,28 @@ module Transformative
 
     get %r{/([0-9]{4})/([0-9]{2})/([a-z0-9-]+)\.json} do |y, m, slug|
       url = "/#{y}/#{m}/#{slug}"
+      json = Cache.get_json(url)
+      etag Digest::SHA1.hexdigest(json)
       content_type :json, charset: 'utf-8'
-      Cache.get_json(url)
+      json
     end
 
     get %r{/(index|posts|rss|feed)(\.xml)?} do
       posts_rows = Cache.stream(%w( note article photo ), 1)
       @posts = posts_rows.map { |row| Cache.row_to_post(row) }
+      xml = builder :rss
+      etag Digest::SHA1.hexdigest(xml)
       content_type :xml
-      builder :rss
+      xml
     end
 
     get '/feed.json' do
       posts_rows = Cache.stream(%w( note article photo ), 1)
       posts = posts_rows.map { |row| Cache.row_to_post(row) }
+      json = jsonfeed(posts)
+      etag Digest::SHA1.hexdigest(json)
       content_type :json, charset: 'utf-8'
-      jsonfeed(posts)
+      json
     end
 
     get '/archives/?' do
@@ -253,6 +256,7 @@ module Transformative
 
     def index_page
       not_found if @posts_rows.nil? || @posts_rows.empty?
+      expires 300, :public, :must_revalidate
       @posts = @posts_rows.map { |row| Cache.row_to_post(row) }
       @contexts = Cache.contexts(@posts)
       @authors = Cache.authors_from_cites(@contexts)
@@ -336,5 +340,11 @@ module Transformative
       data.to_json
     end
 
+    def set_last_modified_header
+      date = @post.properties.key?('updated') ?
+        @post.properties['updated'][0] :
+        @post.properties['published'][0]
+      last_modified date
+    end
   end
 end
