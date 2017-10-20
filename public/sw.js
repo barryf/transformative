@@ -5,8 +5,7 @@ self.addEventListener('install', e => {
    caches.open('barryfrost-com-cache').then(cache => {
      // add all URLs of resources we want to cache
      return cache.addAll([
-       '/',
-       '/2017/06/promulgate-wip'
+       '/'
      ]);
    })
  );

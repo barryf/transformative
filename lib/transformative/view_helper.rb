@@ -337,7 +337,7 @@ module Transformative
         "author" => {
           "name" => "Barry Frost",
           "url" => "https://barryfrost.com/",
-          "avatar" => "https://barryf.s3.amazonaws.com/barryfrost.jpg"
+          "avatar" => "#{ENV['SITE_URL']}barryfrost.jpg"
         },
         "items" => []
       }

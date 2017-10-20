@@ -5,7 +5,7 @@
   "short_name": "Barry Frost",
   "icons": [
     {
-      "src": "https://barryf.s3.amazonaws.com/barryfrost.jpg",
+      "src": "https://barryfrost.com/barryfrost.jpg",
       "sizes": "300x300",
       "type": "image/jpeg"
     }

@@ -6,23 +6,20 @@
     <% if @post_page %>
       <link rel="canonical" href="<%= @post.absolute_url %>">
       <link rel="self" href="<%= @post.absolute_url %>">
-      <link rel="webmention" href="<%= ENV['SITE_URL'] %>webmention">
+      <link rel="webmention" href="/webmention">
     <% else %>
-      <link rel="self" href="<%= ENV['SITE_URL'] %>">
+      <link rel="self" href="/">
     <% end %>
-    <link rel="micropub" href="<%= ENV['SITE_URL'] %>micropub">
+    <link rel="micropub" href="/micropub">
     <link rel="authorization_endpoint" href="<%= ENV['AUTHORIZATION_ENDPOINT'] %>">
     <link rel="token_endpoint" href="<%= ENV['TOKEN_ENDPOINT'] %>">
     <link rel="hub" href="<%= ENV['PUBSUBHUBBUB_HUB'] %>">
-    <link rel="feed" type="text/html" href="<%= ENV['SITE_URL'] %>all">
-    <link rel="feed alternate" type="application/rss+xml"
-      href="<%= ENV['SITE_URL'] %>rss" title="RSS feed">
-    <link rel="feed alternate" type="application/json"
-      href="<%= ENV['SITE_URL'] %>feed.json" title="JSON feed">
-    <link rel="stylesheet" href="<%= ENV['MEDIA_URL'] %>css/moof.css">
-    <link rel="stylesheet"
-      href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
-    <link rel="icon" href="<%= ENV['MEDIA_URL'] %>favicon.ico">
+    <link rel="feed" type="text/html" href="/all">
+    <link rel="feed alternate" type="application/rss+xml" href="/rss" title="RSS feed">
+    <link rel="feed alternate" type="application/json" href="/feed.json" title="JSON feed">
+    <link rel="stylesheet" href="/css/moof.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="icon" href="/favicon.ico">
     <link href="https://micro.blog/barryf" rel="me">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="/manifest.json">
@@ -31,8 +28,7 @@
   <body>
     <header>
       <div>
-        <a href="/"><img src="https://barryf.s3.amazonaws.com/barryfrost.jpg"
-          alt="Photo of Barry Frost"></a>
+        <a href="/"><img src="/barryfrost.jpg" alt="Barry Frost"></a>
         <h1>This is <a href="/about">Barry Frost</a>’s personal website.</h1>
         <nav>
           <ul>
