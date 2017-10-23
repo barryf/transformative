@@ -348,6 +348,8 @@ module Transformative
       published = Time.parse(@post.properties['published'][0])
       if Time.now - published > 600
         cache_control :s_maxage => 300, :max_age => 600
+      else
+        cache_control :max_age => 0
       end
     end
   end
