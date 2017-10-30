@@ -13,7 +13,7 @@ All my notes, articles, bookmarks, photos and more are hosted on my personal dom
 - Reply-/repost-/like- [contexts][] fetched and displayed above posts
 - [Backfeed][] of replies, reposts and likes imported via [Brid.gy][bridgy]
 - Authorisation via [IndieAuth][] and [`rel=me`][relme]
-- [WebSub][pubsub] hub pinging
+- [WebSub][websub] hub pinging
 - [`person-tag`][persontag] support
 
 Implementation reports are available showing Transformative's compliance with the [Webmention][wm-ir] and [Micropub][mp-ir] specifications.
@@ -115,7 +115,7 @@ _This README also appears on my site as its [Colophon][]._
 [contexts]: http://indieweb.org/reply-context
 [indieauth]: https://indieauth.com
 [relme]: http://indieweb.org/rel-me
-[pubsub]: http://indieweb.org/pubsub
+[websub]: http://indieweb.org/websub
 [persontag]: http://indieweb.org/person-tag
 [wm-ir]: https://github.com/w3c/webmention/blob/master/implementation-reports/transformative.md
 [mp-ir]: https://micropub.rocks/implementation-report/server/30/Qr4kVp0CSxFGY9Zfpsfh
