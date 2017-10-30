@@ -13,7 +13,7 @@ All my notes, articles, bookmarks, photos and more are hosted on my personal dom
 - Reply-/repost-/like- [contexts][] fetched and displayed above posts
 - [Backfeed][] of replies, reposts and likes imported via [Brid.gy][bridgy]
 - Authorisation via [IndieAuth][] and [`rel=me`][relme]
-- [PubSub(HubBub)][pubsub] hub pinging
+- [WebSub][pubsub] hub pinging
 - [`person-tag`][persontag] support
 
 Implementation reports are available showing Transformative's compliance with the [Webmention][wm-ir] and [Micropub][mp-ir] specifications.
@@ -46,7 +46,7 @@ The commenter's h-entry will then be parsed, stored and added underneath my post
 
 And using the magic of [Bridgy][], responses to my tweets, Facebook posts and Instagram photos that have been syndicated from my site are pulled back in as webmentions.
 
-## Requirements
+## Requirements
 
 - Ruby 2.3.1 or newer
 - PostgreSQL 9.4 or newer -- required for its JSONB support
