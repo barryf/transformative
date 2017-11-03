@@ -14,6 +14,12 @@ module Transformative
       set :server, :puma
     end
 
+    before do
+      headers \
+        "Referrer-Policy" => "no-referrer",
+        "Content-Security-Policy" => "script-src 'self'"
+    end
+
     get '/' do
       @posts_rows = Cache.stream(%w( note article photo repost ),
         params[:page] || 1)
