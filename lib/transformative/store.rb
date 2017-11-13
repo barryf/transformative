@@ -103,7 +103,10 @@ module Transformative
           if modified
             existing_webmention_client =
               ::Webmention::Client.new(post.absolute_url)
-            existing_webmention_client.crawl
+            begin
+              existing_webmention_client.crawl
+            rescue OpenURI::HTTPError
+            end
             Cache.put(post)
             existing_webmention_client.send_mentions
           else
