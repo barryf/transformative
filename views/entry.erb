@@ -18,7 +18,7 @@
     <div class="content">
       <div class="e-content<% unless @post.properties.key?('name') %> p-name<% end %>"
         ><%= filter_all filter_markdown @post.content %></div>
-      <%= erb :'_photos' %>
+      <%= erb :'_photos_all' %>
     </div>
   <% end %>
 

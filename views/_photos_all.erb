@@ -1,0 +1,20 @@
+<% if @post.properties.key?('photo') %>
+  <div class="clearfix">
+<% @post.properties['photo'].each do |photo| %>
+
+  <figure>
+    <% if photo.is_a?(Hash) %>
+      <a href="<%= photo['value'] %>">
+        <img class="u-photo" src="<%= photo['value'] %>"
+          alt="<%= photo['alt'] %>">
+      </a>
+    <% else %>
+      <a href="<%= photo %>">
+        <img class="u-photo" src="<%= photo %>">
+      </a>
+    <% end %>
+  </figure>
+
+<% end %>
+  </div>
+<% end %>

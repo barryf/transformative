@@ -203,9 +203,14 @@ span.post-type {
 }
 .post .content figure {
   max-width: 320px;
+  float: left; 
+  margin-right: 10px;
 }
 .post .content figure img {
   width: 100%;
+}
+ .post .content figure.thumb {
+  width: 50px;
 }
 .post blockquote {
   border-left: #ccc solid 5px;
@@ -352,6 +357,12 @@ span.post-type {
   color: #999;
   font-size: 15px;
   line-height: 25px;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
 }
 
 @media screen and (max-width: 740px) {
