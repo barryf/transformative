@@ -6,11 +6,11 @@
     <% if @post_page %>
       <link rel="canonical" href="<%= @post.absolute_url %>">
       <link rel="self" href="<%= @post.absolute_url %>">
-      <link rel="webmention" href="/webmention">
+      <link rel="webmention" href="<%= ENV['SITE_URL'] %>webmention">
     <% else %>
       <link rel="self" href="/">
     <% end %>
-    <link rel="micropub" href="/micropub">
+    <link rel="micropub" href="<%= ENV['SITE_URL'] %>micropub">
     <link rel="authorization_endpoint" href="<%= ENV['AUTHORIZATION_ENDPOINT'] %>">
     <link rel="token_endpoint" href="<%= ENV['TOKEN_ENDPOINT'] %>">
     <link rel="hub" href="<%= ENV['PUBSUBHUBBUB_HUB'] %>">
