@@ -1,11 +1,11 @@
 <% if @post.properties.key?('location') || @post.properties.key?('checkin') %>
 
-  <% if @post.properties.key?('location') %>
-    <% location = @post.properties['location'][0] %>
-    <% p_value = "p-location" %>
-  <% elsif @post.properties.key?('checkin') %>
+  <% if @post.properties.key?('checkin') %>
     <% location = @post.properties['checkin'][0] %>
     <% p_value = "p-checkin" %>
+  <% elsif @post.properties.key?('location') %>
+    <% location = @post.properties['location'][0] %>
+    <% p_value = "p-location" %>
   <% end %>
 
   <li class="location">
