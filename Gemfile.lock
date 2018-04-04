@@ -58,7 +58,7 @@ GEM
     s3 (0.3.26)
       addressable
       proxies
-    sanitize (4.6.0)
+    sanitize (4.6.4)
       crass (~> 1.0.2)
       nokogiri (>= 1.4.4)
       nokogumbo (~> 1.4)
@@ -67,7 +67,7 @@ GEM
       faraday (~> 0.8, < 1.0)
     sentry-raven (2.7.2)
       faraday (>= 0.7.6, < 1.0)
-    sequel (5.6.0)
+    sequel (5.7.0)
     sequel_pg (1.8.1)
       pg (>= 0.18.0)
       sequel (>= 4.34.0)
