@@ -78,6 +78,8 @@ module Transformative
         "IndieNews"
       when 'medium.com'
         "<span class=\"fa fa-medium\"></span> Medium"
+      when 'linkedin.com', 'www.linkedin.com'
+        "<span class=\"fa fa-linkedin\"></span> LinkedIn"
       else
         host
       end
