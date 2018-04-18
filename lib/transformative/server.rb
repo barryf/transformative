@@ -23,6 +23,7 @@ module Transformative
     get '/' do
       @posts_rows = Cache.stream(%w( note article photo repost ),
         params[:page] || 1)
+      @show_announcement = params.fetch(:page, 1).to_i == 1
       index_page
     end
 
