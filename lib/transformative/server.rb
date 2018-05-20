@@ -239,6 +239,10 @@ module Transformative
       status 202
     end
 
+    get '/cv' do
+      redirect ENV['CV_URL']
+    end
+
     not_found do
       status 404
       erb :'404'
