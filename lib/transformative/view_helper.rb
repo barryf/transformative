@@ -244,7 +244,12 @@ module Transformative
       url = URI.join(base_url, photo_url).to_s
       if url.start_with?('http://pbs.twimg.com')
         url.gsub 'http://pbs.twimg.com', 'https://pbs.twimg.com'
-      elsif !url.start_with?('https')
+      end
+      https_image(url)
+    end
+
+    def https_image(url)
+      unless url.start_with?('https')
         camo_image(url)
       else
         url

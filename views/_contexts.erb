@@ -37,7 +37,7 @@
         <% if context.properties.key?('photo') && context.properties['photo'].any? %>
           <figure>
             <a href="<%= context.properties['url'][0] %>">
-              <img class="u-photo" src="<%= camo_image context.properties['photo'][0] %>">
+              <img class="u-photo" src="<%= https_image context.properties['photo'][0] %>">
             </a>
           </figure>
         <% end %>
