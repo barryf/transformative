@@ -50,7 +50,13 @@ module Transformative
       if entry.is_a?(Hash) && entry['properties'].key?('author')
         entry['properties']['author'][0]
       elsif author_rel = Nokogiri::HTML(body).css("[rel=author]")
-        author_rel.attribute('href').value
+        unless author_rel.empty?
+          author_rel.attribute('href').value
+        else
+          # no author url so fall back to the base url
+          uri = URI(url)
+          "#{uri.scheme}://#{uri.host}"
+        end
       end
     end
 
