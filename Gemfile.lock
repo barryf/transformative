@@ -47,7 +47,7 @@ GEM
     proxies (0.2.3)
     public_suffix (3.0.3)
     puma (3.12.0)
-    rack (2.0.6)
+    rack (2.0.8)
     rack-contrib (2.1.0)
       rack (~> 2.0)
     rack-protection (2.0.5)
