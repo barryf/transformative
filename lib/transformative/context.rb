@@ -124,11 +124,9 @@ module Transformative
     end
 
     def find_first_hentry_or_hevent(items)
-      items.each do |item|
-        if item['type'][0] == 'h-entry' || item['type'][0] == 'h-event'
-          return item
-        end
-      end
+      items.extend Hashie::Extensions::DeepLocate
+      found = items.deep_locate -> (k, v, o) {k == 'type' && (v == ['h-entry'] || v == ['h-event'])} 
+      found.first if found
     end
 
     def twitter_client

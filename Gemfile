@@ -20,6 +20,7 @@ gem 'will_paginate'
 gem 's3'
 gem 'twitter'
 gem 'indieweb-authorship'
+gem 'hashie'
 
 group :production do
   gem 'sentry-raven'
