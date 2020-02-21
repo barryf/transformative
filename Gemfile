@@ -19,6 +19,7 @@ gem 'sequel_pg', require: 'sequel'
 gem 'will_paginate'
 gem 's3'
 gem 'twitter'
+gem 'indieweb-authorship'
 
 group :production do
   gem 'sentry-raven'
