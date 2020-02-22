@@ -89,7 +89,7 @@ module Transformative
     end
 
     def store_author(source)
-      author_post = Authorship.get_author(source)
+      author_post = Authorship.fetch(source)
       Store.save(author_post)
     end
 
