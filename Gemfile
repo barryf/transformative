@@ -19,7 +19,7 @@ gem 'sequel_pg', require: 'sequel'
 gem 'will_paginate'
 gem 's3'
 gem 'twitter'
-gem 'indieweb-authorship'
+gem 'indieweb-authorship', git: 'https://github.com/barryf/indieweb-authorship'
 gem 'hashie'
 
 group :production do
