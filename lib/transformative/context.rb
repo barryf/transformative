@@ -42,14 +42,15 @@ module Transformative
       published = properties.key?('published') ?
         Time.parse(properties['published'][0]) : Time.now
       post_url = properties.key?('url') ? properties['url'][0] : url
-      post_name = properties.key?('name') ? properties['name'][0].strip : ''
       hash = {
         'url' => [URI.join(url, post_url).to_s],
-        'name' => [post_name],
         'published' => [published.utc.iso8601],
         'content' => [properties['content'][0]['value']],
         'author' => [author.properties['url'][0]]
       }
+      if properties.key?('name')
+        hash['name'] = [properties['name'][0].strip]
+      end
       if properties.key?('photo')
         hash['photo'] = properties['photo']
       end
