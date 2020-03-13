@@ -12,7 +12,6 @@ Dotenv.load
 require_relative 'lib/transformative.rb'
 
 DB = Sequel.connect(ENV['DATABASE_URL'])
-DB[:posts].truncate
 
 CONTENT_PATH = "#{File.dirname(__FILE__)}/../content"
 
@@ -28,6 +27,7 @@ end
 
 desc "Rebuild database cache from all content JSON files."
 task :rebuild do
+  DB[:posts].truncate
   Dir.glob("#{CONTENT_PATH}/**/*.json").each do |file|
     parse(file)
   end
@@ -35,6 +35,7 @@ end
 
 desc "Rebuild database cache from this month's content JSON files."
 task :recent do
+  DB[:posts].truncate
   year_month = Time.now.strftime('%Y/%m')
   files = Dir.glob("#{CONTENT_PATH}/#{year_month}/**/*.json")
   # need to rebuild all cites and cards because they're not organised by month
