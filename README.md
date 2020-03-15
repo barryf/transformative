@@ -9,7 +9,7 @@ All my notes, articles, bookmarks, photos and more are hosted on my personal dom
 - [Microformats2][] (h-entry, h-event, h-cite, h-card)
 - [Webmention][] sending and receiving
 - [Micropub][] create, update and delete/undelete
-- [POSSE][] syndication to Twitter via [Silo.pub][silopub] and Pinboard
+- [POSSE][] syndication to Twitter and Pinboard
 - Reply-/repost-/like- [contexts][] fetched and displayed above posts
 - [Backfeed][] of replies, reposts and likes imported via [Brid.gy][bridgy]
 - Authorisation via [IndieAuth][] and [`rel=me`][relme]
