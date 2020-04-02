@@ -214,7 +214,6 @@ module Transformative
         content_type :json
         case params[:q]
         when 'source'
-          verify_url
           render_source
         when 'config'
           render_config
@@ -338,6 +337,16 @@ module Transformative
 
     def render_source
       content_type :json
+      if params.key?('url')
+        render_source_post
+      else
+        posts_rows = Cache.stream_all(params[:page] || 1)
+        { items: posts_rows.to_a.map{ |p| p[:data] } }.to_json
+      end
+    end
+
+    def render_source_post
+      verify_url
       relative_url = Utils.relative_url(params[:url])
       not_found unless post = Store.get("#{relative_url}.json")
       data = if params.key?('properties')
