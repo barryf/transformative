@@ -336,13 +336,15 @@ module Transformative
     end
 
     def render_source
-      content_type :json
-      if params.key?('url')
-        render_source_post
-      else
-        posts_rows = Cache.stream_all(params[:page] || 1)
-        { items: posts_rows.to_a.map{ |p| p[:data] } }.to_json
-      end
+      content_type :json, charset: 'utf-8'
+      return render_source_post if params.key?('url')
+      types = %w(note article bookmark photo checkin repost like reply)
+      posts_rows = if params.key?('post-type') && types.include?(params['post-type'])
+          Cache.stream([params['post-type']], params[:page] || 1)
+        else
+          Cache.stream_all(params[:page] || 1)
+        end
+      { items: posts_rows.to_a.map{ |p| p[:data] } }.to_json
     end
 
     def render_source_post
