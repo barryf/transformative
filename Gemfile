@@ -21,6 +21,7 @@ gem 's3'
 gem 'twitter'
 gem 'indieweb-authorship', git: 'https://github.com/barryf/indieweb-authorship'
 gem 'hashie'
+gem 'redis'
 
 group :production do
   gem 'sentry-raven'
