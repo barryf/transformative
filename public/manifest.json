@@ -5,8 +5,8 @@
   "short_name": "Barry Frost",
   "icons": [
     {
-      "src": "https://barryfrost.com/barryfrost.jpg",
-      "sizes": "300x300",
+      "src": "https://barryfrost.com/barryfrost-favicon.png",
+      "sizes": "192x192",
       "type": "image/jpeg"
     }
   ],
