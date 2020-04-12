@@ -7,7 +7,9 @@ module Transformative
       if post.h_type == 'h-entry'
         post.properties['entry-type'] ||= [post.entry_type]
       end
-      put(post.filename, post.data)
+      # trim initial slash from path (if exists)
+      filename = post.filename.start_with?('/') ? post.filename[1..-1] : post.filename
+      put(filename, post.data)
       post
     end
 
