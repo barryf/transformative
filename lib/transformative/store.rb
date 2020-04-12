@@ -106,15 +106,15 @@ module Transformative
             existing_webmention_client =
               ::Webmention::Client.new(post.absolute_url)
             begin
-              existing_webmention_client.crawl
+              existing_webmention_client.mentioned_urls
             rescue OpenURI::HTTPError
             end
             Cache.put(post)
-            existing_webmention_client.send_mentions
+            existing_webmention_client.send_all_mentions
           else
             Cache.put(post)
           end
-          ::Webmention::Client.new(post.absolute_url).send_mentions
+          ::Webmention::Client.new(post.absolute_url).send_all_mentions
           Utils.ping_pubsubhubbub
           Context.fetch_contexts(post)
         else
