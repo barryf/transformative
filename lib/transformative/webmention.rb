@@ -99,9 +99,10 @@ module Transformative
       published = properties.key?('published') ?
         Time.parse(properties['published'][0]) :
         Time.now
+      name = properties.key?('name') ? properties['name'][0] : ""
       hash = {
         'url' => [properties['url'][0]],
-        'name' => [properties['name'][0].strip],
+        'name' => [name.strip],
         'published' => [published.utc.iso8601],
         'author' => [author_url],
         webmention_property(source, target) => [target]
