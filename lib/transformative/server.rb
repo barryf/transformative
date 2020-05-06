@@ -344,7 +344,14 @@ module Transformative
         else
           Cache.stream_all(params[:page] || 1)
         end
-      { items: posts_rows.to_a.map{ |p| p[:data] } }.to_json
+      items = posts_rows.to_a.map do |post| 
+        {
+          url: post[:url], 
+          type: post[:data]['type'], 
+          properties: post[:data]['properties'] 
+        }
+      end
+      { items: items }.to_json
     end
 
     def render_source_post
