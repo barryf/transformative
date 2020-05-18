@@ -242,8 +242,13 @@ module Transformative
 
     def force_https_author_profile(photo_url, base_url)
       url = URI.join(base_url, photo_url).to_s
-      if url.start_with?('http://pbs.twimg.com')
-        url.gsub 'http://pbs.twimg.com', 'https://pbs.twimg.com'
+      # use unavatar.now.sh to avoid avatar rot
+      if url.match(/pbs\.twimg\.com/)
+        screen_name = base_url.split('/').last
+        return "https://unavatar.now.sh/twitter/#{screen_name}"
+      elsif url.match(/cdninstagram\.com/)
+        screen_name = base_url.split('/')[3]
+        return "https://unavatar.now.sh/instagram/#{screen_name}"
       end
       https_image(url)
     end
