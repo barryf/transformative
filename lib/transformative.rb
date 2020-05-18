@@ -13,6 +13,6 @@ end
 
 %w( utils post card cite entry event auth context media micropub notification
     syndication authorship notification webmention view_helper cache twitter
-    file_system store server ).each do |file|
+    file_system store redis server ).each do |file|
   require_relative "transformative/#{file}.rb"
 end

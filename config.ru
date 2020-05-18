@@ -18,7 +18,7 @@ if env == :production && ENV.key?('SENTRY_DSN')
 end
 
 # automatically parse json in the body
-use Rack::PostBodyContentTypeParser
+use Rack::JSONBodyParser
 
 require 'will_paginate/sequel'
 Sequel::Database.extension(:pagination, :pg_json)

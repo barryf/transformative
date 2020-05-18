@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.4.5'
+ruby '2.6.5'
 
 gem 'sinatra'
 gem 'sinatra-contrib'
@@ -21,6 +21,7 @@ gem 's3'
 gem 'twitter'
 gem 'indieweb-authorship', git: 'https://github.com/barryf/indieweb-authorship'
 gem 'hashie'
+gem 'redis'
 
 group :production do
   gem 'sentry-raven'

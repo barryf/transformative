@@ -7,7 +7,9 @@ module Transformative
       if post.h_type == 'h-entry'
         post.properties['entry-type'] ||= [post.entry_type]
       end
-      put(post.filename, post.data)
+      # trim initial slash from path (if exists)
+      filename = post.filename.start_with?('/') ? post.filename[1..-1] : post.filename
+      put(filename, post.data)
       post
     end
 
@@ -104,15 +106,15 @@ module Transformative
             existing_webmention_client =
               ::Webmention::Client.new(post.absolute_url)
             begin
-              existing_webmention_client.crawl
+              existing_webmention_client.mentioned_urls
             rescue OpenURI::HTTPError
             end
             Cache.put(post)
-            existing_webmention_client.send_mentions
+            existing_webmention_client.send_all_mentions
           else
             Cache.put(post)
           end
-          ::Webmention::Client.new(post.absolute_url).send_mentions
+          ::Webmention::Client.new(post.absolute_url).send_all_mentions
           Utils.ping_pubsubhubbub
           Context.fetch_contexts(post)
         else
