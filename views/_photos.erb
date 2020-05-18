@@ -5,12 +5,12 @@
   <figure style="float: none;">
     <% if photo.is_a?(Hash) %>
       <a href="<%= photo['value'] %>">
-        <img class="u-photo" src="<%= photo['value'] %>"
+        <img class="u-photo" loading="lazy" src="<%= photo['value'] %>"
           alt="<%= photo['alt'] %>">
       </a>
     <% else %>
       <a href="<%= photo %>">
-        <img class="u-photo" src="<%= photo %>">
+        <img class="u-photo" loading="lazy" src="<%= photo %>">
       </a>
     <% end %>
   </figure>
@@ -21,12 +21,12 @@
       <figure class="thumb">
         <% if photo.is_a?(Hash) %>
           <a href="<%= photo['value'] %>">
-            <img class="u-photo" src="<%= photo['value'] %>"
+            <img class="u-photo" loading="lazy" src="<%= photo['value'] %>"
               alt="<%= photo['alt'] %>">
           </a>
         <% else %>
           <a href="<%= photo %>">
-            <img class="u-photo" src="<%= photo %>">
+            <img class="u-photo" loading="lazy" src="<%= photo %>">
           </a>
         <% end %>
       </figure>
