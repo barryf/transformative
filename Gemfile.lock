@@ -3,7 +3,7 @@ GEM
   specs:
     absolutely (4.0.0)
       addressable (~> 2.7)
-    addressable (2.7.0)
+    addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     backports (3.17.2)
     buftok (0.2.0)
@@ -71,7 +71,7 @@ GEM
       sawyer (~> 0.8.0, >= 0.5.3)
     pg (1.2.3)
     proxies (0.2.3)
-    public_suffix (4.0.5)
+    public_suffix (4.0.6)
     puma (4.3.5)
       nio4r (~> 2.0)
     racc (1.5.2)
