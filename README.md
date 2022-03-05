@@ -1,6 +1,6 @@
 # Transformative
 
-Transformative is a microblogging engine that powers my personal website [barryfrost.com][bf]. It's written in Ruby and supports several key [IndieWeb][] technologies as detailed below.
+Transformative is a microblogging engine that powered my personal website 2016-2021. It's written in Ruby and supports several key [IndieWeb][] technologies as detailed below.
 
 All my notes, articles, bookmarks, photos and more are hosted on my personal domain rather than in someone else's silo. I can choose how it looks and works while having fun building it for myself.
 
