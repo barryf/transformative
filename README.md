@@ -18,7 +18,7 @@ All my notes, articles, bookmarks, photos and more are hosted on my personal dom
 
 Implementation reports are available showing Transformative's compliance with the [Webmention][wm-ir] and [Micropub][mp-ir] specifications.
 
-## How it works
+## How it works
 
 Transformative has several parts. The most obvious is a [Sinatra][] web app that serves content from a database cache. It also exposes APIs so that compatible clients can create and edit content. Posts are first stored as flat JSON files in a git repository and then sucked down into the database and cached. Any external contexts, replies, likes and reposts are also imported.
 
